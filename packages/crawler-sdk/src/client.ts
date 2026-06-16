@@ -53,7 +53,7 @@ export class CrawlPayClient {
       cacheSeconds: config.cacheSeconds ?? DEFAULT_CACHE_SECONDS,
       budgetWarningRatio: config.budgetWarningRatio ?? DEFAULT_BUDGET_WARNING_RATIO,
     };
-    this.#signer = config.paymentSigner ?? new StellarPaymentSigner(config.network, config.secret);
+    this.#signer = config.paymentSigner ?? defaultSigner(config);
     this.#budget =
       config.budgetTracker ??
       (config.dailyBudget !== undefined
@@ -307,6 +307,15 @@ export class CrawlPayClient {
 }
 
 // ── Helpers ──────────────────────────────────────────────────────
+
+function defaultSigner(config: CrawlPayClientConfig): PaymentSigner {
+  if (!config.sorobanRpcUrl) {
+    throw new Error('sorobanRpcUrl is required unless you supply a custom paymentSigner');
+  }
+  return new StellarPaymentSigner(config.network, config.secret, {
+    rpcUrl: config.sorobanRpcUrl,
+  });
+}
 
 function nowSeconds(): number {
   return Math.floor(Date.now() / 1000);

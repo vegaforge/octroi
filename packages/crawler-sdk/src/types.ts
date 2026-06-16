@@ -16,6 +16,8 @@ export interface CrawlPayClientConfig {
   secret: string;
   /** Network the crawler operates on. */
   network: Network;
+  /** Soroban RPC endpoint. Required unless a custom `paymentSigner` is supplied. */
+  sorobanRpcUrl?: string;
   /** Hard per-request cap. The SDK refuses to pay more than this for any URL. */
   maxPerRequest: AtomicUsdc;
   /** Optional daily spend cap across all publishers (UTC day). */

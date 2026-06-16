@@ -20,7 +20,7 @@
   "dependencies": {
     "@crawlpay/receipt-signer": "workspace:*",
     "@crawlpay/types": "workspace:*",
-    "@stellar/stellar-base": "^15.0.0"
+    "@stellar/stellar-sdk": "^16.0.0"
   },
   "devDependencies": {
     "typescript": "^5.4.0",

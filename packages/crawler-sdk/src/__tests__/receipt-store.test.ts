@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Keypair } from '@stellar/stellar-base';
+import { Keypair } from '@stellar/stellar-sdk';
 import type { AssetId, CrawlPayReceipt, StellarAddress } from '@crawlpay/types';
 import { MemoryReceiptStore } from '../receipt-store';
 
