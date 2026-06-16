@@ -11,7 +11,7 @@ export interface ClassificationResult {
   isCrawler: boolean;
   /** Confidence in `[0, 1]`. 1 = certain. */
   confidence: number;
-  /** Short identifier for the rule that fired (for logs / audit). */
+  /** Id of the rule that fired, for logs/audit. */
   reason: string;
 }
 
@@ -19,10 +19,7 @@ export interface BotClassifier {
   classify(signals: RequestSignals): ClassificationResult;
 }
 
-/**
- * Case-insensitive regex patterns matching known AI/agent crawler User-Agents.
- * Ordering doesn't matter for correctness — first hit wins.
- */
+/** Known AI/agent crawler User-Agents (case-insensitive, first hit wins). */
 const KNOWN_BOT_PATTERNS: RegExp[] = [
   // OpenAI
   /GPTBot/i,
@@ -35,7 +32,7 @@ const KNOWN_BOT_PATTERNS: RegExp[] = [
   // Perplexity
   /PerplexityBot/i,
   /Perplexity-User/i,
-  // Other major model providers
+  // other model providers
   /cohere-ai/i,
   /mistralai/i,
   /Google-Extended/i,
@@ -44,28 +41,19 @@ const KNOWN_BOT_PATTERNS: RegExp[] = [
   /Meta-ExternalAgent/i,
   /Amazonbot/i,
   /DuckAssistBot/i,
-  // General-purpose crawlers
+  // general crawlers
   /CCBot/i,
   /Diffbot/i,
   /ImagesiftBot/i,
   /Omgilibot/i,
-  // CrawlPay-aware crawlers self-identify
+  // CrawlPay crawlers self-identify
   /CrawlPay/i,
 ];
 
 /**
- * Default heuristic classifier.
- *
- * Signals are evaluated in priority order:
- *
- *   1. Request carries an `X-PAYMENT` header → unambiguous crawler.
- *   2. User-Agent matches a known AI bot pattern.
- *   3. User-Agent contains a generic bot/crawler/spider token.
- *   4. None of Accept-Language, Cookie, Referer, `Accept: text/html` → likely a bot.
- *   5. Otherwise → classify as human.
- *
- * Defaults to "human" on ambiguous signals because false positives
- * (paywalling a human) hurt publishers more than false negatives.
+ * Heuristic classifier, checked in order: X-PAYMENT header, known bot UA,
+ * generic bot/crawler/spider token, then missing browser headers.
+ * Defaults to human when ambiguous (paywalling a real human is the worse error).
  */
 export class DefaultBotClassifier implements BotClassifier {
   classify(signals: RequestSignals): ClassificationResult {
@@ -81,10 +69,8 @@ export class DefaultBotClassifier implements BotClassifier {
       }
     }
 
-    // Match `bot|crawler|spider` at a real boundary: start-of-string, any
-    // non-word char, or a lowercase→uppercase camelCase transition (so
-    // `AcmeContentSpider/1.0` still triggers). Trailing `\b` keeps `robots.txt`
-    // and other substrings from misfiring.
+    // match bot|crawler|spider at a real boundary (start, non-word, or camelCase
+    // transition) so AcmeContentSpider hits but robots.txt doesn't.
     if (/(?:^|[\W_]|[a-z])(?:bot|crawler|spider)\b/i.test(ua)) {
       return { isCrawler: true, confidence: 0.7, reason: 'ua-generic-bot-suffix' };
     }

@@ -4,11 +4,8 @@ import '../styles/globals.css';
 import { Providers } from '@/components/providers/Providers';
 
 // Typography roles:
-//   Inter           — body text, UI controls, navigation, descriptions
-//   Fjalla One      — editorial headlines (H1/H2/H3) — condensed display
-//   Alfa Slab One   — hero numbers + one-off display moments (404, math)
-//   Smooch Sans     — eyebrows + UI micro-labels (variable, condensed sans)
-//   JetBrains Mono  — code, addresses, amounts, technical detail
+//   Inter: body/UI. Fjalla One: headlines. Alfa Slab One: hero numbers.
+//   Smooch Sans: eyebrows/micro-labels. JetBrains Mono: code/addresses/amounts.
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
@@ -38,8 +35,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  // Resolves OG / Twitter image URLs to absolute. Override per-environment
-  // via NEXT_PUBLIC_SITE_URL when you deploy (e.g. https://crawlpay.xyz).
+  // Makes OG/Twitter image URLs absolute. Override via NEXT_PUBLIC_SITE_URL on deploy.
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
   title: 'CrawlPay — Pay-per-crawl infrastructure for the open web',
   description:

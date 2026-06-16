@@ -1,10 +1,6 @@
 import type { CrawlPayReceipt, StellarAddress } from '@crawlpay/types';
 
-/**
- * A stored receipt is the canonical signed receipt plus the catalog
- * `publisherId` it belongs to. `publisherId` is not part of the signed body —
- * it's storage context that lets the gateway scope queries to a publisher.
- */
+/** Signed receipt plus `publisherId`. publisherId is storage context, not part of the signed body. */
 export interface StoredReceipt extends CrawlPayReceipt {
   publisherId: string;
 }
@@ -23,11 +19,7 @@ export interface ReceiptFilter {
   offset?: number;
 }
 
-/**
- * Persistent receipt store. Append-only by design — receipts are immutable
- * once issued. The `onchainTxHash` field can be backfilled later via a separate
- * update path (not part of this interface).
- */
+/** Append-only receipt store; receipts are immutable once issued. onchainTxHash is backfilled out-of-band. */
 export interface ReceiptRepository {
   insert(receipt: CrawlPayReceipt, publisherId: string): Promise<void>;
   getByNonce(nonce: string): Promise<StoredReceipt | null>;

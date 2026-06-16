@@ -31,8 +31,7 @@ const POS: Record<TokenPos, string> = {
   publisher: '84%',
 };
 
-// 5 steps × 2 beats — choreography ported from the design mockup so the
-// motion matches what claude design shipped.
+// 5 steps, 2 beats each
 const SUBSTEPS: SubStep[] = [
   {
     step: 1,
@@ -63,7 +62,7 @@ const SUBSTEPS: SubStep[] = [
     beat: 'a',
     caption: (
       <>
-        A built-in classifier flags the caller — <b>bot, not human</b>
+        A built-in classifier flags the caller as a <b>bot, not a human</b>
       </>
     ),
     token: { text: 'classify · bot', at: 'gate', variant: 'warn' },
@@ -87,7 +86,7 @@ const SUBSTEPS: SubStep[] = [
     beat: 'a',
     caption: (
       <>
-        Crawler signs a <b>Soroban authorization entry</b> — off-chain, <b>no gas</b>
+        Crawler signs a <b>Soroban authorization entry</b>, off-chain, <b>no gas</b>
       </>
     ),
     token: { text: 'sign auth entry', at: 'crawler', variant: 'pay' },
@@ -124,7 +123,7 @@ const SUBSTEPS: SubStep[] = [
     beat: 'b',
     caption: (
       <>
-        <b>Soroban</b> settles the batch in one transaction — the facilitator sponsors the fee
+        <b>Soroban</b> settles the batch in one transaction, with the facilitator sponsoring the fee
       </>
     ),
     token: null,
@@ -137,7 +136,7 @@ const SUBSTEPS: SubStep[] = [
     beat: 'a',
     caption: (
       <>
-        <b>200 OK</b> — the content unlocks for the crawler
+        <b>200 OK</b>, and the content unlocks for the crawler
       </>
     ),
     token: { text: '200 OK', at: 'gate', variant: 'ok' },
@@ -149,7 +148,7 @@ const SUBSTEPS: SubStep[] = [
     beat: 'b',
     caption: (
       <>
-        A <b>portable signed receipt</b> is issued — verifiable with no database
+        A <b>portable signed receipt</b> is issued, verifiable with no database
       </>
     ),
     token: { text: '✓ receipt', at: 'crawler', variant: 'ok' },
@@ -158,9 +157,7 @@ const SUBSTEPS: SubStep[] = [
   },
 ];
 
-// ──────────────────────────────────────────────────────────────────────────
-// Visual mapping helpers
-// ──────────────────────────────────────────────────────────────────────────
+// visual mapping helpers
 
 function gateFilter(state: GateState): string {
   switch (state) {
@@ -209,16 +206,13 @@ function tokenColors(variant: TokenVariant) {
   }
 }
 
-// ──────────────────────────────────────────────────────────────────────────
-
 export function HeroWalkthrough() {
   const reduced = useReducedMotion();
   const containerRef = useRef<HTMLDivElement>(null);
   const inView = useInView(containerRef, { once: true, amount: 0.25 });
   const [index, setIndex] = useState(0);
 
-  // Auto-advance once visible. Loops infinitely; honors prefers-reduced-motion
-  // by holding on the first frame (which renders as a complete static state).
+  // auto-advance once visible, looping. reduced-motion holds on the first (complete) frame
   useEffect(() => {
     if (!inView || reduced) return;
     const isLast = index === SUBSTEPS.length - 1;
@@ -233,7 +227,6 @@ export function HeroWalkthrough() {
 
   return (
     <div ref={containerRef} className="w-full max-w-[900px]">
-      {/* Stage head */}
       <div className="mb-4 flex items-center justify-between gap-4">
         <span className="mono inline-flex items-center gap-2 text-xs text-ink-secondary">
           <span className="live-dot" aria-hidden />
@@ -244,7 +237,6 @@ export function HeroWalkthrough() {
         </span>
       </div>
 
-      {/* Stepper */}
       <div className="grid grid-cols-5 gap-2 sm:gap-2.5">
         {([1, 2, 3, 4, 5] as const).map((s) => {
           const done = s < current.step;
@@ -282,13 +274,11 @@ export function HeroWalkthrough() {
         })}
       </div>
 
-      {/* Scene */}
       <div
         className="relative mt-5 h-[200px] sm:h-[230px]"
         role="img"
         aria-label="Animated walkthrough of a paid crawl"
       >
-        {/* Dashed track */}
         <div
           className="absolute left-[16%] right-[16%] top-[54%] h-0.5 -translate-y-1/2"
           style={{
@@ -298,7 +288,6 @@ export function HeroWalkthrough() {
           aria-hidden
         />
 
-        {/* Crawler station */}
         <Station label="AI crawler" left="16%">
           <div
             className="flex h-13 w-13 items-center justify-center rounded-2xl border bg-bg-elevated shadow-[0_6px_18px_rgba(0,0,0,0.35)]"
@@ -312,7 +301,6 @@ export function HeroWalkthrough() {
           </div>
         </Station>
 
-        {/* Gate (the CrawlPay mark) */}
         <Station label="CrawlPay paygate" left="50%">
           <motion.div
             className="relative flex h-[94px] items-center justify-center text-accent"
@@ -356,7 +344,6 @@ export function HeroWalkthrough() {
           </motion.div>
         </Station>
 
-        {/* Publisher station */}
         <Station label="Publisher" left="84%">
           <motion.div
             className="relative flex w-[62px] flex-col gap-1.5 rounded-lg border bg-bg-elevated p-[11px_10px]"
@@ -397,7 +384,6 @@ export function HeroWalkthrough() {
           </motion.div>
         </Station>
 
-        {/* Traveling token */}
         <AnimatePresence>
           {current.token && (
             <motion.div
@@ -430,7 +416,6 @@ export function HeroWalkthrough() {
           )}
         </AnimatePresence>
 
-        {/* Batch chip (visible during Settle) */}
         <AnimatePresence>
           {current.batch && (
             <motion.div
@@ -449,7 +434,6 @@ export function HeroWalkthrough() {
         </AnimatePresence>
       </div>
 
-      {/* Substep caption */}
       <div className="mt-2 flex min-h-[46px] items-center gap-3 border-t border-border-subtle pt-[18px]">
         <span
           className="h-2 w-2 flex-none rounded-full bg-accent"
@@ -472,8 +456,6 @@ export function HeroWalkthrough() {
     </div>
   );
 }
-
-// ──────────────────────────────────────────────────────────────────────────
 
 function Station({
   label,

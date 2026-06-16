@@ -12,13 +12,7 @@ export interface MigrateResult {
   alreadyApplied: string[];
 }
 
-/**
- * Apply pending SQL migrations in lexical order. Each migration runs inside
- * a transaction; failure rolls back and aborts the run.
- *
- * The runner tracks state in `_crawlpay_migrations(filename TEXT PK, applied_at TIMESTAMPTZ)`.
- * Re-running is idempotent — already-applied files are skipped silently.
- */
+/** Apply pending SQL migrations in lexical order, each in its own transaction. Idempotent: applied files (tracked in _crawlpay_migrations) are skipped. */
 export async function runMigrations(opts: MigrateOptions): Promise<MigrateResult> {
   const pool = new Pool({ connectionString: opts.databaseUrl });
   try {

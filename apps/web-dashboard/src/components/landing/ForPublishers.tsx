@@ -70,7 +70,7 @@ const POINTS: Point[] = [
   {
     icon: Lock,
     title: 'Your address, your keys.',
-    body: 'We never touch the funds. Native USDC settles to your Stellar address — no bridge.',
+    body: 'We never touch the funds. Native USDC settles to your Stellar address, no bridge.',
   },
 ];
 

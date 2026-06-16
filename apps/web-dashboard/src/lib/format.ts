@@ -1,9 +1,6 @@
 /**
- * Display formatters for atomic USDC values, addresses, and timestamps.
- *
- * The api-gateway returns atomic USDC as stringified bigints; we render
- * dollars in the UI. Use `atomicToUsd` everywhere — never `.toFixed()`
- * raw atomic values. Atomic USDC is 7-decimal (1000 = $0.0001).
+ * Display formatters for atomic USDC, addresses, and timestamps.
+ * Atomic USDC is 7-decimal (1000 = $0.0001). Use atomicToUsd, never .toFixed() on raw atomic.
  */
 
 import { atomicToDollars, atomicUsdc, type Network } from '@crawlpay/types';
@@ -16,7 +13,7 @@ export function atomicToUsd(atomic: string | bigint | number): string {
   return `$${dollars.toFixed(4)}`;
 }
 
-/** Same as atomicToUsd but always 4 decimals — used for chart axis labels. */
+/** Like atomicToUsd but always 4 decimals, for chart axis labels. */
 export function atomicToUsdShort(atomic: string | bigint | number): string {
   const dollars = Number(atomicToDollars(atomicUsdc(toBigInt(atomic))));
   return `$${dollars.toFixed(4)}`;
@@ -36,7 +33,7 @@ export function isoToUnix(iso: string): number {
   return Math.floor(Date.parse(iso) / 1000);
 }
 
-/** "2m ago", "3h ago", "5d ago". Falls back to a locale date for older entries. */
+/** "2m ago" etc. Falls back to a locale date for older entries. */
 export function timeAgo(unixSeconds: number, now: number = Math.floor(Date.now() / 1000)): string {
   const diff = Math.max(0, now - unixSeconds);
   if (diff < 60) return `${Math.floor(diff)}s ago`;
@@ -46,7 +43,7 @@ export function timeAgo(unixSeconds: number, now: number = Math.floor(Date.now()
   return new Date(unixSeconds * 1000).toLocaleDateString();
 }
 
-/** Short "2m" / "3h" — no "ago" — used in compact tables. */
+/** Short "2m" / "3h" with no "ago", for compact tables. */
 export function timeAgoShort(
   unixSeconds: number,
   now: number = Math.floor(Date.now() / 1000),
@@ -59,7 +56,7 @@ export function timeAgoShort(
   return new Date(unixSeconds * 1000).toLocaleDateString();
 }
 
-/** GABC…WXYZ — truncate a 56-char Stellar G-address to first 5 / last 4. */
+/** Truncate a 56-char Stellar G-address to first 5 / last 4 (GABC…WXYZ). */
 export function truncateAddress(addr: string): string {
   if (!addr || addr.length <= 11) return addr;
   return `${addr.slice(0, 5)}…${addr.slice(-4)}`;
@@ -80,13 +77,13 @@ function explorerBase(network: Network): string {
   return `https://stellar.expert/explorer/${segment}`;
 }
 
-/** Map a daily date to the day-of-week chart label, e.g. 2026-06-04 → "Thu". */
+/** Daily date to day-of-week chart label, e.g. 2026-06-04 to "Thu". */
 export function isoDateToDow(iso: string): string {
   const d = new Date(`${iso}T00:00:00Z`);
   return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getUTCDay()] ?? iso;
 }
 
-/** YYYY-MM-DD → "Jun 4" for monthly view. */
+/** YYYY-MM-DD to "Jun 4" for monthly view. */
 export function isoDateToShort(iso: string): string {
   const d = new Date(`${iso}T00:00:00Z`);
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });

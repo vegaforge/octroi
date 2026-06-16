@@ -13,13 +13,11 @@ export interface CrawlerBalance {
 }
 
 /**
- * Signs payments on behalf of the crawler. The default implementation targets
- * Stellar: it builds and signs a Soroban authorization entry for the offered
- * USDC SAC transfer. Pluggable so a smart wallet or a remote signer can be
- * substituted without touching the rest of the client.
+ * Signs payments for the crawler. Default signs a Soroban auth entry for the
+ * offered USDC SAC transfer. Pluggable for a smart wallet or remote signer.
  */
 export interface PaymentSigner {
-  /** The crawler's Stellar G-address — its payment account and identity. */
+  /** The crawler's Stellar G-address (payment account and identity). */
   readonly address: StellarAddress;
   /** Build and sign an `X-PAYMENT` payload for the offer (a Soroban auth entry). */
   createPayment(requirement: PaymentRequirement): Promise<X402PaymentPayload>;
@@ -29,12 +27,11 @@ export interface PaymentSigner {
 
 const SETTLEMENT_PENDING =
   'Soroban authorization-entry signing and USDC SAC settlement are not implemented in this build. ' +
-  'This is the v0 Stellar settlement track — see the repository issues.';
+  'This is the v0 Stellar settlement track. See the repository issues.';
 
 /**
- * Default Stellar payment signer. The account address is derived from the
- * secret seed (offline). Authorization-entry signing and balance reads require
- * Soroban RPC and are implemented in the v0 settlement track.
+ * Default Stellar signer. Address is derived from the seed offline. Auth-entry
+ * signing and balance reads need Soroban RPC (v0 settlement track).
  */
 export class StellarPaymentSigner implements PaymentSigner {
   readonly address: StellarAddress;

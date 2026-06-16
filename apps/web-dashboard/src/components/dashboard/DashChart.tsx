@@ -19,9 +19,7 @@ const easeSmooth = [0.32, 0.72, 0, 1] as const;
 export type WindowKey = 'day' | 'week' | 'month';
 
 export interface ChartPoint {
-  /** Display label (date, hour, day). */
   date: string;
-  /** Dollar value for the bucket. */
   value: number;
   /** Sub-line shown in tooltip ("12 crawls"). */
   sub: string;
@@ -34,7 +32,7 @@ type DashChartProps = {
   onWindowChange: (next: WindowKey) => void;
   /** Show a centered spinner instead of the chart while data hasn't loaded. */
   loading?: boolean;
-  /** Stable id for the gradient def — prevents collisions when two charts share a page. */
+  /** Stable id for the gradient def, avoids collisions when two charts share a page. */
   gradientKey?: string;
 };
 
@@ -45,12 +43,8 @@ const WINDOWS: { key: WindowKey; label: string }[] = [
 ];
 
 /**
- * Earnings / spend area chart driven entirely by props. The parent owns
- * window state so the API call (`/analytics/...?window=...`) re-fires when
- * the user changes it.
- *
- * Built directly on Recharts (skipping Tremor) so brand colors come from
- * CSS variables — no palette override dance.
+ * Earnings/spend area chart. Parent owns window state so the analytics call
+ * re-fires on change. On raw Recharts so colors come straight from CSS vars.
  */
 export function DashChart({
   title,

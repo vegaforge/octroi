@@ -18,12 +18,8 @@ export interface ReputationService {
 /** Reputation saturates as settlements accumulate; at this count the score is ~67. */
 const HALF_SATURATION = 100;
 
-/**
- * Provisional, off-chain reputation derived from CrawlPay's own settlement
- * history (PRD §11.4). A crawler that has paid reliably accrues a higher score.
- * This is honest about being centralized in v0; the on-chain crawlpay_registry
- * replaces it in v2.
- */
+// off-chain score from our own settlement history (PRD 11.4). centralized in v0,
+// replaced by the on-chain crawlpay_registry in v2.
 export class ProvisionalReputationService implements ReputationService {
   readonly #receipts: ReceiptRepository;
 

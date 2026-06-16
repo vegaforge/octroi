@@ -11,16 +11,9 @@ export interface VerificationResult {
 }
 
 /**
- * Verify a CrawlPayReceipt's Ed25519 signature.
- *
- *   1. Recompute the canonical bytes of the receipt body.
- *   2. Verify the signature against the embedded `facilitatorPubkey`.
- *   3. If `expectedSigner` is provided, require it to match `facilitatorPubkey`.
- *
- * Unlike ECDSA there is no public-key recovery; the receipt names its signer in
- * `facilitatorPubkey` and the signature is checked against that key. Returns a
- * structured result (never throws on a bad signature) so callers can attach the
- * reason to error responses or audit logs.
+ * Verify a receipt's Ed25519 signature against the embedded `facilitatorPubkey`
+ * (no key recovery like ECDSA). If `expectedSigner` is given, it must match.
+ * Never throws on a bad signature; returns a structured result with a reason.
  */
 export async function verifyReceipt(
   receipt: CrawlPayReceipt,

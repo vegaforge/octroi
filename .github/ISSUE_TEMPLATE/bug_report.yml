@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for filing a bug. For security vulnerabilities, do **not** use this form — see [SECURITY.md](../blob/main/SECURITY.md).
+        Thanks for filing a bug. For security vulnerabilities, do **not** use this form. See [SECURITY.md](../blob/main/SECURITY.md) instead.
   - type: dropdown
     id: component
     attributes:

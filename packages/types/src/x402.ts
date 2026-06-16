@@ -7,18 +7,12 @@ export type X402Version = 1;
 export type PaymentScheme = 'exact';
 
 /**
- * Settlement model carried in the offer and the payment.
- *   - `x402`: one signed Soroban authorization entry per request, settled as
- *     an individual USDC SAC transfer.
- *   - `mpp`: the request debits a pre-authorized MPP session budget; the
- *     session settles in bulk.
+ * Settlement model. `x402`: one signed Soroban auth entry per request, settled as an individual USDC SAC transfer.
+ * `mpp`: debit a pre-authorized session budget, settled in bulk.
  */
 export type SettlementModel = 'x402' | 'mpp';
 
-/**
- * One payment option in a 402 response's `accepts` array — a single way the
- * publisher is willing to be paid for a resource.
- */
+/** One payment option in a 402 `accepts` array. */
 export interface PaymentRequirement {
   scheme: PaymentScheme;
   network: Network;
@@ -68,7 +62,7 @@ export interface X402PaymentPayload {
   payload: {
     /** Base64 XDR of the signed Soroban authorization entry for the USDC SAC transfer. */
     authorizationEntry: string;
-    /** The crawler's source G-address — the `from` of the SAC transfer. */
+    /** Crawler's source G-address (the SAC transfer `from`). */
     from: StellarAddress;
   };
 }
@@ -87,26 +81,16 @@ export interface MppPaymentPayload {
   };
 }
 
-/**
- * Payload sent in the `X-PAYMENT` header (base64-encoded JSON). Either a
- * per-request signed authorization entry or an MPP session debit.
- */
+/** `X-PAYMENT` header payload (base64 JSON): a signed auth entry or an MPP session debit. */
 export type PaymentPayload = X402PaymentPayload | MppPaymentPayload;
 
-/**
- * x402 HTTP header names. Payment is presented in `X-PAYMENT`; the signed
- * receipt is returned in `X-PAYMENT-RESPONSE`.
- */
+/** x402 header names: payment in `X-PAYMENT`, signed receipt in `X-PAYMENT-RESPONSE`. */
 export const X402_HEADERS = {
   payment: 'X-PAYMENT',
   response: 'X-PAYMENT-RESPONSE',
 } as const;
 
-/**
- * Web Bot Auth (HTTP Message Signatures) header names. The crawler signs each
- * request to a priced path with its Stellar Ed25519 key; `signature-agent`
- * resolves to its key in the `crawlpay_registry` directory.
- */
+/** Web Bot Auth (HTTP Message Signatures) header names. Crawler signs each priced request with its Stellar key; `signature-agent` resolves to its registry key. */
 export const WEB_BOT_AUTH_HEADERS = {
   signatureAgent: 'signature-agent',
   signatureInput: 'signature-input',

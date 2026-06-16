@@ -6,14 +6,7 @@ import { ButtonLink } from './ButtonLink';
 
 const GITHUB_URL = 'https://github.com/StrimzLab/crawlpay';
 
-/**
- * Top-of-page nav for marketing/landing routes.
- *
- * Per design discipline: links go to ACTUAL PAGES only. No in-page anchor
- * navigation (the old #publishers / #crawlers / #pricing links are gone).
- * If a section lives on the landing page, the visitor scrolls to it from the
- * landing page itself, not from the nav.
- */
+/** Top nav for marketing routes. Links go to real pages only, no in-page anchors. */
 export function SiteNav() {
   return (
     <header className="sticky top-0 z-50 h-[var(--nav-h)] border-b border-border-subtle bg-[color:var(--bg-overlay)] backdrop-blur-md">

@@ -55,8 +55,8 @@ export function CrawlerDashboardClient({ wallet }: Props) {
     staleTime: 60_000,
   });
 
-  // Reputation lookup against the crawlpay_registry — crawler accounts are
-  // the most likely to be registered (the registry targets AI agents).
+  // Reputation lookup against crawlpay_registry. Crawler accounts (AI agents)
+  // are the most likely to be registered there.
   const reputationQuery = useQuery({
     queryKey: ['reputation', wallet],
     queryFn: () => getReputation(wallet),

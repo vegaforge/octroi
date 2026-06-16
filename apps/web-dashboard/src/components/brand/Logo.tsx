@@ -1,21 +1,17 @@
 import * as React from 'react';
 
 export type LogoProps = {
-  /** `mark` = icon only; `lockup` = mark + wordmark. */
+  /** `mark` = icon only, `lockup` = mark + wordmark. */
   variant?: 'mark' | 'lockup';
   className?: string;
-  /**
-   * Color is controlled via CSS — the SVG fills with `currentColor`.
-   * Set `text-[color:var(--accent)]` (or any text color) on the wrapper
-   * and the mark inherits it. Default height: 24px (mark) / 32px (lockup),
-   * overridable via `className` (e.g. `h-8`).
-   */
+  // Color comes from `currentColor`, so set a text color on the wrapper.
+  // Default height 24px (mark) / 32px (lockup), override via className.
   'aria-label'?: string;
 } & Omit<React.SVGProps<SVGSVGElement>, 'aria-label'>;
 
 const DEFAULT_LABEL = 'CrawlPay';
 
-/** Shared arch + threshold dot, in a 0 0 64 64 box. */
+/** Arch + threshold dot, in a 0 0 64 64 box. */
 function MarkPaths() {
   return (
     <>
@@ -42,7 +38,7 @@ export function Logo({
 }: LogoProps) {
   const isLockup = variant === 'lockup';
   const viewBox = isLockup ? '0 0 280 64' : '0 0 64 64';
-  // Default height; consumers override via className (e.g. `h-8`).
+  // Default height; className overrides it.
   const defaultStyle: React.CSSProperties = {
     height: isLockup ? 32 : 24,
     width: 'auto',
@@ -56,7 +52,7 @@ export function Logo({
       viewBox={viewBox}
       xmlns="http://www.w3.org/2000/svg"
       className={className}
-      // className-driven sizing wins; this only applies when no size class is set
+      // only applies when no size class is set
       style={className ? undefined : defaultStyle}
       {...rest}
     >

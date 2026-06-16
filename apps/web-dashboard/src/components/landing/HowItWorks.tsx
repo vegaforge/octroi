@@ -13,18 +13,8 @@ interface Node {
   detail: React.ReactNode;
 }
 
-// HTTPie-style coloring conventions used in the wire-exchange detail panels:
-//   method (GET) ............... steel (cyan-ish blue) — semibold
-//   method (POST) .............. plum #c98bdb — semibold
-//   status 2xx ................. sage green — semibold
-//   status 4xx ................. accent amber — semibold
-//   status reason phrase ....... ink-primary
-//   protocol version ........... ink-tertiary
-//   header name ................ #cfcabb (warm parchment)
-//   header value (string) ...... sage
-//   header value (hex/number) .. accent
-//   comment .................... ink-tertiary italic
-//   field name ................. ink-secondary
+// HTTPie-style coloring in the wire-exchange panels: GET=steel, POST=plum, 2xx=sage,
+// 4xx=accent, headers=parchment, string values=sage, hex/number values=accent, comments=tertiary.
 const NODES: Node[] = [
   {
     step: '01',
@@ -71,13 +61,13 @@ const NODES: Node[] = [
     title: 'Crawler signs',
     body: (
       <>
-        A <span className="mono">Soroban</span> authorization entry — off-chain, no gas.
+        A <span className="mono">Soroban</span> authorization entry, signed off-chain, no gas.
       </>
     ),
     detail: (
       <>
         <span className="italic text-ink-tertiary">
-          # crawler signs a Soroban auth entry — off-chain, no gas
+          # crawler signs a Soroban auth entry, off-chain, no gas
         </span>
         {'\n'}
         <span className="text-[#cfcabb]">X-PAYMENT:</span>{' '}
@@ -147,7 +137,7 @@ const NOTES = [
   {
     n: '01',
     h: 'Sub-cent settlement',
-    p: <>Stellar&rsquo;s base fee is ~$0.00001 — well under a single crawl.</>,
+    p: <>Stellar&rsquo;s base fee is ~$0.00001, well under a single crawl.</>,
   },
   {
     n: '02',
@@ -170,7 +160,7 @@ export function HowItWorks() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
 
-  // Auto-advance every 2.6s once visible, unless the user is hovering a node.
+  // auto-advance every 2.6s once visible, unless hovering a node
   useEffect(() => {
     if (!inView || reduced || paused) return;
     const id = window.setInterval(() => {
@@ -192,7 +182,7 @@ export function HowItWorks() {
           <h2 className="h2">x402 negotiates. MPP batches. Soroban settles.</h2>
         </motion.div>
 
-        {/* Playhead rail (desktop only) */}
+        {/* playhead rail, desktop only */}
         <div className="relative mt-11 hidden h-3.5 lg:block" aria-hidden>
           <span className="absolute left-[10%] right-[10%] top-1/2 h-0.5 -translate-y-1/2 bg-border-subtle" />
           <motion.span
@@ -207,7 +197,6 @@ export function HowItWorks() {
           />
         </div>
 
-        {/* Nodes grid */}
         <div className="mt-3.5 grid grid-cols-1 items-stretch gap-3.5 sm:grid-cols-2 lg:grid-cols-5">
           {NODES.map((node, i) => {
             const isActive = i === active;
@@ -244,8 +233,7 @@ export function HowItWorks() {
           })}
         </div>
 
-        {/* Wire-exchange detail panel — generous min-h prevents layout jump
-            between steps with 2- vs 3-line payloads. */}
+        {/* min-h stops layout jump between 2- and 3-line payloads */}
         <div className="mono mt-6 flex min-h-[140px] flex-col justify-center whitespace-pre-wrap rounded-card border border-border-subtle bg-[#0B1015] px-6 py-5 text-[13px] leading-[1.75] text-ink-secondary">
           <AnimatePresence mode="wait">
             <motion.div
@@ -260,7 +248,6 @@ export function HowItWorks() {
           </AnimatePresence>
         </div>
 
-        {/* Three closing notes */}
         <div className="mt-10 grid grid-cols-1 gap-7 md:grid-cols-3">
           {NOTES.map((note, i) => (
             <motion.div

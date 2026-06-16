@@ -14,11 +14,8 @@ export interface ReceiptFilter {
 }
 
 /**
- * Long-term receipt archive for the crawler.
- *
- * Distinct from FetchCache:
- *   - ReceiptStore: append-only audit log, queried for spend history + reports
- *   - FetchCache:   short-lived content cache, queried to skip re-payment
+ * Long-term receipt archive (append-only audit log for spend history).
+ * Distinct from FetchCache, which is a short-lived content cache to skip re-payment.
  */
 export interface ReceiptStore {
   put(receipt: CrawlPayReceipt): Promise<void>;
@@ -29,7 +26,7 @@ export interface ReceiptStore {
   count(filter?: ReceiptFilter): Promise<number>;
 }
 
-/** In-memory receipt store. Suitable for tests and short-lived scripts. */
+/** In-memory receipt store, for tests and short-lived scripts. */
 export class MemoryReceiptStore implements ReceiptStore {
   readonly #byNonce = new Map<string, CrawlPayReceipt>();
 

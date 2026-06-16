@@ -30,7 +30,7 @@ export interface CrawlPayMiddlewareConfig {
   /** Description shown in the 402 offer (e.g. "Premium research articles"). */
   description?: string;
 
-  // ── Pluggable dependencies ─────────────────────────────────────
+  // pluggable dependencies
   /** Override the default heuristic bot classifier. */
   botClassifier?: BotClassifier;
   /** Override the default facilitator client (HTTP to `facilitatorUrl`). */
@@ -38,7 +38,7 @@ export interface CrawlPayMiddlewareConfig {
   /** Override the default pricing resolver (replaces pricingRules + defaultPrice). */
   pricingResolver?: PricingResolver;
 
-  // ── Observability hooks ────────────────────────────────────────
+  // observability hooks
   onPayment?: (event: PaymentEvent) => void | Promise<void>;
   onSkip?: (event: SkipEvent) => void | Promise<void>;
   onError?: (event: ErrorEvent) => void | Promise<void>;
@@ -50,7 +50,7 @@ export interface PaymentEvent {
   from: StellarAddress;
   amount: AtomicUsdc;
   receipt: CrawlPayReceipt;
-  /** On-chain tx hash (x402) or session id (mpp), whichever the receipt carries. */
+  /** On-chain tx hash (x402) or session id (mpp). */
   settlementRef: string;
   durationMs: number;
 }

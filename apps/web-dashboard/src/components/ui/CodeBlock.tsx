@@ -9,16 +9,11 @@ type CodeBlockProps = {
   code: string;
   /** Filename label shown in the header. */
   filename: string;
-  /** Language label badge — purely decorative for v0 (the highlighter is TS-only). */
+  /** Language label badge. Decorative only (the highlighter is TS-only). */
   language?: string;
 };
 
-/**
- * Standalone code block with header, language badge, and copy button.
- *
- * Syntax highlighting is sync (no Shiki round-trip), so this renders
- * instantly on the client with no flash of unstyled content.
- */
+/** Code block with header, language badge, and copy button. Highlighting is sync (no Shiki). */
 export function CodeBlock({ code, filename, language = 'typescript' }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
@@ -28,7 +23,7 @@ export function CodeBlock({ code, filename, language = 'typescript' }: CodeBlock
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1500);
     } catch {
-      // Clipboard access denied (insecure context, permissions); silently no-op.
+      // clipboard denied (insecure context or permissions), no-op
     }
   };
 

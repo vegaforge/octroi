@@ -17,11 +17,7 @@ export interface ApiKeyAuth {
   authenticate(authorizationHeader: string | undefined): Promise<PublisherRecord | null>;
 }
 
-/**
- * API-key authentication backed by the publisher repository. A request carries
- * its key as a bearer token; the key is hashed and matched against the stored
- * `api_key_hash`. The plaintext key is never persisted.
- */
+/** Bearer-token auth: hashes the key and matches it against the stored api_key_hash. */
 export class PublisherApiKeyAuth implements ApiKeyAuth {
   readonly #publishers: PublisherRepository;
 

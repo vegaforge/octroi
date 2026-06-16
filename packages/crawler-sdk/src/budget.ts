@@ -6,16 +6,13 @@ export interface BudgetTracker {
   getState(): Promise<CrawlerBudgetState>;
   /** True if `amount` would fit within the remaining daily budget. */
   canSpend(amount: AtomicUsdc): Promise<boolean>;
-  /** Record a spend against today's budget. Idempotent only if you pass distinct amounts. */
+  /** Record a spend against today's budget. Not idempotent, accumulates. */
   recordSpend(amount: AtomicUsdc): Promise<void>;
 }
 
 /**
- * In-process budget tracker. State is held in memory and resets at UTC midnight.
- *
- * Not safe for concurrent processes (no shared store). Production deployments
- * with multiple crawler workers should implement BudgetTracker against Redis
- * or Postgres so the budget is shared.
+ * In-process budget tracker. Resets at UTC midnight. Not safe across processes;
+ * for multiple workers back BudgetTracker with Redis/Postgres so the budget is shared.
  */
 export class InMemoryBudgetTracker implements BudgetTracker {
   readonly #dailyBudget: AtomicUsdc;

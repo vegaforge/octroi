@@ -8,14 +8,12 @@ const easeSmooth = [0.32, 0.72, 0, 1] as const;
 type ProgressBarProps = {
   /** 0 ≤ ratio ≤ 1. Clamped on render. */
   ratio: number;
-  /** Color thresholds — accent < warn (60%) < error (85%). */
+  /** Color thresholds: accent < warn (60%) < error (85%). */
   thresholds?: { warn: number; error: number };
   className?: string;
 };
 
-/**
- * Used for the crawler's daily-budget bar. Color shifts as the bar fills.
- */
+/** Crawler daily-budget bar. Color shifts as it fills. */
 export function ProgressBar({
   ratio,
   thresholds = { warn: 0.6, error: 0.85 },

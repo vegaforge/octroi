@@ -1,4 +1,4 @@
-import './bigint-json'; // side-effect: patches BigInt.prototype.toJSON
+import './bigint-json'; // patches BigInt.prototype.toJSON
 import { Pool } from 'pg';
 import {
   MemoryPublisherRepository,
@@ -33,7 +33,7 @@ async function main() {
     receipts = new MemoryReceiptRepository();
     publishers = new MemoryPublisherRepository();
     storage = 'memory';
-    logger.warn('DATABASE_URL not set — using in-memory repositories. Suitable for demo only.');
+    logger.warn('DATABASE_URL not set, using in-memory repositories. Demo only.');
   }
 
   const auth = new PublisherApiKeyAuth(publishers);

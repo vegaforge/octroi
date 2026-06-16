@@ -81,8 +81,7 @@ export function Pricing() {
               )}
               whileHover={tier.recommended ? undefined : { y: -2 }}
             >
-              {/* Recommended chip sits in normal flow at the top of the card —
-                  no absolute positioning, no z-index trickery, no overflow. */}
+              {/* chip in normal flow at top of card, so no absolute positioning needed */}
               {tier.recommended && (
                 <Chip variant="accent" className="mb-4 self-start">
                   Recommended

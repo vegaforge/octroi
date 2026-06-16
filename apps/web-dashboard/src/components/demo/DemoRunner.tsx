@@ -68,7 +68,7 @@ export function DemoRunner() {
   const [selected, setSelected] = useState<DemoReceipt | null>(null);
   const cancelRef = useRef(false);
 
-  // Cancel any in-flight run on unmount.
+  // cancel any in-flight run on unmount
   useEffect(
     () => () => {
       cancelRef.current = true;
@@ -117,7 +117,7 @@ export function DemoRunner() {
       setStats({ done: i + 1, totalUnits: totalUnitsRunning, avg });
       setPubsSeen(new Set(pubs));
 
-      // Push a receipt every 4th success, plus the first five.
+      // receipt every 4th success, plus the first five
       if ((i + 1) % 4 === 0 || i < 5) {
         const dom = publisherDomain(p.id);
         const wallet = `G${b32(4)}…${b32(4)}`;

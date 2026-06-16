@@ -9,8 +9,7 @@ const CRAWLER_A = Keypair.random().publicKey() as StellarAddress;
 const CRAWLER_B = Keypair.random().publicKey() as StellarAddress;
 const USDC: AssetId = 'USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN';
 
-// Anchor NOW to mid-day UTC so receipts a few hours back don't accidentally
-// cross a date boundary and miss the daily bucket they belong to.
+// anchor to mid-day UTC so receipts a few hours back don't cross a date boundary
 const NOW = Math.floor(Date.UTC(2026, 3, 27, 12, 0, 0) / 1000); // 2026-04-27 12:00 UTC
 const DAY = 86_400;
 

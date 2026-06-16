@@ -1,9 +1,6 @@
 /**
  * Client for the api-gateway's /reputation/* endpoints.
- *
- * The api-gateway reads the `crawlpay_registry` Soroban contract (identity +
- * reputation) for the given Stellar G-address, caches the result, and serves a
- * compact summary that's safe to render in a chip.
+ * Gateway reads the crawlpay_registry Soroban contract, caches, returns a chip-sized summary.
  */
 
 const BASE = '/api';
@@ -15,7 +12,7 @@ export interface ReputationSummary {
   provisional: boolean;
   /** Count of settled receipts backing the score. */
   settledCount: number;
-  /** Reputation score (0–100), null when not yet computable. */
+  /** Reputation score (0 to 100), null when not yet computable. */
   score: number | null;
 }
 

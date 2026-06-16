@@ -1,10 +1,8 @@
 import type { NonceTracker } from './interface';
 
 /**
- * In-process nonce tracker. Safe for single-instance deployments and tests.
- * Multi-process / multi-instance deployments must use RedisNonceTracker.
- *
- * Expired entries are swept lazily on every operation. No background timer.
+ * In-process nonce tracker. Single-instance only; use RedisNonceTracker for multi-process.
+ * Expired entries are swept lazily on each op, no timer.
  */
 export class MemoryNonceTracker implements NonceTracker {
   readonly #entries = new Map<string, number>();

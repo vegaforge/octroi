@@ -29,14 +29,9 @@ interface ReceiptRow {
 }
 
 /**
- * Postgres-backed receipt repository.
- *
- * Inserts use ON CONFLICT (nonce) DO NOTHING — the nonce is already gated by
- * the NonceTracker (Redis) before settle, so a duplicate insert here means a
- * race between facilitator instances, treated as a silent no-op.
- *
- * Backfilling on-chain settlement fields (onchain_tx_hash for the MPP path)
- * happens via a separate worker UPDATE path, not through this interface.
+ * Postgres-backed receipt repo. Insert uses ON CONFLICT (nonce) DO NOTHING:
+ * nonce is already gated by the NonceTracker before settle, so a dup here is just an
+ * inter-instance race, no-op'd silently. onchain_tx_hash is backfilled by a separate worker.
  */
 export class PostgresReceiptRepository implements ReceiptRepository {
   readonly #pool: Pool;

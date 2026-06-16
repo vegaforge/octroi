@@ -9,12 +9,7 @@ import { HeroWalkthrough } from './HeroWalkthrough';
 const GITHUB_URL = 'https://github.com/StrimzLab/crawlpay';
 const easeSmooth = [0.32, 0.72, 0, 1] as const;
 
-/**
- * Landing hero — text on top, animated walkthrough as centerpiece, CTAs
- * and ticker below. The reading order intentionally puts the walkthrough
- * between the headline and the CTAs so the eye lands on the animation
- * before deciding whether to click.
- */
+/** Landing hero. Walkthrough sits between headline and CTAs so the eye lands on it first. */
 export function Hero() {
   const reduced = useReducedMotion();
   const fade = (delay: number) => ({
@@ -30,13 +25,11 @@ export function Hero() {
 
       <div className="wrap relative z-10">
         <div className="flex min-h-[calc(100vh-var(--nav-h))] flex-col items-center justify-center gap-8 py-12 text-center md:gap-10 md:py-16">
-          {/* Eyebrow chip + headline */}
-
           <motion.h1 className="h1 max-w-[20ch]" {...fade(0.07)}>
             <span className="text-accent">Pay</span>-per-crawl infrastructure for the open web.
           </motion.h1>
 
-          {/* The animated walkthrough — sits between headline and supporting copy. */}
+          {/* walkthrough sits between headline and supporting copy */}
           <motion.div className="w-full" {...fade(0.12)}>
             <div className="w-full flex justify-center">
               <HeroWalkthrough />

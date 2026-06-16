@@ -32,10 +32,7 @@ const sizes: Record<Size, string> = {
   lg: 'h-12 px-6 text-[15px]',
 };
 
-/**
- * Anchor-flavored variant of <Button/>. Uses next/link for internal routes
- * and a raw <a> with rel="noopener" for external links.
- */
+/** Anchor variant of Button. next/link for internal routes, raw <a> for external. */
 export function ButtonLink({
   variant = 'primary',
   size = 'md',

@@ -6,25 +6,15 @@ import { GlobPricingResolver, type PricingResolver } from './pricing';
 import { encodeReceiptHeader } from './receipts';
 import type { CrawlPayMiddlewareConfig, ErrorEvent } from './types';
 
-/**
- * Validity window published in 402 offers (seconds). A crawler's Soroban
- * authorization entry must settle within this window, so it is kept short.
- */
+/** Offer validity window (seconds). Kept short: the crawler's Soroban auth entry must settle within it. */
 const OFFER_VALIDITY_WINDOW_SECONDS = 60;
 
 const PAYMENT_HEADER = X402_HEADERS.payment.toLowerCase();
 
 /**
- * CrawlPay's publisher middleware.
- *
- * Composition (left → right):
- *
- *   classifier  →  pricing  →  facilitator verify  →  receipt header  →  next()
- *
- * Each step is pluggable via `CrawlPayMiddlewareConfig`. The default wiring uses
- * heuristic bot classification, glob-based pricing, and an HTTP facilitator
- * client. The facilitator owns settlement and receipt signing; the middleware
- * relays the payment and returns the signed receipt to the crawler.
+ * Publisher middleware: classify, price, facilitator verify, receipt header, next().
+ * Each step is pluggable via config. The facilitator owns settlement and signing;
+ * the middleware just relays payment and returns the signed receipt.
  */
 export function crawlpay(config: CrawlPayMiddlewareConfig): RequestHandler {
   const classifier = config.botClassifier ?? new DefaultBotClassifier();
@@ -38,7 +28,6 @@ export function crawlpay(config: CrawlPayMiddlewareConfig): RequestHandler {
     const fullUrl = `${req.protocol}://${req.get('host') ?? 'localhost'}${req.originalUrl}`;
     const startedAt = Date.now();
 
-    // 1. Classify
     let classification;
     try {
       classification = classifier.classify({
@@ -57,7 +46,6 @@ export function crawlpay(config: CrawlPayMiddlewareConfig): RequestHandler {
       return next();
     }
 
-    // 2. Price
     const pricing = pricingResolver.resolve(req.originalUrl, req.method);
     if (!pricing || pricing.priceAtomic === 0n) {
       await config.onSkip?.({ url: fullUrl, reason: 'free-path', classification });
@@ -67,13 +55,12 @@ export function crawlpay(config: CrawlPayMiddlewareConfig): RequestHandler {
     const paymentHeaderRaw = req.headers[PAYMENT_HEADER];
     const paymentHeader = Array.isArray(paymentHeaderRaw) ? paymentHeaderRaw[0] : paymentHeaderRaw;
 
-    // 3. No payment yet — emit a 402 offer
+    // no payment yet, emit a 402 offer
     if (!paymentHeader) {
       res.status(402).json(buildOffer(config, fullUrl, pricing.priceAtomic.toString()));
       return;
     }
 
-    // 4. Decode payload and forward to the facilitator
     let payload: PaymentPayload;
     try {
       payload = decodePaymentPayload(paymentHeader);
@@ -103,7 +90,7 @@ export function crawlpay(config: CrawlPayMiddlewareConfig): RequestHandler {
       return;
     }
 
-    // 5. Return the signed receipt to the crawler and downstream handlers.
+    // return the signed receipt to the crawler and downstream handlers
     const { receipt } = result;
     res.setHeader(X402_HEADERS.response, encodeReceiptHeader(receipt));
     res.locals.crawlpayReceipt = receipt;
@@ -167,6 +154,6 @@ async function emitError(
   try {
     await config.onError?.({ url, error, phase });
   } catch {
-    // Don't compound errors thrown by the user's handler.
+    // don't compound errors thrown by the user's handler
   }
 }

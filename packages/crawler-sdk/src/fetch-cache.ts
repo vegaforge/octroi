@@ -12,10 +12,8 @@ export interface FetchCacheEntry {
 }
 
 /**
- * Short-term content cache so we don't pay twice for the same URL within a
- * configurable window. Authorization nonces are single-use, so the cache must
- * store the content alongside the receipt — there's no "replay the payment"
- * shortcut.
+ * Short-term content cache so we don't pay twice for the same URL in a window.
+ * Auth nonces are single-use, so the cache stores content with the receipt (no payment replay).
  */
 export interface FetchCache {
   /** Return a cache entry if present AND within `maxAgeSeconds`, else null. */

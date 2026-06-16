@@ -20,7 +20,7 @@ runMigrations({ databaseUrl, migrationsDir })
       console.log(`✓ applied ${result.applied.length} migration(s):`);
       for (const f of result.applied) console.log(`  + ${f}`);
       if (result.alreadyApplied.length > 0) {
-        console.log(`  (${result.alreadyApplied.length} skipped — already applied)`);
+        console.log(`  (${result.alreadyApplied.length} skipped, already applied)`);
       }
     }
   })

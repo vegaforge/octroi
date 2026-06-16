@@ -17,11 +17,11 @@ When reporting, please include:
 
 The areas where a vulnerability has the highest impact:
 
-- **Receipt forgery** — producing a receipt that verifies without a corresponding settlement.
-- **Settlement integrity** — redirecting USDC, bypassing the amount ceiling, or double-charging.
-- **Replay** — reusing an authorization nonce or an MPP session debit.
-- **Facilitator key handling** — exposure or misuse of the receipt-signing or fee-sponsor keys.
-- **Auth** — bypassing the publisher API key on a protected route.
+- **Receipt forgery**: producing a receipt that verifies without a matching settlement.
+- **Settlement integrity**: redirecting USDC, bypassing the amount ceiling, or double-charging.
+- **Replay**: reusing an authorization nonce or an MPP session debit.
+- **Facilitator key handling**: exposure or misuse of the receipt-signing or fee-sponsor keys.
+- **Auth**: bypassing the publisher API key on a protected route.
 
 By design, no single party can both move funds and forge evidence of authorization (see [`docs/PRD.md` §17](./docs/PRD.md)). Reports that demonstrate a break in that invariant are the highest priority.
 

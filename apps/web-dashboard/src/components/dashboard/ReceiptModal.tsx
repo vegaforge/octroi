@@ -17,7 +17,7 @@ export interface ReceiptModalReceipt {
   amount: string;
   /** Object dumped as JSON inside the modal. */
   canonical: Record<string, unknown>;
-  /** Full receipt payload — used by the Verify button to call /receipts/verify. */
+  /** Full receipt payload, used by the Verify button to call /receipts/verify. */
   fullReceipt?: CrawlPayReceipt;
 }
 
@@ -27,12 +27,8 @@ type ReceiptModalProps = {
 };
 
 /**
- * Centered modal showing a receipt's canonical JSON + a verify action.
- * Closes on ESC, backdrop click, or the explicit Close button.
- *
- * Verify POSTs to /receipts/verify with the full receipt payload. The
- * api-gateway checks the receipt's Ed25519 signature against its
- * `facilitatorPubkey` and returns `{ valid, signerPubkey, reason? }`.
+ * Modal showing a receipt's canonical JSON plus a verify action. Closes on ESC, backdrop, or Close.
+ * Verify POSTs to /receipts/verify; the gateway checks the Ed25519 signature against facilitatorPubkey.
  */
 export function ReceiptModal({ receipt, onClose }: ReceiptModalProps) {
   const [verifying, setVerifying] = useState(false);

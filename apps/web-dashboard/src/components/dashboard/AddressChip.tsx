@@ -12,10 +12,7 @@ type AddressChipProps = {
   className?: string;
 };
 
-/**
- * Copyable monospace pill for wallet addresses. Used in dashboard headers
- * and live feeds. Hits navigator.clipboard; silently no-ops if denied.
- */
+/** Copyable monospace pill for wallet addresses. No-ops if clipboard is denied. */
 export function AddressChip({ address, display, className }: AddressChipProps) {
   const [copied, setCopied] = useState(false);
 
@@ -25,7 +22,7 @@ export function AddressChip({ address, display, className }: AddressChipProps) {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1500);
     } catch {
-      // Silently fail — clipboard requires a secure context.
+      // clipboard requires a secure context; ignore failures
     }
   };
 

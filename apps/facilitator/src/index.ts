@@ -42,15 +42,13 @@ async function main() {
     nonces = new MemoryNonceTracker();
     receipts = new PostgresReceiptRepository(pool);
     storage = 'mixed';
-    logger.warn('REDIS_URL not set — using MemoryNonceTracker. Single-instance only.');
+    logger.warn('REDIS_URL not set, using MemoryNonceTracker. Single-instance only.');
   } else if (config.redisUrl) {
     const redis = new IORedis(config.redisUrl);
     nonces = new RedisNonceTracker(redis);
     receipts = new MemoryReceiptRepository();
     storage = 'mixed';
-    logger.warn(
-      'DATABASE_URL not set — using MemoryReceiptRepository. Receipts are NOT persisted.',
-    );
+    logger.warn('DATABASE_URL not set, using MemoryReceiptRepository. Receipts are NOT persisted.');
   } else {
     nonces = new MemoryNonceTracker();
     receipts = new MemoryReceiptRepository();

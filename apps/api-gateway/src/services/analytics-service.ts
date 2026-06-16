@@ -43,13 +43,7 @@ export interface AnalyticsService {
   forCrawler(walletAddress: StellarAddress, window: AnalyticsWindow): Promise<CrawlerAnalytics>;
 }
 
-/**
- * Default analytics implementation. Pulls all receipts in the window from the
- * given ReceiptRepository and aggregates in JS.
- *
- * Adequate for v0 demo volumes (≤ ~10k receipts/window). Production at scale
- * will want a Postgres-side aggregation pass that pushes the GROUP BY into SQL.
- */
+/** Pulls all receipts in the window and aggregates in JS. Fine for demo volumes; at scale push the GROUP BY into SQL. */
 export class RepositoryAnalyticsService implements AnalyticsService {
   readonly #receipts: ReceiptRepository;
   readonly #now: () => number;

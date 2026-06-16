@@ -47,7 +47,7 @@ export interface PublisherRepository {
   count(filter?: PublisherFilter): Promise<number>;
 }
 
-/** Thrown by `create()` on UNIQUE constraint violation (id or domain collision). */
+/** Thrown by create() when id or domain already exists. */
 export class PublisherAlreadyExistsError extends Error {
   constructor(
     public readonly field: 'id' | 'domain',

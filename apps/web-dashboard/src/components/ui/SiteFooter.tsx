@@ -4,10 +4,7 @@ import { Chip } from './Chip';
 
 const GITHUB_URL = 'https://github.com/StrimzLab/crawlpay';
 
-/**
- * Site footer. Keeps all the resource links the nav doesn't carry
- * (Pricing, Docs, Protocol spec, etc.) so visitors can still find them.
- */
+/** Site footer. Holds the resource links the nav doesn't carry. */
 export function SiteFooter() {
   return (
     <footer className=" border-t border-border-subtle">

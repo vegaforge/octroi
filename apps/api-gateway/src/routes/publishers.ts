@@ -55,12 +55,8 @@ function asPositiveInt(s: string | undefined, fallback: number, max?: number): n
   return n;
 }
 
-/**
- * Slugify a domain into a stable publisher id. Strips `www.`, takes the leading
- * label, and camel-cases hyphenated parts:
- *   technotes.example.com → pub_technotes
- *   foo-bar.io           → pub_fooBar
- */
+// domain to stable publisher id: strip www, take leading label, camelCase hyphens.
+// e.g. technotes.example.com -> pub_technotes, foo-bar.io -> pub_fooBar
 function makePublisherId(domain: string): string {
   const main =
     domain
@@ -109,10 +105,7 @@ export function publishersRoutes(app: FastifyInstance, deps: PublishersRoutesDep
     });
   });
 
-  /**
-   * Register a publisher. Returns a freshly generated API key once — the caller
-   * must store it; only its hash is kept. The key authenticates later mutations.
-   */
+  // register a publisher. returns the API key once (only its hash is stored), caller must keep it.
   app.post('/publishers', async (req, reply) => {
     const body = (req.body ?? {}) as CreateBody;
 
@@ -195,10 +188,7 @@ export function publishersRoutes(app: FastifyInstance, deps: PublishersRoutesDep
     },
   );
 
-  /**
-   * Server-side integration probe. Requires the publisher's API key, and that
-   * key must belong to the publisher being probed.
-   */
+  // integration probe. key must belong to the publisher being probed.
   app.post<{ Params: { id: string } }>(
     '/publishers/:id/probe',
     { preHandler: requireApiKey(auth) },

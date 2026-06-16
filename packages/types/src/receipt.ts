@@ -11,12 +11,8 @@ export interface MppSessionRef {
 }
 
 /**
- * Unsigned receipt body — canonicalized for signing.
- *
- * Field order in this declaration is NOT significant; the canonicalizer sorts
- * keys lexicographically before hashing, so receipts hash the same regardless
- * of how they're constructed. The receipt is settlement-model-agnostic: the
- * same shape covers both x402 per-request and MPP session settlement.
+ * Unsigned receipt body, canonicalized for signing. Field order here is not significant;
+ * the canonicalizer sorts keys before hashing. Same shape covers x402 and MPP settlement.
  */
 export interface CrawlPayReceiptBody {
   version: CrawlPayReceiptVersion;
@@ -42,11 +38,7 @@ export interface CrawlPayReceiptBody {
   facilitatorPubkey: StellarAddress;
 }
 
-/**
- * A receipt body plus the facilitator's Ed25519 signature over its canonical
- * form. This is the portable proof-of-access — verifiable with nothing but the
- * receipt itself and the facilitator's public key.
- */
+/** Receipt body plus the facilitator's Ed25519 signature. Portable proof-of-access, verifiable from the receipt alone. */
 export interface CrawlPayReceipt extends CrawlPayReceiptBody {
   /** Base64 Ed25519 signature over the canonical body. */
   signature: Ed25519Signature;

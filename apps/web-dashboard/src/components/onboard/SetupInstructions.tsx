@@ -19,17 +19,7 @@ type SetupInstructionsProps = {
   apiKey: string;
 };
 
-/**
- * Final step of the onboarding flow.
- *
- *   1. One-time reveal of the API key — this is the publisher's only chance to
- *      copy it. It's already stored in localStorage for this browser.
- *   2. Copyable install command + Express middleware snippet pre-filled with
- *      the publisher's id, payout address, and price.
- *   3. .env block ready to paste, with the API key embedded.
- *   4. "Test my integration" — runs a server-side probe of the domain.
- *   5. "Open dashboard" CTA.
- */
+/** Final onboarding step: one-time API key reveal, prefilled middleware/.env snippets, domain probe. */
 export function SetupInstructions({ publisher, apiKey }: SetupInstructionsProps) {
   const installCmd = 'pnpm add @crawlpay/proxy-middleware @crawlpay/types';
 
@@ -55,7 +45,7 @@ app.listen(3000);
 `;
 
   const envBlock = `# CrawlPay API key
-# Save this — we don't store it, and there's no "show again" button.
+# Save this. We don't store it, and there's no "show again" button.
 CRAWLPAY_API_KEY=${apiKey}
 `;
 
@@ -98,7 +88,7 @@ CRAWLPAY_API_KEY=${apiKey}
           </Button>
         </Link>
         <span className="text-sm text-ink-tertiary">
-          You can come back anytime — your API key is the way in.
+          You can come back anytime. Your API key is the way in.
         </span>
       </div>
     </div>
@@ -119,7 +109,7 @@ function ApiKeyReveal({ apiKey }: { apiKey: string }) {
       <div className="mb-2 flex items-center gap-2">
         <ShieldAlert className="h-4 w-4 text-clay" strokeWidth={1.75} aria-hidden />
         <span className="text-sm font-semibold text-clay">
-          Copy and store this — it won&rsquo;t be shown again
+          Copy and store this. It won&rsquo;t be shown again
         </span>
       </div>
       <p className="mb-4 text-sm leading-[1.6] text-ink-secondary">

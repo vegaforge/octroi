@@ -1,12 +1,6 @@
 /**
- * Minimal TypeScript syntax highlighter — no deps, no async, no themes.
- *
- * Produces HTML with `<span class="tok-*">` wrappers consumed by the
- * `.tok-*` rules in globals.css. Good enough for the short snippets shown
- * on the landing page. For full-language fidelity (TSX, JSX, decorators,
- * template-string interpolation), swap in Shiki later.
- *
- * Ports the `cpHighlight` helper from the design mockup's site.js.
+ * Minimal TypeScript highlighter (no deps, sync). Emits `<span class="tok-*">`
+ * styled by globals.css. Fine for short snippets; swap in Shiki for full TSX fidelity.
  */
 
 const KEYWORDS = new Set([
@@ -52,7 +46,6 @@ export function highlightTypeScript(source: string): string {
   while (i < n) {
     const c = source[i]!;
 
-    // Line comment
     if (c === '/' && source[i + 1] === '/') {
       let j = i;
       while (j < n && source[j] !== '\n') j++;
@@ -61,7 +54,6 @@ export function highlightTypeScript(source: string): string {
       continue;
     }
 
-    // String literal (single, double, or backtick)
     if (c === "'" || c === '"' || c === '`') {
       const quote = c;
       let k = i + 1;
@@ -75,7 +67,6 @@ export function highlightTypeScript(source: string): string {
       continue;
     }
 
-    // Identifier
     if (isIdStart(c)) {
       let p = i;
       while (p < n && isId(source[p]!)) p++;
@@ -90,7 +81,6 @@ export function highlightTypeScript(source: string): string {
       continue;
     }
 
-    // Numeric literal (including bigint `n` suffix and underscores)
     if (/[0-9]/.test(c)) {
       let q = i;
       while (q < n && /[0-9._n]/.test(source[q]!)) q++;

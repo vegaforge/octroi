@@ -31,6 +31,6 @@ export interface AccessRule {
   crawlerWallet?: StellarAddress;
   minReputationScore?: number;
   maxReputationScore?: number;
-  /** Discount in basis points (0–10000). */
+  /** Discount in basis points (0 to 10000). */
   discountBps?: number;
 }

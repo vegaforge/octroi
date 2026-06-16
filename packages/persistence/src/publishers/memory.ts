@@ -9,7 +9,7 @@ import {
 
 const DEFAULT_PRICE = atomicUsdc(1000n);
 
-/** In-memory implementation. Suitable for single-instance demos and tests. */
+/** In-memory publisher repo, single-instance only. */
 export class MemoryPublisherRepository implements PublisherRepository {
   readonly #byId = new Map<string, PublisherRecord>();
   readonly #domainIndex = new Map<string, string>();
@@ -86,5 +86,5 @@ function matches(p: PublisherRecord, f: PublisherFilter): boolean {
   return true;
 }
 
-/** Reserved for use sites that need a typed default. */
+/** Typed default for callers that need it. */
 export const _defaultPublisherPrice: AtomicUsdc = DEFAULT_PRICE;

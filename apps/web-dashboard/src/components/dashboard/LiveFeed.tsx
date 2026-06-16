@@ -17,7 +17,7 @@ export interface FeedEntry {
   amount: string;
   /** Relative timestamp, e.g. "2m". */
   timeAgo: string;
-  /** Set this when an entry first appears in a polling cycle — drives the highlight. */
+  /** Set when an entry first appears in a polling cycle. Drives the highlight. */
   fresh?: boolean;
 }
 
@@ -27,11 +27,7 @@ type LiveFeedProps = {
   loading?: boolean;
 };
 
-/**
- * Receipts feed driven entirely by props. The parent polls the api-gateway
- * (typically every ~5s via TanStack Query's `refetchInterval`) and diffs the
- * list to mark new entries as `fresh` for the highlight animation.
- */
+/** Props-driven receipts feed. Parent polls and marks new entries `fresh` for the highlight. */
 export function LiveFeed({ title, entries, loading }: LiveFeedProps) {
   const reduced = useReducedMotion();
 

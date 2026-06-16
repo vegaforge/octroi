@@ -15,14 +15,8 @@ export interface ProbeResult {
 
 const PROBE_TIMEOUT_MS = 10_000;
 
-/**
- * Issues an unauthenticated GET against a random path on the publisher's
- * domain and inspects the response for the signatures of a working CrawlPay
- * middleware (HTTP 402 + Payment-Required header).
- *
- * Not a security check — a smoke test the setup page uses to answer
- * "did I install the middleware correctly?"
- */
+// GETs a random path on the publisher's domain and checks for working middleware
+// (402 + Payment-Required header). Not a security check, just a setup smoke test.
 export interface ProbeService {
   probePublisher(domain: string): Promise<ProbeResult>;
 }
@@ -47,7 +41,7 @@ export class IntegrationProbeService implements ProbeService {
         ok: false,
         status: 0,
         hasPaymentHeader: false,
-        detail: `Could not reach https://${host} — ${msg}`,
+        detail: `Could not reach https://${host}: ${msg}`,
         url,
       };
     }
@@ -73,7 +67,7 @@ export class IntegrationProbeService implements ProbeService {
         ok: false,
         status,
         hasPaymentHeader: false,
-        detail: 'Got 402 but no Payment-Required header — check middleware config.',
+        detail: 'Got 402 but no Payment-Required header. Check middleware config.',
         url,
       };
     }

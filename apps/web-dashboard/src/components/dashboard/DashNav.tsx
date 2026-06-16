@@ -7,17 +7,11 @@ import { ApiKeyMenu } from '@/components/auth/ApiKeyMenu';
 const GITHUB_URL = 'https://github.com/StrimzLab/crawlpay';
 
 type DashNavProps = {
-  /** Network chip label override — defaults to "Stellar testnet". */
+  /** Network chip label override. Defaults to "Stellar testnet". */
   network?: string;
 };
 
-/**
- * Top nav variant for dashboard pages.
- *
- * The static address chip from Phase 3 has been replaced with the API-key
- * session menu — it shows the masked key + a clear action when one is stored,
- * or an "Enter API key" affordance when none is.
- */
+/** Top nav for dashboard pages, with the API-key session menu on the right. */
 export function DashNav({ network = 'Stellar testnet' }: DashNavProps) {
   return (
     <header className="sticky top-0 z-50 h-[var(--nav-h)] border-b border-border-subtle bg-[color:var(--bg-overlay)] backdrop-blur-md">

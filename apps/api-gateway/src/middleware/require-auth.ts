@@ -8,16 +8,7 @@ declare module 'fastify' {
   }
 }
 
-/**
- * Fastify preHandler that gates a route on a valid publisher API key. The key
- * is read from the `Authorization: Bearer` header; on success the publisher id
- * is attached to `req.authPublisherId`.
- *
- * Usage:
- *   app.post('/protected', { preHandler: requireApiKey(auth) }, async (req) => {
- *     const id = req.authPublisherId!;  // safe: preHandler 401'd if missing
- *   });
- */
+/** preHandler that gates a route on a valid publisher API key (Authorization: Bearer). */
 export function requireApiKey(auth: ApiKeyAuth) {
   return async function preHandler(req: FastifyRequest, reply: FastifyReply): Promise<void> {
     const publisher = await auth.authenticate(req.headers.authorization);

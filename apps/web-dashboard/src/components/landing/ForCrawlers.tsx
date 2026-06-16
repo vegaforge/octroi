@@ -88,9 +88,7 @@ export function ForCrawlers() {
         </motion.div>
 
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-12">
-          {/* Code first in DOM (renders on top on mobile), but moves to the
-              right column on desktop via lg:order-2. Mirrors the original
-              "feat flip" layout from the design mockup. */}
+          {/* code first in DOM (top on mobile), moves to right column on desktop via lg:order-2 */}
           <motion.div className="min-w-0 lg:order-2" {...reveal(0)}>
             <CodeBlock code={CRAWLER_CODE} filename="crawler.ts" language="typescript" />
           </motion.div>

@@ -7,15 +7,8 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 
 /**
- * API-key session widget for dashboard navs.
- *
- *   - Hydrating: shows a skeleton pill
- *   - No key: "Enter API key" button that opens an inline input
- *   - Has key: masked key + dropdown to clear it
- *
- * The key is the publisher's onboarding credential; the probe and publisher
- * mutations send it as a Bearer token. Read-only dashboard views work without
- * one, so this is optional.
+ * API-key session widget for dashboard navs (skeleton / enter-key / masked-key states).
+ * The key is the publisher's Bearer credential for mutations. Read-only views work without one.
  */
 export function ApiKeyMenu() {
   const { apiKey, hydrated, setApiKey, clearApiKey } = useApiKey();

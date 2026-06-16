@@ -32,15 +32,8 @@ const DEFAULT_CACHE_SECONDS = 86_400;
 const DEFAULT_BUDGET_WARNING_RATIO = 0.8;
 
 /**
- * CrawlPayClient — the buyer-side SDK.
- *
- * Wraps the Stellar payment signer with the policy layer publishers and
- * crawlers need:
- *   - Pre-payment maxPerRequest + daily budget enforcement
- *   - 24h fetch cache (don't pay twice for the same URL)
- *   - Retry policy keyed on x402 error codes
- *   - CrawlPayReceipt verification + archival
- *   - Pluggable budget / cache / receipt store / signer / retry
+ * Buyer-side SDK. Wraps the Stellar signer with budget caps, a fetch cache,
+ * x402 retry policy, and receipt verification/archival. All pieces pluggable.
  */
 export class CrawlPayClient {
   readonly #config: Required<
@@ -88,15 +81,8 @@ export class CrawlPayClient {
   }
 
   /**
-   * Fetch a URL, paying transparently if the server returns 402.
-   *
-   * Flow:
-   *   1. Cache check
-   *   2. Initial GET — if 200, treat as free
-   *   3. Parse 402 offer, pick the payable x402 option
-   *   4. Enforce maxPerRequest + daily budget
-   *   5. Sign a Soroban auth entry, retry with X-PAYMENT
-   *   6. On success, verify the X-PAYMENT-RESPONSE receipt, archive, return
+   * Fetch a URL, paying transparently on a 402. Cache check, GET, parse offer,
+   * enforce caps, sign a Soroban auth entry, then verify and archive the receipt.
    */
   async fetch<T = unknown>(url: string, opts: FetchOpts = {}): Promise<FetchResult<T>> {
     const method = opts.method ?? 'GET';
@@ -118,8 +104,7 @@ export class CrawlPayClient {
         if (!cachedOffer) {
           initial = await sendRequest(url, method, opts);
         } else {
-          // Re-using the previous offer for a non-refresh retry; skip the
-          // unpaid round-trip and go straight to sign + send.
+          // reuse the prior offer on a non-refresh retry, skip the unpaid round-trip
           initial = new Response(JSON.stringify(cachedOffer), { status: 402 });
         }
       } catch (err) {
@@ -131,7 +116,7 @@ export class CrawlPayClient {
         continue;
       }
 
-      // 200 from the seller without payment — unprotected resource.
+      // 200 without payment means an unprotected resource
       if (initial.status === 200) {
         const data = (await parseBody(initial)) as T;
         const entry: FetchCacheEntry = {
@@ -151,7 +136,7 @@ export class CrawlPayClient {
         throw new Error(`Unexpected status ${initial.status} from ${url}`);
       }
 
-      // Parse offer + pick the Gateway option
+      // parse offer, pick the payable option
       let offer: PaymentRequiredResponse;
       try {
         offer = (await parseBody(initial)) as PaymentRequiredResponse;
@@ -166,7 +151,7 @@ export class CrawlPayClient {
 
       const priceAtomic = atomicUsdc(BigInt(requirement.maxAmountRequired));
 
-      // Pre-payment policy gates
+      // pre-payment policy gates
       if (priceAtomic > this.#config.maxPerRequest) {
         await this.#emitSkip({ url, reason: 'price-cap', price: priceAtomic });
         throw new MaxPriceExceededError(url, priceAtomic, this.#config.maxPerRequest);
@@ -240,7 +225,7 @@ export class CrawlPayClient {
         return { ...cacheEntryToResult<T>(entry, false), settlementRef };
       }
 
-      // 402 with error code → consult retry policy
+      // 402 with error code: consult retry policy
       if (paid.status === 402) {
         const body = (await parseBody(paid)) as { error?: string };
         const code = body.error ?? 'unexpected_error';

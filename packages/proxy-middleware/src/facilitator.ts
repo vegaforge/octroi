@@ -10,7 +10,7 @@ import type {
 /** What the middleware sends the facilitator to verify and settle a payment. */
 export interface FacilitatorVerifyRequest {
   publisherId: string;
-  /** Publisher payout address — must equal the SAC transfer `to`. */
+  /** Publisher payout address. Must equal the SAC transfer `to`. */
   payTo: StellarAddress;
   resource: string;
   network: Network;
@@ -25,21 +25,13 @@ export type FacilitatorVerifyResult =
   | { ok: true; receipt: CrawlPayReceipt }
   | { ok: false; error: { code: CrawlPayErrorCode; message: string } };
 
-/**
- * Pluggable facilitator interface. Decouples the middleware from any specific
- * facilitator deployment, so tests can substitute a mock and publishers can
- * point at the hosted facilitator or a self-hosted instance.
- */
+/** Pluggable facilitator interface so tests can mock and publishers can point at any deployment. */
 export interface FacilitatorClient {
   /** Verify a signed payment, trigger settlement, and return a signed receipt. */
   verify(request: FacilitatorVerifyRequest): Promise<FacilitatorVerifyResult>;
 }
 
-/**
- * Default FacilitatorClient — POSTs to a facilitator's `/verify` endpoint over
- * HTTP. The facilitator owns settlement and receipt signing; the middleware
- * only relays the request and returns the receipt to the crawler.
- */
+/** Default client: POSTs to the facilitator's /verify. The facilitator owns settlement and signing. */
 export class HttpFacilitatorClient implements FacilitatorClient {
   readonly #baseUrl: string;
 

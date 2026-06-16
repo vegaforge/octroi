@@ -13,15 +13,9 @@ export interface RetryPolicy {
 
 /**
  * Default retry policy keyed on the x402 error code table (PRD §9.7).
- *
- *   refresh-offer  — the authorization itself is no good (bad signature,
- *                    replayed nonce, expired, offer changed). Re-fetch the 402
- *                    offer and re-sign with a fresh nonce + window.
- *   retry          — transient infrastructure issue (rate limit, 500). Wait
- *                    and try the same payload again.
- *   abort          — terminal (insufficient balance, banned, recipient mismatch).
- *
- * Backoff: exponential starting at 500ms, capped at 60s.
+ * refresh-offer: auth is stale (bad sig, replay, expired), re-fetch and re-sign.
+ * retry: transient infra (rate limit, 500). abort: terminal (no balance, banned).
+ * Backoff is exponential from 500ms, capped at 60s.
  */
 export class DefaultRetryPolicy implements RetryPolicy {
   readonly maxAttempts: number;

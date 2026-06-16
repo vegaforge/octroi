@@ -6,15 +6,17 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.4-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![pnpm](https://img.shields.io/badge/pnpm-9-F69220?logo=pnpm&logoColor=white)](https://pnpm.io)
 
-Open-source pay-per-crawl infrastructure for the open web. Publishers charge AI crawlers per URL fetched in USDC at sub-cent prices; every fetch returns a portable, cryptographically signed receipt that is proof of paid access. Payments settle on **Stellar** — per request via **x402** over Soroban authorization entries, or in bulk via **MPP** sessions — in **native USDC**, with the transaction fee sponsored so the crawler never holds a gas token.
+CrawlPay lets publishers charge AI crawlers for the pages they fetch. A crawler pays in USDC per URL, in fractions of a cent, and gets back a signed receipt that proves it paid. Humans still browse for free.
 
-CrawlPay is the open, self-hostable alternative to Cloudflare's Pay Per Crawl, built for the ~80% of the web Cloudflare does not sit in front of. The full product spec lives in [`docs/PRD.md`](./docs/PRD.md).
+Payments settle on Stellar. The default is one signed Soroban authorization per request (the x402 scheme). High-volume crawlers can instead open a session, pre-authorize a budget, and settle in bulk (MPP). USDC is native on Stellar, and the facilitator pays the network fee, so a crawler only needs USDC and never has to hold a gas token.
 
-> **Project status.** This repository is the in-progress migration to Stellar (the project began on the Arc testnet). The protocol, shared types, the Ed25519 receipt signer/verifier, the publisher middleware, the crawler SDK, the facilitator, and the API gateway are implemented and tested. The live Soroban settlement path — signing authorization entries, submitting the USDC SAC `transfer`, and MPP sessions — is the active v0 build, tracked in the repository [issues](https://github.com/vegaforge/crawlpay/issues). Modules that depend on it expose their interfaces and fail fast with an explicit "not implemented" until that lands.
+It is an open, self-hostable alternative to Cloudflare's Pay Per Crawl. Cloudflare only works for sites already behind it, which leaves most of the web without an option. CrawlPay runs on any stack and anyone can host it. The full spec is in [`docs/PRD.md`](./docs/PRD.md).
+
+> **Status.** This repo is mid-migration from Arc (EVM) to Stellar. The protocol types, the Ed25519 receipt signer, the publisher middleware, the crawler SDK, the facilitator, and the API gateway are built and tested. The part that signs Soroban authorization entries and submits the USDC transfer on-chain is still being written (issues [#1 to #3](https://github.com/vegaforge/crawlpay/issues)). Code that depends on it throws a clear "not implemented" for now.
 
 ## Table of contents
 
-- [Problem and approach](#problem-and-approach)
+- [Why this exists](#why-this-exists)
 - [Why Stellar](#why-stellar)
 - [Architecture](#architecture)
 - [Protocol flow](#protocol-flow)
@@ -29,29 +31,31 @@ CrawlPay is the open, self-hostable alternative to Cloudflare's Pay Per Crawl, b
 - [License](#license)
 - [References](#references)
 
-## Problem and approach
+## Why this exists
 
-The web's economic model assumes humans. Humans browse slowly, click ads occasionally, sometimes subscribe. AI crawlers don't. A single research bot can fetch a million pages a week. At that volume, ad-supported sites are uneconomical (crawlers don't see ads), subscription-only sites are inflexible (they overcharge tiny readers and undercharge industrial bots), and outright blocking leaves money on the table while pushing crawlers to scrape harder. The economically right answer is **per-fetch pricing as small as $0.0001**.
+The web's business model assumes humans. People browse a few pages, click an ad now and then, maybe subscribe. AI crawlers don't do any of that. One research bot can pull a million pages a week. At that scale, ads don't work (bots don't see them), subscriptions don't fit (they overcharge a casual reader and undercharge an industrial crawler), and blocking just starts an arms race over IP addresses and user agents. Charging per fetch, as little as $0.0001, is the option nobody could build.
 
-No conventional payment rail makes that viable. Stripe's flat $0.30 minimum is a 300,000% fee on a $0.0001 charge. Cloudflare's Pay Per Crawl exists but is gated to enterprise customers and only covers sites already behind Cloudflare. The whole long tail — small publishers, indie news, niche research databases — has no option.
+Nobody could build it because the payment rails don't reach that low. Stripe's minimum fee is $0.30, which is 300,000% of a $0.0001 charge. Cloudflare's Pay Per Crawl exists but it is gated to enterprise and only covers sites already on Cloudflare. Everyone else, the small publishers and indie news sites and niche databases, has nothing.
 
-CrawlPay makes per-fetch pricing work by composing three things that are already live on Stellar:
+CrawlPay closes that gap with three things that already work on Stellar:
 
-- **x402 over Soroban authorization entries.** The crawler signs an authorization entry that authorizes a single USDC `transfer` from itself to the publisher, scoped to a short window and a nonce. One request, one signed authorization.
-- **MPP sessions (the Machine Payments Protocol).** For high-volume access, the crawler pre-authorizes a budget once and streams per-URL debits that settle in bulk — a standardized batching primitive, not a proprietary aggregation service.
-- **Native USDC on Stellar.** No wrapped or bridged representation and no bridge risk. The facilitator sponsors the transaction fee, so the crawler funds a USDC budget and nothing else — it never needs to hold the gas asset.
+- **x402 over Soroban authorization entries.** The crawler signs an authorization for a single USDC transfer to the publisher, scoped to a short window and a one-time nonce. One request, one signed authorization.
+- **MPP sessions.** For heavy access to one publisher, the crawler pre-authorizes a budget once and streams per-URL debits that settle together. This is a standard protocol, not something CrawlPay had to invent.
+- **Native USDC.** No wrapped token, no bridge. The facilitator covers the network fee, so the crawler funds a USDC budget and that's it.
 
-The protocol layer is **x402**: a protected URL returns a standard `402 Payment Required` with a JSON offer when called without payment, and a `200 OK` with a signed receipt header when payment is presented. Anything that doesn't care still sees a URL, a status code, and a body. Crawlers that do care install one SDK and pay transparently — and because the signature format aligns with **Web Bot Auth** and the payment with **x402**, a crawler already integrated for Cloudflare or another x402 service can pay CrawlPay with almost no new code.
+The wire protocol is x402. A protected URL returns `402 Payment Required` with a JSON offer when there's no payment, and `200 OK` with a receipt header once the crawler pays. Anything that doesn't speak the protocol still sees a normal URL, status code, and body. A crawler that does speak it installs one SDK. And because the request signature follows Web Bot Auth and the payment follows x402, a crawler that already integrated either for Cloudflare or another x402 service can pay CrawlPay with very little new code.
 
-Every paid fetch produces a **portable, signed receipt** — verifiable by anyone holding the receipt and the facilitator's public key, with no access to CrawlPay's database. Receipts double as audit logs, billing records, and evidence of paid access in any licensing or copyright dispute.
+Every paid fetch returns a signed receipt. Anyone can verify it with the receipt and the facilitator's public key, without touching CrawlPay's database. The receipt works as an audit log, a billing record, and evidence of paid access if a licensing or copyright question ever comes up.
 
 ## Why Stellar
 
-A Stellar account _is_ an Ed25519 keypair, so one key is the crawler's payment account, its Web Bot Auth request-signing identity, and its reputation subject at once. Beyond that, Stellar fits pay-per-crawl on the merits: native USDC with no bridge; server-sponsored fees so the agent holds no gas token; MPP sessions as a native batching primitive; a ~$0.00001 base fee that makes even unbatched per-request settlement economically sane; and — the sleeper advantage — a **fiat off-ramp through Stellar's anchor network**, so a long-tail publisher in an emerging market can convert USDC earnings to local currency through existing cash-out rails. See [`docs/PRD.md` §4](./docs/PRD.md) for the full rationale and the honest tradeoffs.
+A Stellar account is an Ed25519 keypair, so the crawler's one key is its payment account, its Web Bot Auth signing key, and its reputation identity at the same time. There's no separate identity system to run.
+
+The rest is practical. USDC is native, so there's no bridge in the settlement path. The facilitator sponsors fees, so the crawler holds no gas token. MPP sessions give you batching as a standard primitive instead of a custom service. The base fee is around $0.00001, low enough that even unbatched per-request settlement makes sense for a $0.0001 charge. And publishers can cash out USDC to local currency through Stellar's anchor network, which matters most for the indie and emerging-market creators CrawlPay is aimed at. [`docs/PRD.md` §4](./docs/PRD.md) covers the reasoning and the tradeoffs in full.
 
 ## Architecture
 
-CrawlPay separates concerns across three planes — **data**, **settlement**, and **control** — so no plane's failure modes block the others. The data plane handles HTTP fetches and the synchronous verify call; the settlement plane moves USDC on Stellar; the control plane serves dashboards, the API, and (from v2) on-chain reads, and is read-only relative to the hot path.
+CrawlPay is split into three planes so that a problem in one doesn't take down the others. The data plane handles the HTTP fetch and the synchronous verify call. The settlement plane moves USDC on Stellar. The control plane serves the dashboard, the API, and (from v2) on-chain reads, and never sits on the hot path.
 
 ```mermaid
 flowchart TB
@@ -71,7 +75,7 @@ flowchart TB
   subgraph SETTLE["Settlement plane"]
     direction LR
     SAC["USDC Stellar Asset Contract"]
-    STELLAR["Stellar / Soroban<br/>native USDC · sponsored fees"]
+    STELLAR["Stellar / Soroban<br/>native USDC, sponsored fees"]
     F -->|"x402: submit transfer auth entry"| SAC
     F -->|"mpp: open / debit session"| SAC
     SAC --> STELLAR
@@ -79,11 +83,11 @@ flowchart TB
 
   subgraph CONTROL["Control plane"]
     direction LR
-    API["<code>apps/api-gateway</code><br/>receipts · analytics · publishers · reputation"]
-    WEB["<code>apps/web-dashboard</code><br/>Next.js · TanStack Query"]
-    DB[("Postgres<br/>receipts · publishers")]
-    R[("Redis<br/>nonces · session budgets")]
-    REG["crawlpay_registry<br/>(Soroban · v2)"]
+    API["<code>apps/api-gateway</code><br/>receipts, analytics, publishers, reputation"]
+    WEB["<code>apps/web-dashboard</code><br/>Next.js, TanStack Query"]
+    DB[("Postgres<br/>receipts, publishers")]
+    R[("Redis<br/>nonces, session budgets")]
+    REG["crawlpay_registry<br/>(Soroban, v2)"]
     F -->|"insert receipt"| DB
     F -->|"nonce reservations"| R
     API -->|"read"| DB
@@ -95,11 +99,11 @@ flowchart TB
   class DATA,SETTLE,CONTROL plane
 ```
 
-**Data plane.** One enforcement core behind thin adapters (Section 7 of the PRD): the middleware classifies a request, returns a 402 offer when payment is due, forwards the crawler's `X-PAYMENT` to the facilitator's `/verify`, and returns the signed receipt. The facilitator owns settlement and receipt signing, so the adapter stays small and identical everywhere.
+**Data plane.** There is one enforcement core, and every integration is a thin adapter over it (PRD §7). The middleware classifies the request, returns a 402 offer when payment is due, forwards the crawler's `X-PAYMENT` to the facilitator's `/verify`, and returns the signed receipt. The facilitator does the settlement and the signing, so the adapter stays small and behaves the same everywhere.
 
-**Settlement plane.** The facilitator verifies the signed Soroban authorization entry against the offer terms, submits the USDC SAC `transfer` (sponsoring the fee), and — for high-volume crawlers — debits an MPP session that settles in bulk. USDC moves directly from crawler to publisher; CrawlPay never custodies funds.
+**Settlement plane.** The facilitator checks the signed authorization entry against the offer, submits the USDC transfer (and pays the fee), or for a high-volume crawler debits an open MPP session that settles in bulk. USDC goes straight from crawler to publisher. CrawlPay never holds funds.
 
-**Control plane.** Read-mostly. The api-gateway serves receipts, analytics, publisher onboarding, and provisional reputation from Postgres, gating writes behind a publisher **API key** (bearer token). It never touches the hot path; if it's down, fetches and settlement keep working. The web dashboard is a Next.js client that talks to the gateway through a same-origin `/api/*` rewrite.
+**Control plane.** Mostly reads. The api-gateway serves receipts, analytics, publisher onboarding, and a provisional reputation score from Postgres, and gates writes behind a publisher API key (a bearer token). It stays off the hot path, so if it goes down, fetches and settlement keep working. The dashboard is a Next.js app that talks to the gateway through a same-origin `/api/*` rewrite.
 
 ## Protocol flow
 
@@ -114,7 +118,7 @@ sequenceDiagram
   C->>P: GET /article (no payment)
   P-->>C: 402 + x402 offer<br/>(scheme, network, payTo, asset, maxAmountRequired)
 
-  Note over C: Build a Soroban authorization entry<br/>authorizing USDC transfer → payTo<br/>Sign with the crawler's Stellar key
+  Note over C: Build a Soroban authorization entry<br/>authorizing USDC transfer to payTo<br/>Sign with the crawler's Stellar key
 
   C->>P: GET /article<br/>X-PAYMENT: base64(signed auth entry)
   P->>F: POST /verify (payment + offer terms)
@@ -129,115 +133,104 @@ sequenceDiagram
   Note over C: Verify the receipt signature locally<br/>against the facilitator public key
 ```
 
-**Phase 1 — Discovery.** The crawler reads price out of band (a `/.well-known/crawlpay` manifest or robots.txt extension) or learns it in band from the 402 offer.
-
-**Phase 2 — Offer.** The middleware classifies the request and, if payment is due, returns a 402 with an x402 offer naming the Stellar network, the USDC asset, the publisher payout address, and `maxAmountRequired` in atomic USDC (7 decimals; `1000` = $0.0001).
-
-**Phase 3 — Authorization.** The crawler builds a Soroban authorization entry for the USDC SAC `transfer`, scoped to a short signature window and a nonce, and signs it with its Stellar key. The base64-encoded entry rides in the **`X-PAYMENT`** header.
-
-**Phase 4 — Verification and settlement.** The facilitator validates the offer terms, reserves the nonce (replay barrier), submits the SAC transfer with a sponsored fee, then signs the receipt.
-
-**Phase 5 — Delivery.** The middleware returns `200` plus the signed receipt in **`X-PAYMENT-RESPONSE`**. The crawler verifies the signature locally — it already has the facilitator's public key.
+1. **Discovery.** The crawler reads the price ahead of time from a `/.well-known/crawlpay` manifest or a robots.txt extension, or it learns the price from the 402 offer on its first request.
+2. **Offer.** The middleware classifies the request. If payment is due, it returns a 402 with an x402 offer naming the network, the USDC asset, the payout address, and `maxAmountRequired` in atomic USDC (7 decimals, so `1000` is $0.0001).
+3. **Authorization.** The crawler builds a Soroban authorization entry for the USDC transfer, scopes it to a short window and a nonce, signs it with its Stellar key, and sends it base64-encoded in the `X-PAYMENT` header.
+4. **Verification.** The facilitator checks the offer terms, reserves the nonce so it can't be replayed, submits the transfer with a sponsored fee, and signs the receipt.
+5. **Delivery.** The middleware returns `200` with the receipt in `X-PAYMENT-RESPONSE`. The crawler verifies the signature locally, since it already has the facilitator's public key.
 
 ## Settlement models
 
-|          | **x402 per-request** (default)         | **MPP session** (high volume)              |
-| -------- | -------------------------------------- | ------------------------------------------ |
-| Unit     | One signed authorization entry per URL | One pre-authorized budget, many debits     |
-| On-chain | One SAC transfer per request           | One bulk settlement per session            |
-| Best for | The long tail; maximum accountability  | Thousands of fetches/hour at one publisher |
-| Receipt  | One per URL                            | One per URL (settlement backfills the tx)  |
+|          | x402 per-request (default)             | MPP session (high volume)                |
+| -------- | -------------------------------------- | ---------------------------------------- |
+| Unit     | One signed authorization entry per URL | One pre-authorized budget, many debits   |
+| On-chain | One transfer per request               | One bulk settlement per session          |
+| Best for | The long tail, with a receipt per URL  | Thousands of fetches an hour, one origin |
+| Receipt  | One per URL                            | One per URL (tx backfilled on settle)    |
 
-Both paths produce the **same canonical signed receipt**, so downstream verification and legal use are identical. The SDK picks per-request x402 by default and opens an MPP session when it detects sustained high-frequency access above a threshold.
+Both paths produce the same canonical signed receipt, so verification and record-keeping don't care which one was used. The SDK defaults to per-request x402 and switches to an MPP session when it sees sustained high-frequency access to a single publisher.
 
 ## Receipt model
 
-Every paid fetch produces a `CrawlPayReceipt` — portable cryptographic evidence, signed with the facilitator's Ed25519 (Stellar) key over a canonical JSON form:
+Every paid fetch returns a `CrawlPayReceipt`, signed with the facilitator's Ed25519 (Stellar) key over a canonical JSON form:
 
 ```typescript
 interface CrawlPayReceipt {
   version: '1';
   resource: string; // the URL paid for
   amount: string; // atomic USDC (7 decimals), stringified
-  asset: string; // 'USDC:GISSUER…'
+  asset: string; // 'USDC:GISSUER...'
   network: 'stellar-testnet' | 'stellar-mainnet';
   from: string; // crawler G-address
   to: string; // publisher payout G-address
-  nonce: string; // authorization nonce (replay key)
+  nonce: string; // authorization nonce (the replay key)
   timestamp: string; // ISO 8601 UTC
   settlement: 'x402' | 'mpp';
-  onchainTxHash: string | null; // SAC transfer hash; null for mpp until bulk settle
+  onchainTxHash: string | null; // transfer hash; null for mpp until bulk settle
   mppSessionRef: { sessionId: string; sequence: number } | null;
   facilitatorPubkey: string; // signer's G-address
   signature: string; // base64 Ed25519 over canonical(body)
 }
 ```
 
-Receipts sign over a **canonical JSON form** with lexicographic key ordering and stable serialization, so any field mutation invalidates the signature. Verification recomputes the canonical bytes and checks the Ed25519 signature against the embedded `facilitatorPubkey` — no recovery, no database, no trust in CrawlPay required. See [`packages/receipt-signer`](./packages/receipt-signer).
+The signature covers a canonical JSON form with sorted keys and stable serialization, so changing any field breaks it. To verify, you recompute the canonical bytes and check the Ed25519 signature against the `facilitatorPubkey` in the receipt. No key recovery, no database lookup, no need to trust CrawlPay. See [`packages/receipt-signer`](./packages/receipt-signer).
 
 ## Tech stack
 
-| Layer          | Tools                                                                 |
-| -------------- | --------------------------------------------------------------------- |
-| Language       | TypeScript 5.4 strict, ES2022 target                                  |
-| Runtime        | Node 20+ · pnpm 9 workspaces · Turbo                                  |
-| Backend HTTP   | Fastify (facilitator, api-gateway)                                    |
-| Frontend       | Next.js 15 (App Router) · React 18 · Tailwind · TanStack Query        |
-| Stellar        | `@stellar/stellar-base` (Ed25519 keys, strkey, signing) · Soroban RPC |
-| Receipt crypto | Ed25519 over canonical JSON                                           |
-| Persistence    | Postgres 16 (`pg`) · Redis 7 (`ioredis`)                              |
-| On-chain (v2)  | `crawlpay_registry` Soroban contract (Rust, soroban-sdk)              |
-| Testing        | Vitest                                                                |
+| Layer          | Tools                                                                |
+| -------------- | -------------------------------------------------------------------- |
+| Language       | TypeScript 5.4 strict, ES2022                                        |
+| Runtime        | Node 20+, pnpm 9 workspaces, Turbo                                   |
+| Backend HTTP   | Fastify (facilitator, api-gateway)                                   |
+| Frontend       | Next.js 15 (App Router), React 18, Tailwind, TanStack Query          |
+| Stellar        | `@stellar/stellar-base` (Ed25519 keys, strkey, signing), Soroban RPC |
+| Receipt crypto | Ed25519 over canonical JSON                                          |
+| Persistence    | Postgres 16 (`pg`), Redis 7 (`ioredis`)                              |
+| On-chain (v2)  | `crawlpay_registry` Soroban contract (Rust, soroban-sdk)             |
+| Testing        | Vitest                                                               |
 
 ## Repository layout
 
 ```
 crawlpay/
 ├── apps/
-│   ├── facilitator/           x402/MPP verification · Soroban settlement · receipt signing
-│   ├── api-gateway/           Receipts · analytics · publishers · API-key auth · reputation
-│   └── web-dashboard/         Landing · onboarding · publisher + crawler dashboards
+│   ├── facilitator/           x402/MPP verification, Soroban settlement, receipt signing
+│   ├── api-gateway/           receipts, analytics, publishers, API-key auth, reputation
+│   └── web-dashboard/         landing, onboarding, publisher and crawler dashboards
 ├── packages/
-│   ├── types/                 Shared protocol types (offer, receipt, AtomicUsdc, …)
-│   ├── receipt-signer/        Canonical-JSON Ed25519 sign + verify
-│   ├── proxy-middleware/      Drop-in Express middleware for publishers
-│   ├── crawler-sdk/           Buyer SDK (budgets, retries, cache, payment signing)
-│   └── persistence/           Postgres + Redis + in-memory repos and migrations
-├── contracts/                 Soroban registry + pools (Rust, v2)
-├── infra/                     Docker Compose for Postgres + Redis
-└── docs/                      PRD and architecture docs
+│   ├── types/                 shared protocol types (offer, receipt, AtomicUsdc)
+│   ├── receipt-signer/        canonical-JSON Ed25519 sign and verify
+│   ├── proxy-middleware/      drop-in Express middleware for publishers
+│   ├── crawler-sdk/           buyer SDK (budgets, retries, cache, payment signing)
+│   └── persistence/           Postgres, Redis, and in-memory repos plus migrations
+├── contracts/                 Soroban registry and pools (Rust, v2)
+├── infra/                     Docker Compose for Postgres and Redis
+└── docs/                      the PRD and architecture docs
 ```
 
 ## Getting started
 
-### Prerequisites
-
-- Node 20+ and pnpm 9
-- Docker (for local Postgres + Redis)
-
-### Install and verify
+You need Node 20+, pnpm 9, and Docker (for local Postgres and Redis).
 
 ```bash
 git clone https://github.com/vegaforge/crawlpay
 cd crawlpay
 pnpm install
 
-cp .env.example .env   # fill in the Stellar settings (see comments in the file)
+cp .env.example .env   # fill in the Stellar settings; the file has comments
 
 pnpm typecheck         # tsc --noEmit across the workspace
-pnpm test              # Vitest across packages with tests
+pnpm test              # Vitest across the packages that have tests
 ```
 
-### Bring up infrastructure
+Bring up the local services and apply the schema:
 
 ```bash
-pnpm infra:up          # Postgres + Redis via Docker Compose
-pnpm migrate           # apply the schema
+pnpm infra:up          # Postgres and Redis via Docker Compose
+pnpm migrate
 ```
 
-### Run the stack
-
-Each in its own terminal:
+Run the three apps, each in its own terminal:
 
 ```bash
 pnpm --filter @crawlpay/facilitator dev   # :3001
@@ -245,36 +238,36 @@ pnpm --filter @crawlpay/api-gateway dev   # :8080
 pnpm web:dev                              # :3000
 ```
 
-See [`.env.example`](./.env.example) for the full, documented environment-variable reference (Soroban RPC URL, network, USDC asset and SAC address, facilitator signing seed, fee-sponsor seed, database and Redis URLs).
+[`.env.example`](./.env.example) documents every variable: the Soroban RPC URL, the network, the USDC asset and SAC address, the facilitator signing seed, the fee-sponsor seed, and the database and Redis URLs.
 
 ## Documentation
 
-- [`docs/PRD.md`](./docs/PRD.md) — the complete product requirements document: problem, market, protocol, settlement, identity, security, and roadmap
-- [`.env.example`](./.env.example) — canonical environment-variable reference
-- [`CONTRIBUTING.md`](./CONTRIBUTING.md) — development workflow and the issue-driven, one-PR-per-issue process
-- [`SECURITY.md`](./SECURITY.md) — how to report vulnerabilities
+- [`docs/PRD.md`](./docs/PRD.md): the full product requirements doc covering the problem, market, protocol, settlement, identity, security, and roadmap.
+- [`.env.example`](./.env.example): the environment-variable reference.
+- [`CONTRIBUTING.md`](./CONTRIBUTING.md): how the project is developed, including the one-PR-per-issue workflow.
+- [`SECURITY.md`](./SECURITY.md): how to report a vulnerability.
 
 ## Roadmap
 
-| Version           | Focus                                                                                                                                 | Status          |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
-| **v0** (testnet)  | Protocol, receipt signing, adapters, SDK, facilitator, gateway, dashboard; live Soroban x402 + one MPP path; 60-fetch demo            | **in progress** |
-| v1 (mainnet beta) | WordPress/Ghost/Substack plugins · edge adapters · hosted proxy · discovery manifest · Python SDK · Go gateway · anchor fiat cash-out | Q3 2026         |
-| v2 (reputation)   | `crawlpay_registry` on-chain identity + reputation + key directory · validator network · discovery catalog · publisher pools          | Q4 2026–Q1 2027 |
-| v3 (scale)        | CCTP cross-chain payout · subscription/deferred models on MPP · enterprise (SLA, HSM, SSO) · Helm/Kubernetes                          | 2027            |
+| Version           | Focus                                                                                                                          | Status      |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------ | ----------- |
+| v0 (testnet)      | protocol, receipt signing, adapters, SDK, facilitator, gateway, dashboard, live Soroban x402 and one MPP path, a 60-fetch demo | in progress |
+| v1 (mainnet beta) | WordPress/Ghost/Substack plugins, edge adapters, hosted proxy, discovery manifest, Python SDK, Go gateway, anchor cash-out     | Q3 2026     |
+| v2 (reputation)   | `crawlpay_registry` on-chain identity and reputation, a validator network, a discovery catalog, publisher pools                | late 2026   |
+| v3 (scale)        | CCTP cross-chain payout, subscriptions on MPP, enterprise features (SLA, HSM, SSO), Helm and Kubernetes                        | 2027        |
 
 ## Contributing
 
-CrawlPay follows an issue-driven, open-source workflow: every pull request resolves a tracked issue, and bugs are filed as issues before they're fixed. Start with [`CONTRIBUTING.md`](./CONTRIBUTING.md) and the [good first issues](https://github.com/vegaforge/crawlpay/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+The workflow is issue-driven: every pull request closes a tracked issue, and a bug gets filed as an issue before it's fixed. Start with [`CONTRIBUTING.md`](./CONTRIBUTING.md) and the [good first issues](https://github.com/vegaforge/crawlpay/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
 ## License
 
-[Apache License 2.0](./LICENSE). OSI-approved, includes a patent grant.
+[Apache License 2.0](./LICENSE).
 
 ## References
 
-- [x402 specification](https://x402.org) — HTTP-native payment negotiation
-- [Stellar / Soroban](https://developers.stellar.org) — smart contracts, the Stellar Asset Contract, and Soroban RPC
-- [USDC on Stellar](https://www.circle.com/usdc) — native USDC issued by Circle
-- [Web Bot Auth](https://datatracker.ietf.org/doc/draft-meunier-web-bot-auth-architecture/) — HTTP Message Signatures for crawler identity
-- [Cloudflare Pay Per Crawl](https://blog.cloudflare.com/introducing-pay-per-crawl/) — the proprietary incumbent CrawlPay is the open alternative to
+- [x402](https://x402.org): HTTP-native payment negotiation.
+- [Stellar and Soroban](https://developers.stellar.org): smart contracts, the Stellar Asset Contract, and Soroban RPC.
+- [USDC on Stellar](https://www.circle.com/usdc): native USDC from Circle.
+- [Web Bot Auth](https://datatracker.ietf.org/doc/draft-meunier-web-bot-auth-architecture/): HTTP Message Signatures for crawler identity.
+- [Cloudflare Pay Per Crawl](https://blog.cloudflare.com/introducing-pay-per-crawl/): the closed product CrawlPay is an open alternative to.

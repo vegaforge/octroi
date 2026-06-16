@@ -3,9 +3,9 @@ import { DashNav } from './DashNav';
 import { DashSidebar, type SidebarItem } from './DashSidebar';
 
 type DashLayoutProps = {
-  /** @deprecated — kept for prop compatibility; the nav now uses the API-key menu. */
+  /** @deprecated kept for prop compatibility; nav now uses the API-key menu. */
   walletAddress?: string;
-  /** @deprecated — see walletAddress. */
+  /** @deprecated see walletAddress. */
   walletShort?: string;
   sidebarContext: string;
   sidebarItems: SidebarItem[];
@@ -13,11 +13,7 @@ type DashLayoutProps = {
   children: React.ReactNode;
 };
 
-/**
- * Shell for `/publisher/[id]/**` and `/crawler/[wallet]/**`. Top nav + side
- * rail + main content slot. The mobile hint chip nudges visitors to switch
- * to desktop where the grid is more usable.
- */
+/** Shell for publisher/crawler dashboards: top nav, side rail, content slot. */
 export function DashLayout({
   walletAddress: _walletAddress,
   walletShort: _walletShort,

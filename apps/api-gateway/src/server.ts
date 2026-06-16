@@ -24,11 +24,7 @@ export interface ServerDeps {
   logger?: FastifyServerOptions['logger'];
 }
 
-/**
- * Build the api-gateway Fastify app without starting it. Routes are mounted
- * here so tests can `app.inject()` against the same instance configuration the
- * production process uses.
- */
+/** Builds the Fastify app without starting it, so tests can inject() the same config. */
 export function buildServer(deps: ServerDeps): FastifyInstance {
   const app = Fastify({ logger: deps.logger ?? false });
 

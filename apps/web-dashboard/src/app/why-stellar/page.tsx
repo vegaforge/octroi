@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const MATH = [
   { value: '$0.006', tone: 'success' as const, label: 'Revenue', sub: '60 fetches × $0.0001' },
   {
-    value: '$6 — $60+',
+    value: '$6 to $60+',
     tone: 'error' as const,
     label: 'Ethereum gas',
     sub: '60 transactions, volatile ETH',
@@ -36,7 +36,7 @@ const COMPARISON = [
   {
     chain: 'Ethereum',
     token: 'ETH (volatile)',
-    gas: '$1 — $20',
+    gas: '$1 to $20',
     min: '~$5+',
     sub: { text: '✗', cls: 'text-clay' },
   },
@@ -153,7 +153,7 @@ export default function WhyStellarPage() {
             </div>
             <p className="lead mt-6 max-w-[60ch]">
               60 paid fetches at $0.0001 is $0.006 in revenue against a near-zero settlement cost
-              with sponsored fees — versus chains where the gas fee alone exceeds the payment.
+              with sponsored fees. On other chains the gas fee alone would exceed the payment.
             </p>
           </div>
         </section>
@@ -239,7 +239,7 @@ export default function WhyStellarPage() {
           </div>
         </section>
 
-        {/* WHY STELLAR — the edge */}
+        {/* WHY STELLAR, the edge */}
         <section className="section pt-0">
           <div className="wrap">
             <span className="eyebrow">The edge</span>
@@ -249,7 +249,7 @@ export default function WhyStellarPage() {
                 <h4 className="text-[15px] font-semibold">Native USDC, no bridge</h4>
                 <p className="mt-1.5 text-[13px] leading-[1.5] text-ink-secondary">
                   USDC is issued natively on Stellar. Payments settle in the same asset publishers
-                  hold — no wrapped tokens, no bridge risk.
+                  hold, with no wrapped tokens and no bridge risk.
                 </p>
               </div>
               <div className="rounded-card border border-border-subtle bg-bg-surface p-6">
@@ -262,8 +262,8 @@ export default function WhyStellarPage() {
               <div className="rounded-card border border-border-subtle bg-bg-surface p-6">
                 <h4 className="text-[15px] font-semibold">Fiat off-ramp built in</h4>
                 <p className="mt-1.5 text-[13px] leading-[1.5] text-ink-secondary">
-                  Stellar&rsquo;s anchor network lets publishers cash out earnings to local currency
-                  — the on-chain payment ends at a bank account, not a wallet.
+                  Stellar&rsquo;s anchor network lets publishers cash out earnings to local
+                  currency. The on-chain payment ends at a bank account, not a wallet.
                 </p>
               </div>
             </div>

@@ -1,15 +1,9 @@
 import type { Config } from 'tailwindcss';
 
 /**
- * CrawlPay design system → Tailwind.
- *
- * Color values reference CSS variables defined in src/styles/globals.css.
- * That keeps a single source of truth for colors/fonts that Framer Motion,
- * Tremor, and inline styles can all consume.
- *
- * Tremor note: charts default to Tailwind palette names (amber, blue, …)
- * so we override `amber` here with our brand accent. Passing
- * colors={['amber']} on a Tremor chart produces our brand color.
+ * CrawlPay design system for Tailwind. Colors reference CSS vars in globals.css
+ * (single source of truth). Tremor charts use palette names, so `amber` is
+ * overridden below with the brand accent.
  */
 export default {
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}', './node_modules/@tremor/**/*.{js,ts,jsx,tsx}'],
@@ -17,7 +11,6 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ── Brand tokens (via CSS variables) ──────────────────────────
         bg: {
           base: 'var(--bg-base)',
           surface: 'var(--bg-surface)',
@@ -41,9 +34,8 @@ export default {
         sage: 'var(--success)',
         clay: 'var(--error)',
 
-        // ── Override Tailwind's amber palette with brand colors ──────
-        // Lets Tremor's color="amber" produce our brand accent. The full
-        // 50-900 ramp is computed around #E8A96B (the 500 value).
+        // amber overridden so Tremor color="amber" renders the brand accent.
+        // 50-900 ramp computed around #E8A96B (the 500 value).
         amber: {
           50: '#FCF4E6',
           100: '#F8E4C0',

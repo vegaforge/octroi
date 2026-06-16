@@ -11,7 +11,7 @@ export interface FacilitatorConfig {
   usdcAsset: AssetId;
   /** USDC Stellar Asset Contract address (the SAC the `transfer` invokes). */
   usdcSacAddress: ContractAddress;
-  /** Stellar secret seed (S...) used ONLY to sign receipts. Holds no funds. */
+  /** Stellar secret seed (S...) used only to sign receipts. Holds no funds. */
   receiptSigningSeed: string;
   /** Stellar secret seed of the account that sponsors transaction fees. */
   feeSponsorSeed?: string;
@@ -25,10 +25,7 @@ const SECRET_SEED_RE = /^S[A-Z2-7]{55}$/;
 const ASSET_RE = /^[A-Za-z0-9]{1,12}:G[A-Z2-7]{55}$/;
 const CONTRACT_RE = /^C[A-Z2-7]{55}$/;
 
-/**
- * Parse and validate environment variables. Throws on any malformed value so
- * the service fails fast on startup rather than at first request.
- */
+/** Parse and validate env vars. Throws on bad values so we fail fast at startup. */
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): FacilitatorConfig {
   const port = Number(env.FACILITATOR_PORT ?? 3001);
   if (!Number.isInteger(port) || port < 1 || port > 65535) {

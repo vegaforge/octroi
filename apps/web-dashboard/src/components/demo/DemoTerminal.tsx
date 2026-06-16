@@ -13,11 +13,7 @@ type DemoTerminalProps = {
   idle: boolean;
 };
 
-/**
- * Terminal-style streaming log. Auto-scrolls to bottom as new lines arrive.
- * Uses `whitespace-pre` so padEnd() spacing in log lines is preserved
- * (alignment of publisher names across rows).
- */
+/** Streaming log, auto-scrolls to bottom. Uses `whitespace-pre` so padEnd() alignment survives. */
 export function DemoTerminal({ logs, idle }: DemoTerminalProps) {
   const ref = useRef<HTMLDivElement>(null);
 

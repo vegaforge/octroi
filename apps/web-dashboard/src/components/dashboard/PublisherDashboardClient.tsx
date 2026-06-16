@@ -56,17 +56,14 @@ export function PublisherDashboardClient({ publisherId }: Props) {
     staleTime: LIVE_FEED_INTERVAL_MS,
   });
 
-  // For top-crawlers we want a wider window than the live feed. One bulk
-  // call powers both the top table and (optionally) richer aggregations.
+  // wider window than the live feed; one bulk call powers the top table
   const broadReceiptsQuery = useQuery({
     queryKey: ['receipts', 'publisher', publisherId, 'broad'],
     queryFn: () => getPublisherReceipts(publisherId, { limit: 100 }),
     staleTime: 60_000,
   });
 
-  // Reputation lookup against the crawlpay_registry. Gated on knowing the
-  // publisher's G-address — no point firing until we have a target.
-  // Reputation is mostly stable — long stale time.
+  // reputation lookup; gated on the publisher's G-address. mostly stable, so long stale time
   const walletAddress = publisherQuery.data?.walletAddress;
   const reputationQuery = useQuery({
     queryKey: ['reputation', walletAddress],
@@ -255,7 +252,7 @@ function KpiSkeleton() {
   );
 }
 
-// ── Helpers ────────────────────────────────────────────────────────────────
+// helpers
 
 function chartFromAnalytics(
   analytics: PublisherAnalytics | undefined,

@@ -1,28 +1,19 @@
 declare const __brand: unique symbol;
 type Brand<T, B extends string> = T & { readonly [__brand]: B };
 
-/**
- * A Stellar account address in strkey form — starts with `G`, 56 chars.
- *
- * A Stellar account *is* an Ed25519 public key, so the same value serves as
- * the crawler's payment account, its Web Bot Auth request-signing identity,
- * and its reputation subject. One key does everything.
- */
+/** Stellar account address (strkey, `G` + 56 chars). It's an Ed25519 pubkey, so one key is payment, request-signing, and reputation identity. */
 export type StellarAddress = Brand<string, 'StellarAddress'>;
 
-/** A Soroban contract address in strkey form — starts with `C`, 56 chars. */
+/** Soroban contract address (strkey, `C` + 56 chars). */
 export type ContractAddress = Brand<string, 'ContractAddress'>;
 
-/**
- * A Stellar asset identifier: `CODE:ISSUER`, where `ISSUER` is the issuing
- * account's G-address. USDC on Stellar is `USDC:GA5ZSE…` (Circle's issuer).
- */
+/** Stellar asset id `CODE:ISSUER` where ISSUER is the issuer G-address (e.g. `USDC:GA5ZSE...`). */
 export type AssetId = `${string}:${string}`;
 
 /** Base64-encoded Ed25519 signature over a canonical message. */
 export type Ed25519Signature = Brand<string, 'Ed25519Signature'>;
 
-/** Hex string (0x-prefixed) — used for opaque values such as nonces. */
+/** 0x-prefixed hex string, for opaque values like nonces. */
 export type Hex = `0x${string}`;
 
 const G_ADDRESS = /^G[A-Z2-7]{55}$/;
@@ -44,15 +35,8 @@ export function isContractAddress(value: string): value is ContractAddress {
 }
 
 /**
- * USDC in atomic units.
- *
- * CrawlPay standardizes on Stellar's classic 7-decimal representation as the
- * single atomic unit across the SDK, facilitator, adapters, and contracts
- * (resolves PRD open question #1):
- *
- *   10_000_000n = $1.00
- *   1_000_000n  = $0.10
- *   1_000n      = $0.0001   (a hundredth of a cent — the default crawl price)
+ * USDC in atomic units. Stellar's 7-decimal scale is the one atomic unit everywhere.
+ *   10_000_000n = $1.00, 1_000_000n = $0.10, 1_000n = $0.0001 (default crawl price).
  */
 export type AtomicUsdc = Brand<bigint, 'AtomicUsdc'>;
 

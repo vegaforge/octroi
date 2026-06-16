@@ -11,10 +11,7 @@ export interface ServerOptions {
   logger?: FastifyServerOptions['logger'];
 }
 
-/**
- * Build the Fastify app without starting it. Used by `index.ts` to boot the
- * server and by tests to call `app.inject()` directly.
- */
+/** Build the Fastify app without starting it, so tests can inject directly. */
 export function buildServer(opts: ServerOptions): FastifyInstance {
   const app = Fastify({ logger: opts.logger ?? false });
 

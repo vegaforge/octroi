@@ -38,19 +38,13 @@ export interface VerifyFailure {
 
 export type VerifyResult = VerifySuccess | VerifyFailure;
 
-/** Replay-window buffer (seconds) added when reserving a settled nonce. */
+/** replay-window buffer (seconds) added when reserving a settled nonce */
 const NONCE_TTL_SECONDS = 5 * 60;
 
 /**
- * Core facilitator orchestration. Stateless per call — all state lives in the
- * injected NonceTracker / ReceiptRepository.
- *
- * verify() flow:
- *   1. Validate the payment against the offer terms (network, asset).
- *   2. Settle on Stellar (the settlement layer parses and verifies the auth
- *      entry, enforces the amount ceiling, and submits the SAC transfer).
- *   3. Reserve the settled nonce (replay barrier; Soroban also enforces it).
- *   4. Build, sign, and persist a CrawlPayReceipt.
+ * Core facilitator orchestration. Stateless per call (state lives in the injected trackers).
+ * verify() validates, settles on Stellar, reserves the nonce as a replay barrier, then
+ * signs and persists a receipt.
  */
 export class FacilitatorService {
   readonly #settlement: SorobanSettlement;

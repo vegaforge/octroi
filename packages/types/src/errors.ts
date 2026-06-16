@@ -1,9 +1,4 @@
-/**
- * Error codes returned in 402 responses and verification failures.
- *
- * The public set mirrors the protocol error table (PRD §9.7); a few internal
- * codes used only by the SDK retry logic and middleware are appended.
- */
+/** Error codes for 402 responses and verification failures. Public set mirrors PRD §9.7; internal codes appended. */
 export type CrawlPayErrorCode =
   // Protocol errors (PRD §9.7)
   | 'invalid_signature'
@@ -20,7 +15,7 @@ export type CrawlPayErrorCode =
   | 'session_budget_exhausted'
   | 'facilitator_error'
   | 'facilitator_unavailable'
-  // Internal — SDK/middleware only
+  // internal: SDK/middleware only
   | 'invalid_payload'
   | 'unexpected_error';
 

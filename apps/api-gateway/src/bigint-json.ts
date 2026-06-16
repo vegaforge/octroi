@@ -1,16 +1,6 @@
-/**
- * Node's `JSON.stringify` throws `TypeError: Do not know how to serialize a
- * BigInt` because the JSON spec doesn't define a representation for it.
- *
- * We use `AtomicUsdc` (a branded `bigint`) throughout the data layer, so
- * any record that surfaces it to Fastify would crash without this polyfill.
- * Convention across the CrawlPay HTTP surface: BigInts serialize as their
- * decimal string. Clients parse with `BigInt(field)` if they need the
- * number back.
- *
- * Imported once at the top of `index.ts` for the side effect. Must run
- * before any Fastify response is serialized.
- */
+// JSON.stringify can't serialize bigint, so we emit it as a decimal string.
+// AtomicUsdc is a branded bigint used everywhere, so responses would crash without this.
+// Clients parse back with BigInt(field). Must load before any response is serialized.
 declare global {
   interface BigInt {
     toJSON(): string;

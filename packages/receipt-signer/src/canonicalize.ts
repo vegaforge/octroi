@@ -1,15 +1,6 @@
 import type { CrawlPayReceipt, CrawlPayReceiptBody } from '@crawlpay/types';
 
-/**
- * Produce canonical JSON for a receipt:
- *   - object keys sorted lexicographically (recursive)
- *   - no whitespace
- *   - `signature` field excluded if present (so signed and unsigned forms hash the same)
- *   - undefined fields excluded entirely
- *
- * Deterministic across runs and across language implementations that follow
- * the same rules — the foundation for verifiable receipts.
- */
+/** Canonical JSON: keys sorted recursively, no whitespace, signature/undefined dropped. Deterministic so receipts hash the same everywhere. */
 export function canonicalizeReceipt(receipt: CrawlPayReceiptBody | CrawlPayReceipt): string {
   const asAny = receipt as CrawlPayReceipt;
   const body: Record<string, unknown> = { ...asAny };

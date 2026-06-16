@@ -12,7 +12,7 @@ function nonceFrom(seed: number): string {
   return seed.toString(16).padStart(32, '0');
 }
 
-/** ISO timestamp `seconds` after the epoch baseline used by the tests. */
+/** ISO timestamp from a unix seconds value. */
 function ts(seconds: number): string {
   return new Date(seconds * 1000).toISOString();
 }

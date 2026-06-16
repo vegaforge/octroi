@@ -35,11 +35,7 @@ type ReceiptsTableProps =
       subtitle?: React.ReactNode;
     };
 
-/**
- * Live receipts table. Server-paginated via /publishers/:id/receipts or
- * /crawlers/:wallet/receipts. Counterparty + URL filtering is client-side
- * over the current page (server-side filters are a future enhancement).
- */
+/** Server-paginated receipts table. Counterparty/URL filtering is client-side over the current page. */
 export function ReceiptsTable(props: ReceiptsTableProps) {
   const [page, setPage] = useState(0);
   const [counterpartyQuery, setCounterpartyQuery] = useState('');
@@ -52,8 +48,7 @@ export function ReceiptsTable(props: ReceiptsTableProps) {
       props.mode === 'publisher'
         ? (['receipts', 'publisher', props.publisherId, page] as const)
         : (['receipts', 'crawler', props.crawlerWallet, page] as const),
-    // The discriminated-union narrowing makes this safe even though both
-    // arms appear in the deps array.
+    // union narrowing makes this safe even though both arms are in the deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [props.mode, props.mode === 'publisher' ? props.publisherId : props.crawlerWallet, page],
   );
@@ -161,7 +156,7 @@ export function ReceiptsTable(props: ReceiptsTableProps) {
           icon={<Search />}
           value={urlQuery}
           onChange={resetPaging(setUrlQuery)}
-          placeholder="URL pattern — e.g. /research/**"
+          placeholder="URL pattern, e.g. /research/**"
           grow
         />
         <FilterSelect

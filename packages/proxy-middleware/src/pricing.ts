@@ -2,7 +2,7 @@ import type { AtomicUsdc, PricingRule } from '@crawlpay/types';
 
 export interface PricingDecision {
   priceAtomic: AtomicUsdc;
-  /** Identifier of the rule that matched, or `"default"`. */
+  /** Id of the matched rule, or "default". */
   ruleId: string;
 }
 
@@ -12,16 +12,8 @@ export interface PricingResolver {
 }
 
 /**
- * Glob-based pricing resolver.
- *
- * Pattern syntax:
- *   `*`   matches any character except `/`
- *   `**`  matches any character including `/`
- *   Everything else is a literal
- *
- * Rules are evaluated in declaration order. First match wins. If no rule
- * matches, `defaultPrice` is used. To explicitly mark a path as free, define
- * a rule with `priceAtomic === 0n` (the middleware treats it as a skip).
+ * Glob pricing resolver. `*` matches anything but `/`, `**` matches across `/`.
+ * Rules checked in order, first match wins, else defaultPrice. priceAtomic 0n marks a free path (skipped).
  */
 export class GlobPricingResolver implements PricingResolver {
   readonly #compiled: Array<{ rule: PricingRule; regex: RegExp; id: string }>;

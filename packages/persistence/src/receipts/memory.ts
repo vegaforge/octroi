@@ -1,10 +1,7 @@
 import type { CrawlPayReceipt } from '@crawlpay/types';
 import type { ReceiptFilter, ReceiptRepository, StoredReceipt } from './interface';
 
-/**
- * In-process receipt repository. Suitable for single-instance demos and tests.
- * Production deployments use PostgresReceiptRepository.
- */
+/** In-memory receipt repo, single-instance only; use PostgresReceiptRepository in prod. */
 export class MemoryReceiptRepository implements ReceiptRepository {
   readonly #byNonce = new Map<string, StoredReceipt>();
 

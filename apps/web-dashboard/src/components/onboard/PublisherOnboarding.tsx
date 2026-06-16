@@ -15,7 +15,7 @@ const DOMAIN_RE = /^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i;
 type Step = 'form' | 'setup';
 
 const PRICE_TIERS = [
-  { atomic: 1000, label: '$0.0001', hint: 'Default — a hundredth of a cent' },
+  { atomic: 1000, label: '$0.0001', hint: 'Default, a hundredth of a cent' },
   { atomic: 10000, label: '$0.001', hint: 'About 10× a basic API call' },
   { atomic: 100000, label: '$0.01', hint: 'Premium · curated research' },
 ] as const;
@@ -69,9 +69,9 @@ export function PublisherOnboarding() {
         if (err.code === 'already_exists') {
           setError(`A publisher already exists for "${domain.trim().toLowerCase()}".`);
         } else if (err.code === 'invalid_domain') {
-          setError('Domain rejected by the server — double-check the format.');
+          setError('Domain rejected by the server. Double-check the format.');
         } else if (err.code === 'invalid_wallet') {
-          setError('Payout address rejected by the server — double-check the G-address.');
+          setError('Payout address rejected by the server. Double-check the G-address.');
         } else {
           setError(err.message);
         }
@@ -232,7 +232,7 @@ function FormStep(props: FormStepProps) {
             className="mono w-full rounded-lg border border-border-subtle bg-bg-surface py-2.5 pl-9 pr-3 text-[14px] text-ink-primary placeholder:text-ink-tertiary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
           />
         </div>
-        <p className="mt-1 text-[12px] text-ink-tertiary">No scheme, no path — just the host.</p>
+        <p className="mt-1 text-[12px] text-ink-tertiary">No scheme, no path, just the host.</p>
       </Field>
 
       <Field label="Default price per crawl" required>

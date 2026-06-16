@@ -26,7 +26,7 @@ export function DashSidebar({ contextLabel, items, switchTo }: DashSidebarProps)
     <aside
       className={cn(
         'flex flex-col gap-1 border-r border-border-subtle p-4 md:p-6',
-        // Mobile: horizontal scrollable row across the top of the main area
+        // mobile: horizontal scroll row across the top
         'md:gap-1 md:[--rail-pad:24px]',
         'max-md:flex-row max-md:overflow-x-auto max-md:border-b max-md:border-r-0 max-md:py-3',
       )}
@@ -98,6 +98,5 @@ function SidebarLink({ item }: { item: SidebarItem }) {
   );
 }
 
-// Re-export common icons used by the page-level routes so they don't
-// have to import them separately.
+// Re-exported so page routes can grab these icons from one place.
 export { LayoutGrid, Receipt, Settings, Bot };

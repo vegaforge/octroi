@@ -1,8 +1,6 @@
 /**
  * Typed client for the api-gateway's /publishers/* endpoints.
- *
- * All requests go through the /api/* rewrite (next.config.ts). Mutations and
- * the probe carry the publisher's API key as a Bearer token (see useApiKey).
+ * Routes through the /api/* rewrite; mutations and probe carry the Bearer key.
  */
 
 import { getStoredApiKey } from '@/hooks/useApiKey';

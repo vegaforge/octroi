@@ -7,10 +7,7 @@ import type {
 } from '@crawlpay/types';
 import { canonicalizeReceipt } from './canonicalize';
 
-/**
- * Signing surface — pluggable so production deployments can swap in a
- * KMS/HSM-backed Ed25519 signer without changing the rest of the stack.
- */
+/** Pluggable signing surface so prod can swap in a KMS/HSM-backed Ed25519 signer. */
 export interface ReceiptSigner {
   /** G-address of the signing key, embedded in receipts as `facilitatorPubkey`. */
   readonly publicKey: StellarAddress;
@@ -18,11 +15,7 @@ export interface ReceiptSigner {
   sign(message: Uint8Array): Promise<Ed25519Signature>;
 }
 
-/**
- * In-process signer backed by a Stellar keypair (secret seed). Suitable for the
- * v0 hosted facilitator and for tests. For production, wrap a KMS/HSM-backed
- * Ed25519 signer in this same interface.
- */
+/** Signs with an in-memory Stellar keypair. Swap for a KMS/HSM signer in prod. */
 export class StellarKeypairReceiptSigner implements ReceiptSigner {
   readonly publicKey: StellarAddress;
   readonly #keypair: Keypair;
@@ -37,20 +30,12 @@ export class StellarKeypairReceiptSigner implements ReceiptSigner {
   }
 }
 
-/**
- * The signing preimage: UTF-8 bytes of the canonical JSON of a receipt body.
- * Ed25519 hashes internally, so the message is signed directly — no separate
- * digest step.
- */
+/** Signing preimage: UTF-8 bytes of the canonical receipt JSON. Ed25519 hashes internally, so no pre-digest. */
 export function canonicalReceiptBytes(body: CrawlPayReceiptBody): Uint8Array {
   return new TextEncoder().encode(canonicalizeReceipt(body));
 }
 
-/**
- * Sign a receipt body. The signer's public key is embedded as
- * `facilitatorPubkey` so verifiers can confirm signer identity from the
- * receipt alone.
- */
+/** Sign a receipt body. Embeds the signer's key as `facilitatorPubkey` so verifiers need only the receipt. */
 export async function signReceipt(
   body: Omit<CrawlPayReceiptBody, 'facilitatorPubkey'>,
   signer: ReceiptSigner,

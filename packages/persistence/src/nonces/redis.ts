@@ -1,13 +1,7 @@
 import type Redis from 'ioredis';
 import type { NonceTracker } from './interface';
 
-/**
- * Redis-backed nonce tracker. Uses SET key value EX ttl NX, which is atomic:
- *   - sets the key only if it doesn't already exist
- *   - applies a TTL (Redis evicts expired keys for us, no sweep needed)
- *
- * Returns `'OK'` on first reservation, `null` on collision.
- */
+/** Redis-backed nonce tracker. SET ... EX ttl NX is atomic: sets only if absent, TTL handles expiry. Returns 'OK' on first reserve, null on collision. */
 export class RedisNonceTracker implements NonceTracker {
   readonly #redis: Redis;
   readonly #prefix: string;

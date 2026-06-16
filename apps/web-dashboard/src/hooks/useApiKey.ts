@@ -6,13 +6,9 @@ const STORAGE_KEY = 'crawlpay_api_key';
 const EVENT = 'crawlpay:apikey';
 
 /**
- * API-key session. Publishers authenticate with the key returned once at
- * onboarding (POST /publishers). It lives in localStorage and is sent as a
- * Bearer token on the probe and any publisher mutation. Dashboards render in
- * read mode without a key.
- *
- * The custom event keeps every mounted hook in sync across the tab, and the
- * `storage` event keeps other tabs in sync.
+ * API-key session. Key comes from onboarding (POST /publishers), lives in
+ * localStorage, sent as a Bearer token on the probe and publisher mutations.
+ * Custom event syncs hooks in this tab; `storage` event syncs other tabs.
  */
 export interface ApiKeyState {
   apiKey: string | null;

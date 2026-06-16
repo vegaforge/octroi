@@ -3,13 +3,7 @@
 import { useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-/**
- * Root client-side providers. Mounted once in app/layout.tsx.
- *
- * QueryClientProvider for TanStack Query — powers the dashboard's live data
- * fetches. Auth is an API-key session held in localStorage (see useApiKey),
- * so there's no auth provider to mount here.
- */
+/** Root client providers (TanStack Query). Auth is an API-key session in localStorage, no provider. */
 export function Providers({ children }: { children: React.ReactNode }) {
   const [qc] = useState(
     () =>
