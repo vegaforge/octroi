@@ -177,17 +177,17 @@ The signature covers a canonical JSON form with sorted keys and stable serializa
 
 ## Tech stack
 
-| Layer          | Tools                                                                |
-| -------------- | -------------------------------------------------------------------- |
-| Language       | TypeScript 5.4 strict, ES2022                                        |
-| Runtime        | Node 20+, pnpm 9 workspaces, Turbo                                   |
-| Backend HTTP   | Fastify (facilitator, api-gateway)                                   |
-| Frontend       | Next.js 15 (App Router), React 18, Tailwind, TanStack Query          |
-| Stellar        | `@stellar/stellar-base` (Ed25519 keys, strkey, signing), Soroban RPC |
-| Receipt crypto | Ed25519 over canonical JSON                                          |
-| Persistence    | Postgres 16 (`pg`), Redis 7 (`ioredis`)                              |
-| On-chain (v2)  | `crawlpay_registry` Soroban contract (Rust, soroban-sdk)             |
-| Testing        | Vitest                                                               |
+| Layer          | Tools                                                                 |
+| -------------- | --------------------------------------------------------------------- |
+| Language       | TypeScript 5.4 strict (facilitator, SDK, dashboard); Go (api-gateway) |
+| Runtime        | Node 20+, pnpm 9 workspaces, Turbo; Go 1.25                           |
+| Facilitator    | Fastify, `@stellar/stellar-sdk` (Soroban RPC, auth entries)           |
+| API gateway    | Go, Gin, pgx; Ed25519 receipt verification matching the TS signer     |
+| Frontend       | Next.js 15 (App Router), React 18, Tailwind, TanStack Query           |
+| Receipt crypto | Ed25519 over canonical JSON (shared form across TS and Go)            |
+| Persistence    | Postgres 16, Redis 7                                                  |
+| On-chain (v2)  | `crawlpay_registry` Soroban contract (Rust, soroban-sdk)              |
+| Testing        | Vitest (TS), `go test` (gateway)                                      |
 
 ## Repository layout
 
@@ -195,7 +195,7 @@ The signature covers a canonical JSON form with sorted keys and stable serializa
 crawlpay/
 ├── apps/
 │   ├── facilitator/           x402/MPP verification, Soroban settlement, receipt signing
-│   ├── api-gateway/           receipts, analytics, publishers, API-key auth, reputation
+│   ├── api-gateway/           (Go) receipts, analytics, publishers, API-key auth, reputation
 │   └── web-dashboard/         landing, onboarding, publisher and crawler dashboards
 ├── packages/
 │   ├── types/                 shared protocol types (offer, receipt, AtomicUsdc)

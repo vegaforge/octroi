@@ -18,8 +18,10 @@ contracts/target/
 contracts/**/target/
 
 # Go
+apps/api-gateway/api-gateway
 apps/api-gateway/tmp/
 apps/api-gateway/bin/
+*.test
 
 # Secrets
 *.pem
