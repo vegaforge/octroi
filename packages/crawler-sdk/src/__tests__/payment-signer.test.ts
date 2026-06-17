@@ -129,3 +129,33 @@ describe('StellarPaymentSigner.createPayment', () => {
     expect(a.payload.authorizationEntry).not.toBe(b.payload.authorizationEntry);
   });
 });
+
+describe('StellarPaymentSigner.getBalance', () => {
+  it('reads the USDC SAC balance for the crawler account', async () => {
+    const crawler = Keypair.random();
+    const issuer = Keypair.random().publicKey();
+    const asset = `USDC:${issuer}` as AssetId;
+    const expectedSac = deriveSacContractId(asset, PASSPHRASE);
+
+    let calledWith: { sac: string; owner: string } | null = null;
+    const signer = new StellarPaymentSigner(NETWORK, crawler.secret(), {
+      rpcUrl: 'unused-in-tests',
+      usdcAsset: asset,
+      balanceReader: async (sac, owner) => {
+        calledWith = { sac, owner };
+        return 12_345n;
+      },
+    });
+
+    const balance = await signer.getBalance();
+    expect(balance.available).toBe(12_345n);
+    expect(calledWith).toEqual({ sac: expectedSac, owner: crawler.publicKey() });
+  });
+
+  it('throws when usdcAsset is not configured', async () => {
+    const signer = new StellarPaymentSigner(NETWORK, Keypair.random().secret(), {
+      rpcUrl: 'unused-in-tests',
+    });
+    await expect(signer.getBalance()).rejects.toThrow(/usdcAsset/);
+  });
+});

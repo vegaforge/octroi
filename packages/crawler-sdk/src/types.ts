@@ -1,4 +1,5 @@
 import type {
+  AssetId,
   AtomicUsdc,
   CrawlPayErrorCode,
   CrawlPayReceipt,
@@ -18,6 +19,8 @@ export interface CrawlPayClientConfig {
   network: Network;
   /** Soroban RPC endpoint. Required unless a custom `paymentSigner` is supplied. */
   sorobanRpcUrl?: string;
+  /** USDC asset (`CODE:ISSUER`). Required for `getBalance` with the default signer. */
+  usdcAsset?: AssetId;
   /** Hard per-request cap. The SDK refuses to pay more than this for any URL. */
   maxPerRequest: AtomicUsdc;
   /** Optional daily spend cap across all publishers (UTC day). */

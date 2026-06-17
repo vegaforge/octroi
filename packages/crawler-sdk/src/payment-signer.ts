@@ -1,21 +1,27 @@
 import { randomBytes } from 'node:crypto';
 import {
+  Account,
   Address,
   Asset,
+  BASE_FEE,
+  Contract,
   Keypair,
+  TransactionBuilder,
   authorizeEntry,
   nativeToScVal,
   rpc,
+  scValToNative,
   xdr,
 } from '@stellar/stellar-sdk';
 import type {
+  AssetId,
   AtomicUsdc,
   Network,
   PaymentRequirement,
   StellarAddress,
   X402PaymentPayload,
 } from '@crawlpay/types';
-import { NETWORK_PASSPHRASE } from '@crawlpay/types';
+import { NETWORK_PASSPHRASE, atomicUsdc } from '@crawlpay/types';
 
 export interface CrawlerBalance {
   /** USDC available to spend, atomic. */
@@ -36,17 +42,18 @@ export interface PaymentSigner {
 }
 
 export interface StellarPaymentSignerOptions {
-  /** Soroban RPC endpoint, used to read the current ledger for the signature window. */
+  /** Soroban RPC endpoint, used to read the current ledger and the USDC balance. */
   rpcUrl: string;
+  /** USDC asset (`CODE:ISSUER`). Required for getBalance, which has no offer to read it from. */
+  usdcAsset?: AssetId;
   /** Override the current-ledger lookup. Used by tests; defaults to the RPC server. */
   ledgerSource?: () => Promise<number>;
+  /** Override the SAC balance read. Used by tests; defaults to a Soroban simulation. */
+  balanceReader?: (sacContractId: string, owner: string) => Promise<bigint>;
 }
 
 /** Stellar ledgers close roughly every 5s; used to turn the offer timeout into a ledger count. */
 const SECONDS_PER_LEDGER = 5;
-
-const BALANCE_PENDING =
-  'Crawler USDC balance reads are not implemented in this build. See issue #3.';
 
 /**
  * Default Stellar signer. It authorizes the USDC SAC `transfer` from the
@@ -60,7 +67,9 @@ export class StellarPaymentSigner implements PaymentSigner {
   readonly #passphrase: string;
   readonly #keypair: Keypair;
   readonly #rpcUrl: string;
+  readonly #usdcAsset?: AssetId;
   readonly #ledgerSource?: () => Promise<number>;
+  readonly #balanceReader?: (sacContractId: string, owner: string) => Promise<bigint>;
 
   constructor(network: Network, secretSeed: string, opts: StellarPaymentSignerOptions) {
     this.#network = network;
@@ -68,7 +77,9 @@ export class StellarPaymentSigner implements PaymentSigner {
     this.#keypair = Keypair.fromSecret(secretSeed);
     this.address = this.#keypair.publicKey() as StellarAddress;
     this.#rpcUrl = opts.rpcUrl;
+    this.#usdcAsset = opts.usdcAsset;
     this.#ledgerSource = opts.ledgerSource;
+    this.#balanceReader = opts.balanceReader;
   }
 
   get network(): Network {
@@ -104,14 +115,45 @@ export class StellarPaymentSigner implements PaymentSigner {
   }
 
   async getBalance(): Promise<CrawlerBalance> {
-    throw new Error(BALANCE_PENDING);
+    if (!this.#usdcAsset) {
+      throw new Error('usdcAsset is required to read the crawler balance');
+    }
+    const sac = deriveSacContractId(this.#usdcAsset, this.#passphrase);
+    const raw = this.#balanceReader
+      ? await this.#balanceReader(sac, this.address)
+      : await this.#readSacBalance(sac);
+    return { available: atomicUsdc(raw) };
   }
 
   async #currentLedger(): Promise<number> {
     if (this.#ledgerSource) return this.#ledgerSource();
-    const server = new rpc.Server(this.#rpcUrl);
-    const { sequence } = await server.getLatestLedger();
+    const { sequence } = await this.#server().getLatestLedger();
     return sequence;
+  }
+
+  /** Read the crawler's USDC balance by simulating the SAC `balance(owner)` call. */
+  async #readSacBalance(sacContractId: string): Promise<bigint> {
+    const source = new Account(this.address, '0');
+    const tx = new TransactionBuilder(source, {
+      fee: BASE_FEE,
+      networkPassphrase: this.#passphrase,
+    })
+      .addOperation(
+        new Contract(sacContractId).call('balance', new Address(this.address).toScVal()),
+      )
+      .setTimeout(30)
+      .build();
+
+    const sim = await this.#server().simulateTransaction(tx);
+    if (!rpc.Api.isSimulationSuccess(sim) || !sim.result) {
+      throw new Error(`balance read failed: ${'error' in sim ? sim.error : 'no result'}`);
+    }
+    const value = scValToNative(sim.result.retval);
+    return typeof value === 'bigint' ? value : BigInt(value ?? 0);
+  }
+
+  #server(): rpc.Server {
+    return new rpc.Server(this.#rpcUrl, { allowHttp: this.#rpcUrl.startsWith('http://') });
   }
 }
 

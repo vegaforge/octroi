@@ -314,6 +314,7 @@ function defaultSigner(config: CrawlPayClientConfig): PaymentSigner {
   }
   return new StellarPaymentSigner(config.network, config.secret, {
     rpcUrl: config.sorobanRpcUrl,
+    usdcAsset: config.usdcAsset,
   });
 }
 
