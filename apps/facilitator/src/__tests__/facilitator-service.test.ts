@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { Keypair } from '@stellar/stellar-sdk';
-import { StellarKeypairReceiptSigner, verifyReceipt } from '@crawlpay/receipt-signer';
-import type { AssetId, StellarAddress, X402PaymentPayload } from '@crawlpay/types';
-import { MemoryNonceTracker, MemoryReceiptRepository } from '@crawlpay/persistence';
+import { StellarKeypairReceiptSigner, verifyReceipt } from '@octroi/receipt-signer';
+import type { AssetId, StellarAddress, X402PaymentPayload } from '@octroi/types';
+import { MemoryNonceTracker, MemoryReceiptRepository } from '@octroi/persistence';
 import type { SettleResult, SorobanSettlement } from '../services/soroban-settlement';
 import { FacilitatorService, type VerifyInput } from '../services/facilitator-service';
 

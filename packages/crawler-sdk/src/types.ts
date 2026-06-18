@@ -1,18 +1,18 @@
 import type {
   AssetId,
   AtomicUsdc,
-  CrawlPayErrorCode,
-  CrawlPayReceipt,
+  OctroiErrorCode,
+  OctroiReceipt,
   Network,
   StellarAddress,
-} from '@crawlpay/types';
+} from '@octroi/types';
 import type { BudgetTracker } from './budget';
 import type { FetchCache } from './fetch-cache';
 import type { PaymentSigner } from './payment-signer';
 import type { ReceiptStore } from './receipt-store';
 import type { RetryPolicy } from './retry';
 
-export interface CrawlPayClientConfig {
+export interface OctroiClientConfig {
   /** Crawler's Stellar secret seed. Its account must hold USDC to spend. */
   secret: string;
   /** Network the crawler operates on. */
@@ -67,8 +67,8 @@ export interface FetchResult<T = unknown> {
   data: T;
   /** Atomic USDC actually paid. 0n when served from cache or when the endpoint was free. */
   paid: AtomicUsdc;
-  /** CrawlPayReceipt from the `X-PAYMENT-RESPONSE` header, when the server is CrawlPay-aware. */
-  receipt: CrawlPayReceipt | null;
+  /** OctroiReceipt from the `X-PAYMENT-RESPONSE` header, when the server is Octroi-aware. */
+  receipt: OctroiReceipt | null;
   /** True when served from FetchCache without a network round-trip. */
   cached: boolean;
   /** On-chain tx hash (x402) or session id (mpp) carried by the receipt. */
@@ -79,7 +79,7 @@ export interface PaymentEvent {
   url: string;
   amount: AtomicUsdc;
   publisherWallet: StellarAddress;
-  receipt: CrawlPayReceipt | null;
+  receipt: OctroiReceipt | null;
   settlementRef: string;
   durationMs: number;
 }
@@ -140,7 +140,7 @@ export class NoPayableOfferError extends Error {
 export class PaymentRejectedError extends Error {
   constructor(
     public readonly url: string,
-    public readonly code: CrawlPayErrorCode | string,
+    public readonly code: OctroiErrorCode | string,
     public readonly attempt: number,
   ) {
     super(`Payment rejected for ${url}: ${code} (attempt ${attempt})`);

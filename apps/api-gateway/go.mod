@@ -1,4 +1,4 @@
-module github.com/vegaforge/crawlpay/apps/api-gateway
+module github.com/vegaforge/octroi/apps/api-gateway
 
 go 1.25.1
 

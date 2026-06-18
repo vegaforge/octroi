@@ -1,6 +1,6 @@
 # api-gateway (Go)
 
-The CrawlPay control-plane API: receipts, analytics, publisher onboarding,
+The Octroi control-plane API: receipts, analytics, publisher onboarding,
 API-key auth, and provisional reputation. It is read-mostly and never sits on
 the settlement hot path.
 
@@ -14,7 +14,7 @@ in `internal/receipt`).
 
 ```bash
 cd apps/api-gateway
-go run .            # reads API_PORT, CRAWLPAY_NETWORK, DATABASE_URL, NEXT_PUBLIC_FACILITATOR_URL
+go run .            # reads API_PORT, OCTROI_NETWORK, DATABASE_URL, NEXT_PUBLIC_FACILITATOR_URL
 ```
 
 Without `DATABASE_URL` it uses an in-memory store (demo only). With it, it

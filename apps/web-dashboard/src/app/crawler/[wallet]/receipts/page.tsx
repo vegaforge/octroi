@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: { params: RouteParams }): Pro
     params.wallet.length > 12
       ? `${params.wallet.slice(0, 6)}…${params.wallet.slice(-4)}`
       : params.wallet;
-  return { title: `Receipts — ${short} — CrawlPay` };
+  return { title: `Receipts — ${short} — Octroi` };
 }
 
 export default function CrawlerReceiptsPage({ params }: { params: RouteParams }) {

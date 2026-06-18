@@ -1,5 +1,5 @@
-import type { AssetId, ContractAddress, Network } from '@crawlpay/types';
-import { NETWORKS } from '@crawlpay/types';
+import type { AssetId, ContractAddress, Network } from '@octroi/types';
+import { NETWORKS } from '@octroi/types';
 
 export interface FacilitatorConfig {
   port: number;
@@ -34,11 +34,9 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): FacilitatorCon
     );
   }
 
-  const network = (env.CRAWLPAY_NETWORK ?? 'stellar-testnet') as Network;
+  const network = (env.OCTROI_NETWORK ?? 'stellar-testnet') as Network;
   if (!NETWORKS.includes(network)) {
-    throw new Error(
-      `CRAWLPAY_NETWORK "${network}" not supported. Supported: ${NETWORKS.join(', ')}`,
-    );
+    throw new Error(`OCTROI_NETWORK "${network}" not supported. Supported: ${NETWORKS.join(', ')}`);
   }
 
   const sorobanRpcUrl = env.SOROBAN_RPC_URL;
@@ -46,24 +44,24 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): FacilitatorCon
     throw new Error('SOROBAN_RPC_URL is required');
   }
 
-  const usdcAsset = env.CRAWLPAY_USDC_ASSET;
+  const usdcAsset = env.OCTROI_USDC_ASSET;
   if (!usdcAsset || !ASSET_RE.test(usdcAsset)) {
-    throw new Error('CRAWLPAY_USDC_ASSET must be in the form CODE:ISSUER_G_ADDRESS');
+    throw new Error('OCTROI_USDC_ASSET must be in the form CODE:ISSUER_G_ADDRESS');
   }
 
-  const usdcSacAddress = env.CRAWLPAY_USDC_SAC;
+  const usdcSacAddress = env.OCTROI_USDC_SAC;
   if (!usdcSacAddress || !CONTRACT_RE.test(usdcSacAddress)) {
-    throw new Error('CRAWLPAY_USDC_SAC must be a Soroban contract address (C...)');
+    throw new Error('OCTROI_USDC_SAC must be a Soroban contract address (C...)');
   }
 
-  const receiptSigningSeed = env.CRAWLPAY_RECEIPT_SEED;
+  const receiptSigningSeed = env.OCTROI_RECEIPT_SEED;
   if (!receiptSigningSeed || !SECRET_SEED_RE.test(receiptSigningSeed)) {
-    throw new Error('CRAWLPAY_RECEIPT_SEED must be a Stellar secret seed (S...)');
+    throw new Error('OCTROI_RECEIPT_SEED must be a Stellar secret seed (S...)');
   }
 
-  const feeSponsorSeed = env.CRAWLPAY_FEE_SPONSOR_SEED || undefined;
+  const feeSponsorSeed = env.OCTROI_FEE_SPONSOR_SEED || undefined;
   if (feeSponsorSeed && !SECRET_SEED_RE.test(feeSponsorSeed)) {
-    throw new Error('CRAWLPAY_FEE_SPONSOR_SEED must be a Stellar secret seed (S...)');
+    throw new Error('OCTROI_FEE_SPONSOR_SEED must be a Stellar secret seed (S...)');
   }
 
   return {

@@ -1,4 +1,4 @@
-import type { CrawlPayReceipt } from '@crawlpay/types';
+import type { OctroiReceipt } from '@octroi/types';
 
 const BASE = '/api';
 
@@ -10,13 +10,13 @@ export interface ReceiptListPagination {
 
 export interface PublisherReceiptsResponse {
   publisher: { id: string; domain: string };
-  receipts: CrawlPayReceipt[];
+  receipts: OctroiReceipt[];
   pagination: ReceiptListPagination;
 }
 
 export interface CrawlerReceiptsResponse {
   crawler: { walletAddress: string };
-  receipts: CrawlPayReceipt[];
+  receipts: OctroiReceipt[];
   pagination: ReceiptListPagination;
 }
 
@@ -78,7 +78,7 @@ export async function getCrawlerReceipts(
 }
 
 export async function verifyReceipt(
-  receipt: CrawlPayReceipt,
+  receipt: OctroiReceipt,
   expectedSigner?: string,
 ): Promise<VerifyReceiptResponse> {
   const res = await fetch(`${BASE}/receipts/verify`, {

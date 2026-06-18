@@ -1,8 +1,8 @@
 import type { AssetId, Ed25519Signature, Network, StellarAddress } from './primitives';
 import type { SettlementModel } from './x402';
 
-export const CRAWLPAY_RECEIPT_VERSION = '1' as const;
-export type CrawlPayReceiptVersion = typeof CRAWLPAY_RECEIPT_VERSION;
+export const OCTROI_RECEIPT_VERSION = '1' as const;
+export type OctroiReceiptVersion = typeof OCTROI_RECEIPT_VERSION;
 
 /** Session coordinates for an MPP-settled receipt. */
 export interface MppSessionRef {
@@ -14,8 +14,8 @@ export interface MppSessionRef {
  * Unsigned receipt body, canonicalized for signing. Field order here is not significant;
  * the canonicalizer sorts keys before hashing. Same shape covers x402 and MPP settlement.
  */
-export interface CrawlPayReceiptBody {
-  version: CrawlPayReceiptVersion;
+export interface OctroiReceiptBody {
+  version: OctroiReceiptVersion;
   resource: string;
   /** Atomic USDC, stringified. */
   amount: string;
@@ -39,7 +39,7 @@ export interface CrawlPayReceiptBody {
 }
 
 /** Receipt body plus the facilitator's Ed25519 signature. Portable proof-of-access, verifiable from the receipt alone. */
-export interface CrawlPayReceipt extends CrawlPayReceiptBody {
+export interface OctroiReceipt extends OctroiReceiptBody {
   /** Base64 Ed25519 signature over the canonical body. */
   signature: Ed25519Signature;
 }

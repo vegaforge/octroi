@@ -1,6 +1,6 @@
 import type { AssetId, Network, StellarAddress } from './primitives';
 
-/** x402 protocol version CrawlPay speaks. */
+/** x402 protocol version Octroi speaks. */
 export type X402Version = 1;
 
 /** Payment scheme. `exact` settles a fixed amount per resource. */
@@ -37,12 +37,12 @@ export interface PaymentRequirementExtra {
   mppSessionSupported?: boolean;
   /** Whether the facilitator sponsors the transaction fee (crawler needs only USDC). */
   feeSponsored?: boolean;
-  crawlpay_publisher_id?: string;
-  crawlpay_facilitator?: string;
-  /** Agent id in the `crawlpay_registry`, if the crawler is registered. */
-  crawlpay_agent_id?: string;
-  crawlpay_reputation_score?: string;
-  crawlpay_catalog_url?: string;
+  octroi_publisher_id?: string;
+  octroi_facilitator?: string;
+  /** Agent id in the `octroi_registry`, if the crawler is registered. */
+  octroi_agent_id?: string;
+  octroi_reputation_score?: string;
+  octroi_catalog_url?: string;
   [k: string]: unknown;
 }
 

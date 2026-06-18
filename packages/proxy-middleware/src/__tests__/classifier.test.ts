@@ -25,7 +25,7 @@ describe('DefaultBotClassifier', () => {
     ).toBe(true);
     expect(classify({ 'user-agent': 'PerplexityBot/1.0' }).isCrawler).toBe(true);
     expect(classify({ 'user-agent': 'CCBot/2.0' }).isCrawler).toBe(true);
-    expect(classify({ 'user-agent': 'CrawlPayBot/1.0' }).isCrawler).toBe(true);
+    expect(classify({ 'user-agent': 'OctroiBot/1.0' }).isCrawler).toBe(true);
   });
 
   it('matches the generic bot/crawler/spider suffix', () => {

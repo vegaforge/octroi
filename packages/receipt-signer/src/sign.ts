@@ -1,10 +1,10 @@
 import { Keypair } from '@stellar/stellar-base';
 import type {
-  CrawlPayReceipt,
-  CrawlPayReceiptBody,
+  OctroiReceipt,
+  OctroiReceiptBody,
   Ed25519Signature,
   StellarAddress,
-} from '@crawlpay/types';
+} from '@octroi/types';
 import { canonicalizeReceipt } from './canonicalize';
 
 /** Pluggable signing surface so prod can swap in a KMS/HSM-backed Ed25519 signer. */
@@ -31,16 +31,16 @@ export class StellarKeypairReceiptSigner implements ReceiptSigner {
 }
 
 /** Signing preimage: UTF-8 bytes of the canonical receipt JSON. Ed25519 hashes internally, so no pre-digest. */
-export function canonicalReceiptBytes(body: CrawlPayReceiptBody): Uint8Array {
+export function canonicalReceiptBytes(body: OctroiReceiptBody): Uint8Array {
   return new TextEncoder().encode(canonicalizeReceipt(body));
 }
 
 /** Sign a receipt body. Embeds the signer's key as `facilitatorPubkey` so verifiers need only the receipt. */
 export async function signReceipt(
-  body: Omit<CrawlPayReceiptBody, 'facilitatorPubkey'>,
+  body: Omit<OctroiReceiptBody, 'facilitatorPubkey'>,
   signer: ReceiptSigner,
-): Promise<CrawlPayReceipt> {
-  const withPubkey: CrawlPayReceiptBody = {
+): Promise<OctroiReceipt> {
+  const withPubkey: OctroiReceiptBody = {
     ...body,
     facilitatorPubkey: signer.publicKey,
   };

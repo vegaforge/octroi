@@ -6,10 +6,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/analytics"
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/config"
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/server"
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/store"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/analytics"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/config"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/server"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/store"
 )
 
 func main() {
@@ -47,7 +47,7 @@ func main() {
 	})
 
 	addr := fmt.Sprintf(":%d", cfg.Port)
-	log.Printf("crawlpay-api-gateway listening on %s (network=%s storage=%s)", addr, cfg.Network, storage)
+	log.Printf("octroi-api-gateway listening on %s (network=%s storage=%s)", addr, cfg.Network, storage)
 	if err := router.Run(addr); err != nil {
 		log.Fatal(err)
 	}

@@ -1,5 +1,5 @@
 {
-  "name": "@crawlpay/web-dashboard",
+  "name": "@octroi/web-dashboard",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -11,7 +11,7 @@
     "lint": "echo 'noop'"
   },
   "dependencies": {
-    "@crawlpay/types": "workspace:*",
+    "@octroi/types": "workspace:*",
     "@stellar/stellar-base": "^15.0.0",
     "@tanstack/react-query": "^5.51.0",
     "@tremor/react": "^3.18.0",

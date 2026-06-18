@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   CrawlPay — design system tokens
+   Octroi — design system tokens
    Mirrors the PRD/HANDOFF token spec; consumed by both inline CSS and Tailwind.
    ========================================================================== */
 @layer base {

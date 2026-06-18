@@ -15,12 +15,12 @@ import { CodeBlock } from '@/components/ui/CodeBlock';
 import { ButtonLink } from '@/components/ui/ButtonLink';
 
 const easeSmooth = [0.32, 0.72, 0, 1] as const;
-const GITHUB_URL = 'https://github.com/StrimzLab/crawlpay';
+const GITHUB_URL = 'https://github.com/StrimzLab/octroi';
 
-const CRAWLER_CODE = `import { CrawlPayClient } from '@crawlpay/crawler-sdk';
-import { dollarsToAtomic } from '@crawlpay/types';
+const CRAWLER_CODE = `import { OctroiClient } from '@octroi/crawler-sdk';
+import { dollarsToAtomic } from '@octroi/types';
 
-const crawler = new CrawlPayClient({
+const crawler = new OctroiClient({
   secretKey: process.env.CRAWLER_SECRET_KEY,
   network: 'stellar-testnet',
   maxPerRequest: dollarsToAtomic('0.001'),

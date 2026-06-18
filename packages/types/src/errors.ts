@@ -1,5 +1,5 @@
 /** Error codes for 402 responses and verification failures. Public set mirrors PRD §9.7; internal codes appended. */
-export type CrawlPayErrorCode =
+export type OctroiErrorCode =
   // Protocol errors (PRD §9.7)
   | 'invalid_signature'
   | 'invalid_request_signature'
@@ -19,13 +19,13 @@ export type CrawlPayErrorCode =
   | 'invalid_payload'
   | 'unexpected_error';
 
-export class CrawlPayError extends Error {
+export class OctroiError extends Error {
   constructor(
-    public readonly code: CrawlPayErrorCode,
+    public readonly code: OctroiErrorCode,
     message: string,
     public readonly details?: Record<string, unknown>,
   ) {
     super(message);
-    this.name = 'CrawlPayError';
+    this.name = 'OctroiError';
   }
 }

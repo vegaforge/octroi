@@ -1,14 +1,14 @@
 import type {
   AtomicUsdc,
-  CrawlPayReceipt,
+  OctroiReceipt,
   CrawlerBudgetState,
   StellarAddress,
   X402PaymentPayload,
   PaymentRequiredResponse,
   PaymentRequirement,
-} from '@crawlpay/types';
-import { X402_HEADERS, atomicUsdc } from '@crawlpay/types';
-import { verifyReceipt } from '@crawlpay/receipt-signer';
+} from '@octroi/types';
+import { X402_HEADERS, atomicUsdc } from '@octroi/types';
+import { verifyReceipt } from '@octroi/receipt-signer';
 import { InMemoryBudgetTracker, UnlimitedBudgetTracker, type BudgetTracker } from './budget';
 import { MemoryFetchCache, type FetchCache, type FetchCacheEntry } from './fetch-cache';
 import { StellarPaymentSigner, type PaymentSigner } from './payment-signer';
@@ -20,7 +20,7 @@ import {
   NoPayableOfferError,
   PaymentRejectedError,
   ReceiptVerificationError,
-  type CrawlPayClientConfig,
+  type OctroiClientConfig,
   type ErrorEvent,
   type FetchOpts,
   type FetchResult,
@@ -35,11 +35,11 @@ const DEFAULT_BUDGET_WARNING_RATIO = 0.8;
  * Buyer-side SDK. Wraps the Stellar signer with budget caps, a fetch cache,
  * x402 retry policy, and receipt verification/archival. All pieces pluggable.
  */
-export class CrawlPayClient {
+export class OctroiClient {
   readonly #config: Required<
-    Pick<CrawlPayClientConfig, 'network' | 'maxPerRequest' | 'cacheSeconds' | 'budgetWarningRatio'>
+    Pick<OctroiClientConfig, 'network' | 'maxPerRequest' | 'cacheSeconds' | 'budgetWarningRatio'>
   > &
-    CrawlPayClientConfig;
+    OctroiClientConfig;
   readonly #signer: PaymentSigner;
   readonly #budget: BudgetTracker;
   readonly #cache: FetchCache;
@@ -47,7 +47,7 @@ export class CrawlPayClient {
   readonly #retry: RetryPolicy;
   #lastWarnedRatio = 0;
 
-  constructor(config: CrawlPayClientConfig) {
+  constructor(config: OctroiClientConfig) {
     this.#config = {
       ...config,
       cacheSeconds: config.cacheSeconds ?? DEFAULT_CACHE_SECONDS,
@@ -76,7 +76,7 @@ export class CrawlPayClient {
     return this.#signer.getBalance();
   }
 
-  async listReceipts(filter?: Parameters<ReceiptStore['list']>[0]): Promise<CrawlPayReceipt[]> {
+  async listReceipts(filter?: Parameters<ReceiptStore['list']>[0]): Promise<OctroiReceipt[]> {
     return this.#receipts.list(filter);
   }
 
@@ -247,10 +247,10 @@ export class CrawlPayClient {
     );
   }
 
-  async #extractReceipt(url: string, response: Response): Promise<CrawlPayReceipt | null> {
+  async #extractReceipt(url: string, response: Response): Promise<OctroiReceipt | null> {
     const headerValue = response.headers.get(X402_HEADERS.response.toLowerCase());
     if (!headerValue) return null;
-    let receipt: CrawlPayReceipt;
+    let receipt: OctroiReceipt;
     try {
       receipt = decodeReceiptHeader(headerValue);
     } catch (err) {
@@ -308,7 +308,7 @@ export class CrawlPayClient {
 
 // ── Helpers ──────────────────────────────────────────────────────
 
-function defaultSigner(config: CrawlPayClientConfig): PaymentSigner {
+function defaultSigner(config: OctroiClientConfig): PaymentSigner {
   if (!config.sorobanRpcUrl) {
     throw new Error('sorobanRpcUrl is required unless you supply a custom paymentSigner');
   }
@@ -364,7 +364,7 @@ function encodePaymentPayload(payload: X402PaymentPayload): string {
   return Buffer.from(JSON.stringify(payload), 'utf-8').toString('base64');
 }
 
-function decodeReceiptHeader(value: string): CrawlPayReceipt {
+function decodeReceiptHeader(value: string): OctroiReceipt {
   return JSON.parse(Buffer.from(value, 'base64').toString('utf-8'));
 }
 

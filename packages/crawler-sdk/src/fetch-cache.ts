@@ -1,11 +1,11 @@
-import type { AtomicUsdc, CrawlPayReceipt } from '@crawlpay/types';
+import type { AtomicUsdc, OctroiReceipt } from '@octroi/types';
 
 export interface FetchCacheEntry {
   url: string;
   status: number;
   /** Parsed JSON body (or raw string if not JSON). */
   data: unknown;
-  receipt: CrawlPayReceipt | null;
+  receipt: OctroiReceipt | null;
   paid: AtomicUsdc;
   /** Unix seconds at which the entry was created. */
   cachedAt: number;

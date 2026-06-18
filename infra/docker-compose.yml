@@ -1,27 +1,27 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: crawlpay-postgres
+    container_name: octroi-postgres
     environment:
-      POSTGRES_USER: crawlpay
-      POSTGRES_PASSWORD: crawlpay
-      POSTGRES_DB: crawlpay
+      POSTGRES_USER: octroi
+      POSTGRES_PASSWORD: octroi
+      POSTGRES_DB: octroi
     # Host port is 5433 (not 5432) so we don't collide with any other Postgres
     # already running on the dev machine. The container still uses 5432
     # internally; only the host-side mapping is shifted.
     ports:
       - '5433:5432'
     volumes:
-      - crawlpay_postgres_data:/var/lib/postgresql/data
+      - octroi_postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U crawlpay -d crawlpay']
+      test: ['CMD-SHELL', 'pg_isready -U octroi -d octroi']
       interval: 5s
       timeout: 5s
       retries: 10
 
   redis:
     image: redis:7-alpine
-    container_name: crawlpay-redis
+    container_name: octroi-redis
     command: ['redis-server', '--appendonly', 'yes']
     # Host port is 6380 (not 6379) so we don't collide with any other Redis
     # already running on the dev machine. The container still uses 6379
@@ -29,7 +29,7 @@ services:
     ports:
       - '6380:6379'
     volumes:
-      - crawlpay_redis_data:/data
+      - octroi_redis_data:/data
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
@@ -37,5 +37,5 @@ services:
       retries: 10
 
 volumes:
-  crawlpay_postgres_data:
-  crawlpay_redis_data:
+  octroi_postgres_data:
+  octroi_redis_data:

@@ -1,5 +1,5 @@
 {
-  "name": "@crawlpay/proxy-middleware",
+  "name": "@octroi/proxy-middleware",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -18,13 +18,13 @@
     "lint": "echo 'noop'"
   },
   "dependencies": {
-    "@crawlpay/types": "workspace:*"
+    "@octroi/types": "workspace:*"
   },
   "peerDependencies": {
     "express": "^4.17.0 || ^5.0.0"
   },
   "devDependencies": {
-    "@crawlpay/receipt-signer": "workspace:*",
+    "@octroi/receipt-signer": "workspace:*",
     "@stellar/stellar-base": "^15.0.0",
     "@types/express": "^4.17.0",
     "express": "^4.19.0",

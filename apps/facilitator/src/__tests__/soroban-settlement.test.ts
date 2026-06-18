@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { Address, Asset, Keypair, authorizeEntry, nativeToScVal, xdr } from '@stellar/stellar-sdk';
-import type { AssetId, ContractAddress, StellarAddress, X402PaymentPayload } from '@crawlpay/types';
-import { NETWORK_PASSPHRASE } from '@crawlpay/types';
+import type { AssetId, ContractAddress, StellarAddress, X402PaymentPayload } from '@octroi/types';
+import { NETWORK_PASSPHRASE } from '@octroi/types';
 import {
   StellarSorobanSettlement,
   validateTransferAuth,

@@ -3,7 +3,7 @@ package reputation
 import (
 	"math"
 
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/store"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/store"
 )
 
 // halfSaturation is the settled-count at which the score reaches ~67.

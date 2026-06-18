@@ -1,19 +1,15 @@
-import {
-  verifyReceipt,
-  type ReceiptSigner,
-  type VerificationResult,
-} from '@crawlpay/receipt-signer';
+import { verifyReceipt, type ReceiptSigner, type VerificationResult } from '@octroi/receipt-signer';
 import type {
   AssetId,
-  CrawlPayErrorCode,
-  CrawlPayReceipt,
-  CrawlPayReceiptBody,
+  OctroiErrorCode,
+  OctroiReceipt,
+  OctroiReceiptBody,
   Network,
   PaymentPayload,
   StellarAddress,
-} from '@crawlpay/types';
-import { signReceipt } from '@crawlpay/receipt-signer';
-import type { NonceTracker, ReceiptRepository } from '@crawlpay/persistence';
+} from '@octroi/types';
+import { signReceipt } from '@octroi/receipt-signer';
+import type { NonceTracker, ReceiptRepository } from '@octroi/persistence';
 import type { SorobanSettlement } from './soroban-settlement';
 
 export interface VerifyInput {
@@ -28,12 +24,12 @@ export interface VerifyInput {
 
 export interface VerifySuccess {
   ok: true;
-  data: { receipt: CrawlPayReceipt };
+  data: { receipt: OctroiReceipt };
 }
 
 export interface VerifyFailure {
   ok: false;
-  error: { code: CrawlPayErrorCode; message: string };
+  error: { code: OctroiErrorCode; message: string };
 }
 
 export type VerifyResult = VerifySuccess | VerifyFailure;
@@ -134,7 +130,7 @@ export class FacilitatorService {
   }
 
   async verifyReceiptSignature(
-    receipt: CrawlPayReceipt,
+    receipt: OctroiReceipt,
     expectedSigner?: StellarAddress,
   ): Promise<VerificationResult> {
     return verifyReceipt(receipt, expectedSigner);
@@ -149,8 +145,8 @@ export class FacilitatorService {
     nonce: string;
     settlement: PaymentPayload['settlement'];
     onchainTxHash: string | null;
-  }): Promise<CrawlPayReceipt> {
-    const body: Omit<CrawlPayReceiptBody, 'facilitatorPubkey'> = {
+  }): Promise<OctroiReceipt> {
+    const body: Omit<OctroiReceiptBody, 'facilitatorPubkey'> = {
       version: '1',
       resource: input.resource,
       amount: input.amount,

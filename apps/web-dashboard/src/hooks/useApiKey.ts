@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-const STORAGE_KEY = 'crawlpay_api_key';
-const EVENT = 'crawlpay:apikey';
+const STORAGE_KEY = 'octroi_api_key';
+const EVENT = 'octroi:apikey';
 
 /**
  * API-key session. Key comes from onboarding (POST /publishers), lives in

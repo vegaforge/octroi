@@ -1,6 +1,6 @@
 /**
  * Client for the api-gateway's /reputation/* endpoints.
- * Gateway reads the crawlpay_registry Soroban contract, caches, returns a chip-sized summary.
+ * Gateway reads the octroi_registry Soroban contract, caches, returns a chip-sized summary.
  */
 
 const BASE = '/api';

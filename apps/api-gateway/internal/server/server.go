@@ -7,8 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/analytics"
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/store"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/analytics"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/store"
 )
 
 const version = "0.0.1"
@@ -61,7 +61,7 @@ func New(d Deps) *gin.Engine {
 func (s *server) health(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"ok":      true,
-		"service": "crawlpay-api-gateway",
+		"service": "octroi-api-gateway",
 		"version": version,
 		"network": s.d.Network,
 		"storage": s.d.Storage,

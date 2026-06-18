@@ -1,16 +1,16 @@
 import type {
   AssetId,
   AtomicUsdc,
-  CrawlPayReceipt,
+  OctroiReceipt,
   Network,
   PricingRule,
   StellarAddress,
-} from '@crawlpay/types';
+} from '@octroi/types';
 import type { BotClassifier, ClassificationResult } from './classifier';
 import type { FacilitatorClient } from './facilitator';
 import type { PricingResolver } from './pricing';
 
-export interface CrawlPayMiddlewareConfig {
+export interface OctroiMiddlewareConfig {
   /** Publisher catalog identifier (e.g. "pub_abc123"). */
   publisherId: string;
   /** Publisher's payout G-address. */
@@ -25,8 +25,8 @@ export interface CrawlPayMiddlewareConfig {
   defaultPrice: AtomicUsdc;
   /** Per-path glob pricing rules. Evaluated in declaration order; first match wins. */
   pricingRules?: PricingRule[];
-  /** Optional crawlpay_registry agent id; surfaced in the 402 offer. */
-  crawlpayAgentId?: string;
+  /** Optional octroi_registry agent id; surfaced in the 402 offer. */
+  octroiAgentId?: string;
   /** Description shown in the 402 offer (e.g. "Premium research articles"). */
   description?: string;
 
@@ -49,7 +49,7 @@ export interface PaymentEvent {
   /** Crawler G-address that paid (the receipt `from`). */
   from: StellarAddress;
   amount: AtomicUsdc;
-  receipt: CrawlPayReceipt;
+  receipt: OctroiReceipt;
   /** On-chain tx hash (x402) or session id (mpp). */
   settlementRef: string;
   durationMs: number;

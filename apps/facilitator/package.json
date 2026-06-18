@@ -1,5 +1,5 @@
 {
-  "name": "@crawlpay/facilitator",
+  "name": "@octroi/facilitator",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -12,9 +12,9 @@
     "lint": "echo 'noop'"
   },
   "dependencies": {
-    "@crawlpay/persistence": "workspace:*",
-    "@crawlpay/receipt-signer": "workspace:*",
-    "@crawlpay/types": "workspace:*",
+    "@octroi/persistence": "workspace:*",
+    "@octroi/receipt-signer": "workspace:*",
+    "@octroi/types": "workspace:*",
     "@stellar/stellar-sdk": "^16.0.0",
     "fastify": "^4.27.0",
     "ioredis": "^5.4.0",

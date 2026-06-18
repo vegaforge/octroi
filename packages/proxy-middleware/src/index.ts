@@ -1,5 +1,5 @@
-export { crawlpay } from './express';
-export type { CrawlPayMiddlewareConfig, ErrorEvent, PaymentEvent, SkipEvent } from './types';
+export { octroi } from './express';
+export type { OctroiMiddlewareConfig, ErrorEvent, PaymentEvent, SkipEvent } from './types';
 export {
   DefaultBotClassifier,
   type BotClassifier,

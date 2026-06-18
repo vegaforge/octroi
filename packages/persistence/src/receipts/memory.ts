@@ -1,11 +1,11 @@
-import type { CrawlPayReceipt } from '@crawlpay/types';
+import type { OctroiReceipt } from '@octroi/types';
 import type { ReceiptFilter, ReceiptRepository, StoredReceipt } from './interface';
 
 /** In-memory receipt repo, single-instance only; use PostgresReceiptRepository in prod. */
 export class MemoryReceiptRepository implements ReceiptRepository {
   readonly #byNonce = new Map<string, StoredReceipt>();
 
-  async insert(receipt: CrawlPayReceipt, publisherId: string): Promise<void> {
+  async insert(receipt: OctroiReceipt, publisherId: string): Promise<void> {
     if (this.#byNonce.has(receipt.nonce)) return;
     this.#byNonce.set(receipt.nonce, { ...receipt, publisherId });
   }

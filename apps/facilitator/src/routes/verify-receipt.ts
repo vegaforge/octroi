@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import type { CrawlPayReceipt, StellarAddress } from '@crawlpay/types';
+import type { OctroiReceipt, StellarAddress } from '@octroi/types';
 import type { FacilitatorService } from '../services/facilitator-service';
 
 interface VerifyReceiptBody {
@@ -21,7 +21,7 @@ export function verifyReceiptRoutes(app: FastifyInstance, service: FacilitatorSe
     }
     const expectedSigner = isStellarAddress(body.expectedSigner) ? body.expectedSigner : undefined;
     const result = await service.verifyReceiptSignature(
-      body.receipt as CrawlPayReceipt,
+      body.receipt as OctroiReceipt,
       expectedSigner,
     );
     return reply.code(200).send(result);

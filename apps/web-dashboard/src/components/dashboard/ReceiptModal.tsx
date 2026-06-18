@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertTriangle, Check, Loader2, X } from 'lucide-react';
-import type { CrawlPayReceipt } from '@crawlpay/types';
+import type { OctroiReceipt } from '@octroi/types';
 import { Button } from '@/components/ui/Button';
 import { Chip } from '@/components/ui/Chip';
 import { verifyReceipt, type VerifyReceiptResponse } from '@/lib/api/receipts';
@@ -18,7 +18,7 @@ export interface ReceiptModalReceipt {
   /** Object dumped as JSON inside the modal. */
   canonical: Record<string, unknown>;
   /** Full receipt payload, used by the Verify button to call /receipts/verify. */
-  fullReceipt?: CrawlPayReceipt;
+  fullReceipt?: OctroiReceipt;
 }
 
 type ReceiptModalProps = {

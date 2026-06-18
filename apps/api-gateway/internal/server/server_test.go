@@ -9,8 +9,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/analytics"
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/store"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/analytics"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/store"
 )
 
 const gAddr = "GCBFU4JRIBELJO4VG2SH54R4RGZS6ACCSOUZ5ZVAAMMD52AUDKE7OAUH"
@@ -66,7 +66,7 @@ func TestCreateAndGetPublisher(t *testing.T) {
 	if w.Code != 201 {
 		t.Fatalf("create status %d body %s", w.Code, w.Body.String())
 	}
-	if !strings.HasPrefix(body["apiKey"].(string), "cpk_") {
+	if !strings.HasPrefix(body["apiKey"].(string), "oct_") {
 		t.Fatalf("apiKey: %v", body["apiKey"])
 	}
 	if strings.Contains(w.Body.String(), "apiKeyHash") {

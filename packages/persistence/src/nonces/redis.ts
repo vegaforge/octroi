@@ -6,7 +6,7 @@ export class RedisNonceTracker implements NonceTracker {
   readonly #redis: Redis;
   readonly #prefix: string;
 
-  constructor(redis: Redis, prefix = 'crawlpay:nonce:') {
+  constructor(redis: Redis, prefix = 'octroi:nonce:') {
     this.#redis = redis;
     this.#prefix = prefix;
   }

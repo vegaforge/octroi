@@ -1,4 +1,4 @@
-import type { AtomicUsdc, Network, StellarAddress } from '@crawlpay/types';
+import type { AtomicUsdc, Network, StellarAddress } from '@octroi/types';
 
 export interface PublisherRecord {
   id: string;
@@ -6,7 +6,7 @@ export interface PublisherRecord {
   walletAddress: StellarAddress;
   network: Network;
   defaultPriceAtomic: AtomicUsdc;
-  crawlpayAgentId?: string;
+  octroiAgentId?: string;
   /** sha256 of the publisher's API key. Never returned in API responses. */
   apiKeyHash?: string;
   description?: string;
@@ -23,7 +23,7 @@ export interface CreatePublisherInput {
   walletAddress: StellarAddress;
   network: Network;
   defaultPriceAtomic?: AtomicUsdc;
-  crawlpayAgentId?: string;
+  octroiAgentId?: string;
   apiKeyHash?: string;
   description?: string;
   minReputationScore?: number;

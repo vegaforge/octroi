@@ -1,4 +1,4 @@
-import type { CrawlPayErrorCode } from '@crawlpay/types';
+import type { OctroiErrorCode } from '@octroi/types';
 
 export type RetryDecision = 'retry' | 'refresh-offer' | 'abort';
 
@@ -6,7 +6,7 @@ export interface RetryPolicy {
   /** Max attempts (including the first try) before giving up. */
   readonly maxAttempts: number;
   /** Decide what to do given an error code + the attempt number (1-indexed). */
-  decide(errorCode: CrawlPayErrorCode | string, attempt: number): RetryDecision;
+  decide(errorCode: OctroiErrorCode | string, attempt: number): RetryDecision;
   /** Milliseconds to wait before attempt N (1-indexed). */
   backoffMs(attempt: number): number;
 }
@@ -24,7 +24,7 @@ export class DefaultRetryPolicy implements RetryPolicy {
     this.maxAttempts = maxAttempts;
   }
 
-  decide(errorCode: CrawlPayErrorCode | string, attempt: number): RetryDecision {
+  decide(errorCode: OctroiErrorCode | string, attempt: number): RetryDecision {
     if (attempt >= this.maxAttempts) return 'abort';
     switch (errorCode) {
       case 'invalid_signature':

@@ -1,5 +1,5 @@
 {
-  "name": "@crawlpay/receipt-signer",
+  "name": "@octroi/receipt-signer",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -18,7 +18,7 @@
     "lint": "echo 'noop'"
   },
   "dependencies": {
-    "@crawlpay/types": "workspace:*",
+    "@octroi/types": "workspace:*",
     "@stellar/stellar-base": "^15.0.0"
   },
   "devDependencies": {

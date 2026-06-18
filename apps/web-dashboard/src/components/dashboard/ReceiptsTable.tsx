@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { AlertCircle, Calendar, Download, Filter, Loader2, Search } from 'lucide-react';
-import type { CrawlPayReceipt } from '@crawlpay/types';
+import type { OctroiReceipt } from '@octroi/types';
 import { Button } from '@/components/ui/Button';
 import { Chip } from '@/components/ui/Chip';
 import { ReceiptModal } from './ReceiptModal';
@@ -41,7 +41,7 @@ export function ReceiptsTable(props: ReceiptsTableProps) {
   const [counterpartyQuery, setCounterpartyQuery] = useState('');
   const [urlQuery, setUrlQuery] = useState('');
   const [status, setStatus] = useState('');
-  const [selected, setSelected] = useState<CrawlPayReceipt | null>(null);
+  const [selected, setSelected] = useState<OctroiReceipt | null>(null);
 
   const queryKey = useMemo(
     () =>
@@ -119,7 +119,7 @@ export function ReceiptsTable(props: ReceiptsTableProps) {
     const blob = new Blob([header + rows], { type: 'text/csv' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'crawlpay-receipts.csv';
+    a.download = 'octroi-receipts.csv';
     a.click();
     URL.revokeObjectURL(a.href);
   }
@@ -297,7 +297,7 @@ export function ReceiptsTable(props: ReceiptsTableProps) {
   );
 }
 
-function receiptStatus(r: CrawlPayReceipt): 'Settled' | 'Pending' {
+function receiptStatus(r: OctroiReceipt): 'Settled' | 'Pending' {
   return r.onchainTxHash ? 'Settled' : 'Pending';
 }
 

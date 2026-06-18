@@ -2,7 +2,7 @@ import type { AtomicUsdc, StellarAddress } from './primitives';
 
 export interface CrawlerProfile {
   walletAddress: StellarAddress;
-  crawlpayAgentId?: string;
+  octroiAgentId?: string;
   userAgent?: string;
   /** Hard cap on per-request payment, regardless of publisher offer. */
   maxPerRequest: AtomicUsdc;

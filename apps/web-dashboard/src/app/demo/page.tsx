@@ -4,9 +4,9 @@ import { SiteFooter } from '@/components/ui/SiteFooter';
 import { DemoRunner } from '@/components/demo/DemoRunner';
 
 export const metadata: Metadata = {
-  title: 'Live demo — CrawlPay',
+  title: 'Live demo — Octroi',
   description:
-    'Watch CrawlPay settle 60 real Stellar testnet payments in under two minutes. Streaming receipts, verifiable on-chain.',
+    'Watch Octroi settle 60 real Stellar testnet payments in under two minutes. Streaming receipts, verifiable on-chain.',
 };
 
 export default function DemoPage() {

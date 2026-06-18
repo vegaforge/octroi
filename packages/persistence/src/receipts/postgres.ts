@@ -1,12 +1,12 @@
 import type { Pool } from 'pg';
 import type {
   AssetId,
-  CrawlPayReceipt,
+  OctroiReceipt,
   Ed25519Signature,
   Network,
   SettlementModel,
   StellarAddress,
-} from '@crawlpay/types';
+} from '@octroi/types';
 import type { ReceiptFilter, ReceiptRepository, StoredReceipt } from './interface';
 
 interface ReceiptRow {
@@ -40,7 +40,7 @@ export class PostgresReceiptRepository implements ReceiptRepository {
     this.#pool = pool;
   }
 
-  async insert(receipt: CrawlPayReceipt, publisherId: string): Promise<void> {
+  async insert(receipt: OctroiReceipt, publisherId: string): Promise<void> {
     await this.#pool.query(
       `INSERT INTO receipts (
          nonce, publisher_id, from_wallet, to_wallet, resource, amount_atomic,

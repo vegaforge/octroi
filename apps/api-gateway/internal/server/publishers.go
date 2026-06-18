@@ -9,9 +9,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/auth"
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/probe"
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/store"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/auth"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/probe"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/store"
 )
 
 var (

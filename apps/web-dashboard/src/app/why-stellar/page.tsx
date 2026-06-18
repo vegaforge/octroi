@@ -5,7 +5,7 @@ import { SiteFooter } from '@/components/ui/SiteFooter';
 import { ButtonLink } from '@/components/ui/ButtonLink';
 
 export const metadata: Metadata = {
-  title: 'Why Stellar — CrawlPay',
+  title: 'Why Stellar — Octroi',
   description:
     'Sub-cent payments need sub-cent settlement. Why native USDC on Stellar, sponsored fees, and MPP sessions are where pay-per-crawl economics work.',
 };
@@ -274,8 +274,8 @@ export default function WhyStellarPage() {
         <section className="border-y border-border-subtle bg-bg-elevated py-20 text-center">
           <div className="wrap">
             <h2 className="h2 mb-6">The math checks out. Add it to your site.</h2>
-            <ButtonLink href="https://github.com/StrimzLab/crawlpay" external size="lg">
-              Add CrawlPay to your site
+            <ButtonLink href="https://github.com/StrimzLab/octroi" external size="lg">
+              Add Octroi to your site
               <ArrowRight className="h-4 w-4" aria-hidden />
             </ButtonLink>
             <p className="mono mt-5 text-sm text-ink-secondary">

@@ -1,5 +1,5 @@
 {
-  "name": "@crawlpay/persistence",
+  "name": "@octroi/persistence",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -19,7 +19,7 @@
     "lint": "echo 'noop'"
   },
   "dependencies": {
-    "@crawlpay/types": "workspace:*",
+    "@octroi/types": "workspace:*",
     "ioredis": "^5.4.0",
     "pg": "^8.11.0"
   },

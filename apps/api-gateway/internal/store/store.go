@@ -13,7 +13,7 @@ type Publisher struct {
 	WalletAddress      string    `json:"walletAddress"`
 	Network            string    `json:"network"`
 	DefaultPriceAtomic string    `json:"defaultPriceAtomic"`
-	CrawlpayAgentID    *string   `json:"crawlpayAgentId,omitempty"`
+	OctroiAgentID      *string   `json:"octroiAgentId,omitempty"`
 	Description        *string   `json:"description,omitempty"`
 	MinReputationScore int       `json:"minReputationScore"`
 	RobotsTxtAware     bool      `json:"robotsTxtAware"`

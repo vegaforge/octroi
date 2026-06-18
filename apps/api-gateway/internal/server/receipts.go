@@ -8,8 +8,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/receipt"
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/store"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/receipt"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/store"
 )
 
 const defaultLimit = 20

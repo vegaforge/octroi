@@ -8,7 +8,7 @@ export function healthRoutes(
 ): void {
   app.get('/health', async () => ({
     ok: true,
-    service: 'crawlpay-facilitator',
+    service: 'octroi-facilitator',
     version: '0.0.1',
     network,
     facilitatorPublicKey: service.signerPublicKey,

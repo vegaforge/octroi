@@ -12,7 +12,7 @@ export interface PublisherRecord {
   domain: string;
   /** Stellar payout G-address. */
   walletAddress: string;
-  crawlpayAgentId?: string;
+  octroiAgentId?: string;
   defaultPriceAtomic: string;
   network: 'stellar-testnet' | 'stellar-mainnet';
   minReputationScore: number;

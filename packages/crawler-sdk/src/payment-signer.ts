@@ -20,8 +20,8 @@ import type {
   PaymentRequirement,
   StellarAddress,
   X402PaymentPayload,
-} from '@crawlpay/types';
-import { NETWORK_PASSPHRASE, atomicUsdc } from '@crawlpay/types';
+} from '@octroi/types';
+import { NETWORK_PASSPHRASE, atomicUsdc } from '@octroi/types';
 
 export interface CrawlerBalance {
   /** USDC available to spend, atomic. */

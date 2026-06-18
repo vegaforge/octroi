@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { Keypair } from '@stellar/stellar-base';
-import type { StellarAddress } from '@crawlpay/types';
-import { atomicUsdc } from '@crawlpay/types';
+import type { StellarAddress } from '@octroi/types';
+import { atomicUsdc } from '@octroi/types';
 import { MemoryPublisherRepository } from '../publishers/memory';
 import { PublisherAlreadyExistsError } from '../publishers/interface';
 

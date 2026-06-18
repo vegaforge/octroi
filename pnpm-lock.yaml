@@ -38,13 +38,13 @@ importers:
 
   apps/facilitator:
     dependencies:
-      '@crawlpay/persistence':
+      '@octroi/persistence':
         specifier: workspace:*
         version: link:../../packages/persistence
-      '@crawlpay/receipt-signer':
+      '@octroi/receipt-signer':
         specifier: workspace:*
         version: link:../../packages/receipt-signer
-      '@crawlpay/types':
+      '@octroi/types':
         specifier: workspace:*
         version: link:../../packages/types
       '@stellar/stellar-sdk':
@@ -84,7 +84,7 @@ importers:
 
   apps/web-dashboard:
     dependencies:
-      '@crawlpay/types':
+      '@octroi/types':
         specifier: workspace:*
         version: link:../../packages/types
       '@stellar/stellar-base':
@@ -151,10 +151,10 @@ importers:
 
   packages/crawler-sdk:
     dependencies:
-      '@crawlpay/receipt-signer':
+      '@octroi/receipt-signer':
         specifier: workspace:*
         version: link:../receipt-signer
-      '@crawlpay/types':
+      '@octroi/types':
         specifier: workspace:*
         version: link:../types
       '@stellar/stellar-sdk':
@@ -170,7 +170,7 @@ importers:
 
   packages/persistence:
     dependencies:
-      '@crawlpay/types':
+      '@octroi/types':
         specifier: workspace:*
         version: link:../types
       ioredis:
@@ -201,11 +201,11 @@ importers:
 
   packages/proxy-middleware:
     dependencies:
-      '@crawlpay/types':
+      '@octroi/types':
         specifier: workspace:*
         version: link:../types
     devDependencies:
-      '@crawlpay/receipt-signer':
+      '@octroi/receipt-signer':
         specifier: workspace:*
         version: link:../receipt-signer
       '@stellar/stellar-base':
@@ -226,7 +226,7 @@ importers:
 
   packages/receipt-signer:
     dependencies:
-      '@crawlpay/types':
+      '@octroi/types':
         specifier: workspace:*
         version: link:../types
       '@stellar/stellar-base':

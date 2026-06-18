@@ -4,7 +4,7 @@
 
 Please **do not** open a public issue for security vulnerabilities.
 
-Report privately through GitHub's [private vulnerability reporting](https://github.com/vegaforge/crawlpay/security/advisories/new) (the "Report a vulnerability" button under the repository's **Security** tab). We aim to acknowledge a report within 72 hours and to provide a remediation timeline after triage.
+Report privately through GitHub's [private vulnerability reporting](https://github.com/vegaforge/octroi/security/advisories/new) (the "Report a vulnerability" button under the repository's **Security** tab). We aim to acknowledge a report within 72 hours and to provide a remediation timeline after triage.
 
 When reporting, please include:
 
@@ -27,4 +27,4 @@ By design, no single party can both move funds and forge evidence of authorizati
 
 ## Supported versions
 
-CrawlPay is pre-1.0 and under active development. Security fixes are applied to `main`.
+Octroi is pre-1.0 and under active development. Security fixes are applied to `main`.

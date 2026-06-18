@@ -5,9 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/analytics"
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/reputation"
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/store"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/analytics"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/reputation"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/store"
 )
 
 func (s *server) crawlerReceipts(c *gin.Context) {

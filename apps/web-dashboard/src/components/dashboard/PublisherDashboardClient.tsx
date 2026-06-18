@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { AlertCircle, ArrowRight, LayoutGrid, Loader2, Receipt, Settings } from 'lucide-react';
-import type { CrawlPayReceipt } from '@crawlpay/types';
+import type { OctroiReceipt } from '@octroi/types';
 import { DashLayout } from './DashLayout';
 import { KpiCard } from './KpiCard';
 import { DashChart, type ChartPoint, type WindowKey } from './DashChart';
@@ -200,7 +200,7 @@ function KpiStrip({
   );
 }
 
-function TopCrawlersTable({ receipts }: { receipts: CrawlPayReceipt[] }) {
+function TopCrawlersTable({ receipts }: { receipts: OctroiReceipt[] }) {
   const top = useMemo(() => topCounterparties(receipts, 'publisher'), [receipts]);
 
   if (receipts.length === 0) {
@@ -275,7 +275,7 @@ function networkLabel(network: PublisherRecord['network']): string {
   return network === 'stellar-mainnet' ? 'Stellar mainnet' : 'Stellar testnet';
 }
 
-function feedFromReceipts(receipts: CrawlPayReceipt[], mode: 'publisher' | 'crawler'): FeedEntry[] {
+function feedFromReceipts(receipts: OctroiReceipt[], mode: 'publisher' | 'crawler'): FeedEntry[] {
   return receipts.slice(0, 10).map((r) => ({
     id: r.nonce,
     url: r.resource,
@@ -293,7 +293,7 @@ interface CounterpartyAgg {
 }
 
 function topCounterparties(
-  receipts: CrawlPayReceipt[],
+  receipts: OctroiReceipt[],
   mode: 'publisher' | 'crawler',
   limit = 5,
 ): CounterpartyAgg[] {

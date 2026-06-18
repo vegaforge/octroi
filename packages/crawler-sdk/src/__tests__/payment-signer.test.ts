@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { Keypair, Address, hash, scValToNative, xdr } from '@stellar/stellar-sdk';
-import type { AssetId, PaymentRequirement, StellarAddress } from '@crawlpay/types';
-import { NETWORK_PASSPHRASE } from '@crawlpay/types';
+import type { AssetId, PaymentRequirement, StellarAddress } from '@octroi/types';
+import { NETWORK_PASSPHRASE } from '@octroi/types';
 import { StellarPaymentSigner, deriveSacContractId } from '../payment-signer';
 
 const NETWORK = 'stellar-testnet';

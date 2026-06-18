@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { atomicUsdc } from '@crawlpay/types';
+import { atomicUsdc } from '@octroi/types';
 import { InMemoryBudgetTracker, UnlimitedBudgetTracker } from '../budget';
 
 describe('InMemoryBudgetTracker', () => {

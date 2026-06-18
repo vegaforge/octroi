@@ -15,20 +15,20 @@ import { CodeBlock } from '@/components/ui/CodeBlock';
 import { ButtonLink } from '@/components/ui/ButtonLink';
 
 const easeSmooth = [0.32, 0.72, 0, 1] as const;
-const GITHUB_URL = 'https://github.com/StrimzLab/crawlpay';
+const GITHUB_URL = 'https://github.com/StrimzLab/octroi';
 
 const PUBLISHER_CODE = `import express from 'express';
-import { crawlpay } from '@crawlpay/proxy-middleware';
-import { dollarsToAtomic } from '@crawlpay/types';
+import { octroi } from '@octroi/proxy-middleware';
+import { dollarsToAtomic } from '@octroi/types';
 
 const app = express();
 
-app.use(crawlpay({
+app.use(octroi({
   publisherId: 'pub_yourSite',
   payToAddress: 'GYOUR…WXYZ',
   network: 'stellar-testnet',
   defaultPrice: dollarsToAtomic('0.0001'),
-  apiKey: process.env.CRAWLPAY_API_KEY,
+  apiKey: process.env.OCTROI_API_KEY,
 }));
 
 app.get('/articles/:slug', (req, res) => {

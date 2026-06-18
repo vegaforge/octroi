@@ -30,7 +30,7 @@ export function DemoTerminal({ logs, idle }: DemoTerminalProps) {
           <span className="h-2.5 w-2.5 rounded-full bg-border-strong" />
         </div>
         <span className="mono ml-1.5 text-[12px] text-ink-tertiary">
-          crawlpay demo · stellar-testnet
+          octroi demo · stellar-testnet
         </span>
       </header>
       <div ref={ref} className="mono h-[440px] overflow-y-auto px-4 py-4 text-[13px] leading-[1.9]">

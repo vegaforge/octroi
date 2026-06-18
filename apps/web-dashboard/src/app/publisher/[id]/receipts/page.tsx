@@ -6,7 +6,7 @@ import { ReceiptsTable } from '@/components/dashboard/ReceiptsTable';
 type RouteParams = { id: string };
 
 export async function generateMetadata({ params }: { params: RouteParams }): Promise<Metadata> {
-  return { title: `Receipts — ${params.id} — CrawlPay` };
+  return { title: `Receipts — ${params.id} — Octroi` };
 }
 
 export default function PublisherReceiptsPage({ params }: { params: RouteParams }) {

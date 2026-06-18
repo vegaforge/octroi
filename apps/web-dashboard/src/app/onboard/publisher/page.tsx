@@ -4,7 +4,7 @@ import { SiteNav } from '@/components/ui/SiteNav';
 import { PublisherOnboarding } from '@/components/onboard/PublisherOnboarding';
 
 export const metadata: Metadata = {
-  title: 'Open a publisher — CrawlPay',
+  title: 'Open a publisher — Octroi',
   description:
     'Three minutes from "I have a website" to "AI crawlers are paying me per fetch". Add a Stellar payout address, pick a price, paste three lines.',
 };

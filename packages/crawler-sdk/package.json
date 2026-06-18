@@ -1,5 +1,5 @@
 {
-  "name": "@crawlpay/crawler-sdk",
+  "name": "@octroi/crawler-sdk",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -18,8 +18,8 @@
     "lint": "echo 'noop'"
   },
   "dependencies": {
-    "@crawlpay/receipt-signer": "workspace:*",
-    "@crawlpay/types": "workspace:*",
+    "@octroi/receipt-signer": "workspace:*",
+    "@octroi/types": "workspace:*",
     "@stellar/stellar-sdk": "^16.0.0"
   },
   "devDependencies": {

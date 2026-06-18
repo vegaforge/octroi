@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, Globe, KeyRound, Loader2 } from 'lucide-react';
-import { isStellarAddress } from '@crawlpay/types';
+import { isStellarAddress } from '@octroi/types';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import { useApiKey } from '@/hooks/useApiKey';

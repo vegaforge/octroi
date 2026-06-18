@@ -37,19 +37,19 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   // Makes OG/Twitter image URLs absolute. Override via NEXT_PUBLIC_SITE_URL on deploy.
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
-  title: 'CrawlPay — Pay-per-crawl infrastructure for the open web',
+  title: 'Octroi — Pay-per-crawl infrastructure for the open web',
   description:
     'Open-source pay-per-crawl infrastructure. Publishers charge AI crawlers per URL. Crawlers pay $0.0001 per fetch, gas-free, with a cryptographic receipt.',
   icons: { icon: '/brand/favicon.svg' },
   openGraph: {
-    title: 'CrawlPay',
+    title: 'Octroi',
     description: 'Pay-per-crawl infrastructure for the open web.',
     images: ['/brand/og-default.png'],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'CrawlPay',
+    title: 'Octroi',
     description: 'Pay-per-crawl infrastructure for the open web.',
     images: ['/brand/og-default.png'],
   },

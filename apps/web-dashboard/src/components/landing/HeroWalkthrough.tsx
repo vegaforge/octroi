@@ -50,7 +50,7 @@ const SUBSTEPS: SubStep[] = [
     beat: 'b',
     caption: (
       <>
-        The request reaches the publisher&rsquo;s <b>CrawlPay paygate</b>
+        The request reaches the publisher&rsquo;s <b>Octroi paygate</b>
       </>
     ),
     token: { text: 'GET /article', at: 'gate', variant: 'plain' },
@@ -301,7 +301,7 @@ export function HeroWalkthrough() {
           </div>
         </Station>
 
-        <Station label="CrawlPay paygate" left="50%">
+        <Station label="Octroi paygate" left="50%">
           <motion.div
             className="relative flex h-[94px] items-center justify-center text-accent"
             animate={{ filter: gateFilter(current.gate) }}

@@ -4,12 +4,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/store"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/store"
 )
 
 func TestGenerateAndHash(t *testing.T) {
 	key, hash := GenerateAPIKey()
-	if !strings.HasPrefix(key, "cpk_") {
+	if !strings.HasPrefix(key, "oct_") {
 		t.Fatalf("key prefix: %s", key)
 	}
 	if HashAPIKey(key) != hash {

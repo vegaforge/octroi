@@ -21,20 +21,20 @@ type SetupInstructionsProps = {
 
 /** Final onboarding step: one-time API key reveal, prefilled middleware/.env snippets, domain probe. */
 export function SetupInstructions({ publisher, apiKey }: SetupInstructionsProps) {
-  const installCmd = 'pnpm add @crawlpay/proxy-middleware @crawlpay/types';
+  const installCmd = 'pnpm add @octroi/proxy-middleware @octroi/types';
 
   const expressCode = `import express from 'express';
-import { crawlpay } from '@crawlpay/proxy-middleware';
-import { dollarsToAtomic } from '@crawlpay/types';
+import { octroi } from '@octroi/proxy-middleware';
+import { dollarsToAtomic } from '@octroi/types';
 
 const app = express();
 
-app.use(crawlpay({
+app.use(octroi({
   publisherId: '${publisher.id}',
   payToAddress: '${publisher.walletAddress}',
   network: '${publisher.network}',
   defaultPrice: ${publisher.defaultPriceAtomic}n,
-  apiKey: process.env.CRAWLPAY_API_KEY,
+  apiKey: process.env.OCTROI_API_KEY,
 }));
 
 app.get('/articles/:slug', (req, res) => {
@@ -44,9 +44,9 @@ app.get('/articles/:slug', (req, res) => {
 app.listen(3000);
 `;
 
-  const envBlock = `# CrawlPay API key
+  const envBlock = `# Octroi API key
 # Save this. We don't store it, and there's no "show again" button.
-CRAWLPAY_API_KEY=${apiKey}
+OCTROI_API_KEY=${apiKey}
 `;
 
   return (
@@ -229,9 +229,8 @@ function ProbeSection({ publisherId, domain }: { publisherId: string; domain: st
         <h3 className="text-[15px] font-semibold tracking-tight">Test the middleware</h3>
       </div>
       <p className="text-sm leading-[1.55] text-ink-secondary">
-        We&rsquo;ll hit{' '}
-        <code className="mono text-accent">https://{domain}/__crawlpay-probe-…</code> and check for
-        a 402 with the <code className="mono text-accent">X-PAYMENT</code> offer.
+        We&rsquo;ll hit <code className="mono text-accent">https://{domain}/__octroi-probe-…</code>{' '}
+        and check for a 402 with the <code className="mono text-accent">X-PAYMENT</code> offer.
       </p>
       <div className="flex flex-wrap items-center gap-3">
         <Button onClick={runProbe} disabled={probing} variant="secondary">

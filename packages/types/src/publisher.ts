@@ -4,7 +4,7 @@ export interface PublisherConfig {
   id: string;
   domain: string;
   walletAddress: StellarAddress;
-  crawlpayAgentId?: string;
+  octroiAgentId?: string;
   defaultPriceAtomic: AtomicUsdc;
   pricingRules?: PricingRule[];
   accessRules?: AccessRule[];

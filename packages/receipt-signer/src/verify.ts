@@ -1,5 +1,5 @@
 import { Keypair, StrKey } from '@stellar/stellar-base';
-import type { CrawlPayReceipt, StellarAddress } from '@crawlpay/types';
+import type { OctroiReceipt, StellarAddress } from '@octroi/types';
 import { canonicalReceiptBytes } from './sign';
 
 export interface VerificationResult {
@@ -16,7 +16,7 @@ export interface VerificationResult {
  * Never throws on a bad signature; returns a structured result with a reason.
  */
 export async function verifyReceipt(
-  receipt: CrawlPayReceipt,
+  receipt: OctroiReceipt,
   expectedSigner?: StellarAddress,
 ): Promise<VerificationResult> {
   const { signature, ...body } = receipt;

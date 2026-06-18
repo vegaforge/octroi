@@ -35,7 +35,7 @@ func isoMillis(t time.Time) string {
 	return t.UTC().Format("2006-01-02T15:04:05.000Z")
 }
 
-const publisherColumns = `id, domain, wallet_address, crawlpay_agent_id, api_key_hash,
+const publisherColumns = `id, domain, wallet_address, octroi_agent_id, api_key_hash,
 	default_price_atomic, network, min_reputation_score, robots_txt_aware, active,
 	description, created_at, updated_at`
 
@@ -56,7 +56,7 @@ func scanPublisher(row interface {
 		&p.CreatedAt, &p.UpdatedAt); err != nil {
 		return Publisher{}, err
 	}
-	p.CrawlpayAgentID = agentID
+	p.OctroiAgentID = agentID
 	p.Description = descr
 	p.DefaultPriceAtomic = strconv.FormatInt(priceI64, 10)
 	if apiKey != nil {

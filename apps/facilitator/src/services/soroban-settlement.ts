@@ -12,12 +12,12 @@ import {
 import type {
   AssetId,
   ContractAddress,
-  CrawlPayErrorCode,
+  OctroiErrorCode,
   Network,
   PaymentPayload,
   StellarAddress,
-} from '@crawlpay/types';
-import { NETWORK_PASSPHRASE } from '@crawlpay/types';
+} from '@octroi/types';
+import { NETWORK_PASSPHRASE } from '@octroi/types';
 
 export interface SettleInput {
   /** The crawler's `X-PAYMENT` payload (signed auth entry or MPP debit). */
@@ -44,7 +44,7 @@ export type SettleResult =
       /** SAC transfer hash for x402; null until bulk settlement for mpp. */
       onchainTxHash: string | null;
     }
-  | { ok: false; error: { code: CrawlPayErrorCode; message: string } };
+  | { ok: false; error: { code: OctroiErrorCode; message: string } };
 
 /** Settles a verified payment on Stellar by submitting the USDC SAC transfer. */
 export interface SorobanSettlement {
@@ -69,9 +69,9 @@ export interface StellarSorobanSettlementOptions {
 }
 
 function fail(
-  code: CrawlPayErrorCode,
+  code: OctroiErrorCode,
   message: string,
-): { ok: false; error: { code: CrawlPayErrorCode; message: string } } {
+): { ok: false; error: { code: OctroiErrorCode; message: string } } {
   return { ok: false, error: { code, message } };
 }
 
@@ -156,7 +156,7 @@ interface AuthContext {
 
 type ValidatedAuth =
   | { ok: true; from: StellarAddress; to: StellarAddress; amount: bigint; nonce: string }
-  | { ok: false; error: { code: CrawlPayErrorCode; message: string } };
+  | { ok: false; error: { code: OctroiErrorCode; message: string } };
 
 /**
  * Verify that the signed authorization entry authorizes exactly the offered
@@ -289,7 +289,7 @@ export class SorobanGateway implements SettlementGateway {
 
   async submitTransfer(authEntry: xdr.SorobanAuthorizationEntry): Promise<string> {
     if (!this.#feeSponsorSeed) {
-      throw new Error('CRAWLPAY_FEE_SPONSOR_SEED is required to submit settlements');
+      throw new Error('OCTROI_FEE_SPONSOR_SEED is required to submit settlements');
     }
     const sponsor = Keypair.fromSecret(this.#feeSponsorSeed);
 

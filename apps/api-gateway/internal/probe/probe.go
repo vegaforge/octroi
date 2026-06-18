@@ -29,7 +29,7 @@ func Probe(domain string) Result {
 	host := sanitizeDomain(domain)
 	n := make([]byte, 8)
 	_, _ = rand.Read(n)
-	url := fmt.Sprintf("https://%s/__crawlpay-probe-%s", host, hex.EncodeToString(n))
+	url := fmt.Sprintf("https://%s/__octroi-probe-%s", host, hex.EncodeToString(n))
 
 	client := &http.Client{
 		Timeout:       timeout,
@@ -39,7 +39,7 @@ func Probe(domain string) Result {
 	if err != nil {
 		return Result{OK: false, Status: 0, Detail: fmt.Sprintf("Could not reach https://%s: %s", host, err.Error()), URL: url}
 	}
-	req.Header.Set("User-Agent", "CrawlPay-Integration-Probe/1.0")
+	req.Header.Set("User-Agent", "Octroi-Integration-Probe/1.0")
 
 	resp, err := client.Do(req)
 	if err != nil {

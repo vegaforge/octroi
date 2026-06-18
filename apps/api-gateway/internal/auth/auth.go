@@ -7,7 +7,7 @@ import (
 	"encoding/hex"
 	"strings"
 
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/store"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/store"
 )
 
 // HashAPIKey returns the hex sha256 of a key. Only the hash is ever stored.
@@ -20,7 +20,7 @@ func HashAPIKey(key string) string {
 func GenerateAPIKey() (key, hash string) {
 	b := make([]byte, 24)
 	_, _ = rand.Read(b)
-	key = "cpk_" + base64.RawURLEncoding.EncodeToString(b)
+	key = "oct_" + base64.RawURLEncoding.EncodeToString(b)
 	return key, HashAPIKey(key)
 }
 

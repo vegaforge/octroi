@@ -1,6 +1,6 @@
-# Contributing to CrawlPay
+# Contributing to Octroi
 
-Thanks for your interest in CrawlPay. This document covers how the project is developed and the conventions every change is expected to follow.
+Thanks for your interest in Octroi. This document covers how the project is developed and the conventions every change is expected to follow.
 
 ## Ground rules
 
@@ -22,7 +22,7 @@ pnpm typecheck              # tsc --noEmit across the workspace
 pnpm test                   # Vitest across packages with tests
 ```
 
-The monorepo is managed with pnpm workspaces and Turbo. Run a single package's scripts with `pnpm --filter @crawlpay/<name> <script>`.
+The monorepo is managed with pnpm workspaces and Turbo. Run a single package's scripts with `pnpm --filter @octroi/<name> <script>`.
 
 ## Branches and commits
 
@@ -45,4 +45,4 @@ The monorepo is managed with pnpm workspaces and Turbo. Run a single package's s
 
 ## Where to start
 
-Look for issues labeled [`good first issue`](https://github.com/vegaforge/crawlpay/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). The current focus is the v0 Stellar settlement track; see the [`v0` milestone](https://github.com/vegaforge/crawlpay/milestones).
+Look for issues labeled [`good first issue`](https://github.com/vegaforge/octroi/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). The current focus is the v0 Stellar settlement track; see the [`v0` milestone](https://github.com/vegaforge/octroi/milestones).

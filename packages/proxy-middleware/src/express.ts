@@ -1,10 +1,10 @@
 import type { NextFunction, Request, RequestHandler, Response } from 'express';
-import { type PaymentPayload, type PaymentRequiredResponse, X402_HEADERS } from '@crawlpay/types';
+import { type PaymentPayload, type PaymentRequiredResponse, X402_HEADERS } from '@octroi/types';
 import { DefaultBotClassifier } from './classifier';
 import { HttpFacilitatorClient, type FacilitatorClient } from './facilitator';
 import { GlobPricingResolver, type PricingResolver } from './pricing';
 import { encodeReceiptHeader } from './receipts';
-import type { CrawlPayMiddlewareConfig, ErrorEvent } from './types';
+import type { OctroiMiddlewareConfig, ErrorEvent } from './types';
 
 /** Offer validity window (seconds). Kept short: the crawler's Soroban auth entry must settle within it. */
 const OFFER_VALIDITY_WINDOW_SECONDS = 60;
@@ -16,7 +16,7 @@ const PAYMENT_HEADER = X402_HEADERS.payment.toLowerCase();
  * Each step is pluggable via config. The facilitator owns settlement and signing;
  * the middleware just relays payment and returns the signed receipt.
  */
-export function crawlpay(config: CrawlPayMiddlewareConfig): RequestHandler {
+export function octroi(config: OctroiMiddlewareConfig): RequestHandler {
   const classifier = config.botClassifier ?? new DefaultBotClassifier();
   const pricingResolver: PricingResolver =
     config.pricingResolver ??
@@ -93,7 +93,7 @@ export function crawlpay(config: CrawlPayMiddlewareConfig): RequestHandler {
     // return the signed receipt to the crawler and downstream handlers
     const { receipt } = result;
     res.setHeader(X402_HEADERS.response, encodeReceiptHeader(receipt));
-    res.locals.crawlpayReceipt = receipt;
+    res.locals.octroiReceipt = receipt;
 
     await config.onPayment?.({
       url: fullUrl,
@@ -111,7 +111,7 @@ export function crawlpay(config: CrawlPayMiddlewareConfig): RequestHandler {
 }
 
 function buildOffer(
-  config: CrawlPayMiddlewareConfig,
+  config: OctroiMiddlewareConfig,
   resource: string,
   maxAmountRequired: string,
 ): PaymentRequiredResponse {
@@ -130,9 +130,9 @@ function buildOffer(
         extra: {
           settlement: 'x402',
           feeSponsored: true,
-          crawlpay_publisher_id: config.publisherId,
-          crawlpay_facilitator: config.facilitatorUrl,
-          ...(config.crawlpayAgentId ? { crawlpay_agent_id: config.crawlpayAgentId } : {}),
+          octroi_publisher_id: config.publisherId,
+          octroi_facilitator: config.facilitatorUrl,
+          ...(config.octroiAgentId ? { octroi_agent_id: config.octroiAgentId } : {}),
         },
       },
     ],
@@ -145,7 +145,7 @@ function decodePaymentPayload(headerValue: string): PaymentPayload {
 }
 
 async function emitError(
-  config: CrawlPayMiddlewareConfig,
+  config: OctroiMiddlewareConfig,
   url: string,
   err: unknown,
   phase: ErrorEvent['phase'],

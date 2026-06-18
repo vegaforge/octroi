@@ -9,7 +9,7 @@ export type LogoProps = {
   'aria-label'?: string;
 } & Omit<React.SVGProps<SVGSVGElement>, 'aria-label'>;
 
-const DEFAULT_LABEL = 'CrawlPay';
+const DEFAULT_LABEL = 'Octroi';
 
 /** Arch + threshold dot, in a 0 0 64 64 box. */
 function MarkPaths() {

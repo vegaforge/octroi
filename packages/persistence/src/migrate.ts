@@ -12,12 +12,12 @@ export interface MigrateResult {
   alreadyApplied: string[];
 }
 
-/** Apply pending SQL migrations in lexical order, each in its own transaction. Idempotent: applied files (tracked in _crawlpay_migrations) are skipped. */
+/** Apply pending SQL migrations in lexical order, each in its own transaction. Idempotent: applied files (tracked in _octroi_migrations) are skipped. */
 export async function runMigrations(opts: MigrateOptions): Promise<MigrateResult> {
   const pool = new Pool({ connectionString: opts.databaseUrl });
   try {
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS _crawlpay_migrations (
+      CREATE TABLE IF NOT EXISTS _octroi_migrations (
         filename   TEXT PRIMARY KEY,
         applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
@@ -28,7 +28,7 @@ export async function runMigrations(opts: MigrateOptions): Promise<MigrateResult
       .sort();
 
     const { rows } = await pool.query<{ filename: string }>(
-      'SELECT filename FROM _crawlpay_migrations',
+      'SELECT filename FROM _octroi_migrations',
     );
     const applied = new Set(rows.map((r) => r.filename));
     const alreadyApplied = files.filter((f) => applied.has(f));
@@ -42,7 +42,7 @@ export async function runMigrations(opts: MigrateOptions): Promise<MigrateResult
       try {
         await client.query('BEGIN');
         await client.query(sql);
-        await client.query('INSERT INTO _crawlpay_migrations (filename) VALUES ($1)', [file]);
+        await client.query('INSERT INTO _octroi_migrations (filename) VALUES ($1)', [file]);
         await client.query('COMMIT');
         result.applied.push(file);
       } catch (err) {

@@ -6,7 +6,7 @@ import { Chip } from '@/components/ui/Chip';
 import { ButtonLink } from '@/components/ui/ButtonLink';
 import { HeroWalkthrough } from './HeroWalkthrough';
 
-const GITHUB_URL = 'https://github.com/StrimzLab/crawlpay';
+const GITHUB_URL = 'https://github.com/StrimzLab/octroi';
 const easeSmooth = [0.32, 0.72, 0, 1] as const;
 
 /** Landing hero. Walkthrough sits between headline and CTAs so the eye lands on it first. */

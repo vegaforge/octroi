@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/store"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/store"
 )
 
 var clock = time.Date(2026, 4, 27, 12, 0, 0, 0, time.UTC)

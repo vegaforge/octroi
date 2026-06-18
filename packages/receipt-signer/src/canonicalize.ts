@@ -1,8 +1,8 @@
-import type { CrawlPayReceipt, CrawlPayReceiptBody } from '@crawlpay/types';
+import type { OctroiReceipt, OctroiReceiptBody } from '@octroi/types';
 
 /** Canonical JSON: keys sorted recursively, no whitespace, signature/undefined dropped. Deterministic so receipts hash the same everywhere. */
-export function canonicalizeReceipt(receipt: CrawlPayReceiptBody | CrawlPayReceipt): string {
-  const asAny = receipt as CrawlPayReceipt;
+export function canonicalizeReceipt(receipt: OctroiReceiptBody | OctroiReceipt): string {
+  const asAny = receipt as OctroiReceipt;
   const body: Record<string, unknown> = { ...asAny };
   delete body.signature;
   return canonicalize(body);

@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
-import type { AssetId, Network, PaymentPayload, StellarAddress } from '@crawlpay/types';
-import { NETWORKS } from '@crawlpay/types';
+import type { AssetId, Network, PaymentPayload, StellarAddress } from '@octroi/types';
+import { NETWORKS } from '@octroi/types';
 import type { FacilitatorService } from '../services/facilitator-service';
 
 interface VerifyBody {

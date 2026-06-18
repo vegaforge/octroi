@@ -5,7 +5,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/vegaforge/crawlpay/apps/api-gateway/internal/store"
+	"github.com/vegaforge/octroi/apps/api-gateway/internal/store"
 )
 
 var windowDays = map[string]int{"day": 1, "week": 7, "month": 30}

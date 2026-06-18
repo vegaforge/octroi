@@ -1,6 +1,6 @@
 import type { Pool } from 'pg';
-import { atomicUsdc } from '@crawlpay/types';
-import type { Network, StellarAddress } from '@crawlpay/types';
+import { atomicUsdc } from '@octroi/types';
+import type { Network, StellarAddress } from '@octroi/types';
 import {
   PublisherAlreadyExistsError,
   type CreatePublisherInput,
@@ -13,7 +13,7 @@ interface PublisherRow {
   id: string;
   domain: string;
   wallet_address: string;
-  crawlpay_agent_id: string | null;
+  octroi_agent_id: string | null;
   api_key_hash: string | null;
   default_price_atomic: string;
   network: string;
@@ -38,7 +38,7 @@ export class PostgresPublisherRepository implements PublisherRepository {
     try {
       const { rows } = await this.#pool.query<PublisherRow>(
         `INSERT INTO publishers (
-           id, domain, wallet_address, crawlpay_agent_id, api_key_hash,
+           id, domain, wallet_address, octroi_agent_id, api_key_hash,
            default_price_atomic, network, min_reputation_score, robots_txt_aware,
            active, description
          ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
@@ -47,7 +47,7 @@ export class PostgresPublisherRepository implements PublisherRepository {
           input.id,
           input.domain,
           input.walletAddress,
-          input.crawlpayAgentId ?? null,
+          input.octroiAgentId ?? null,
           input.apiKeyHash ?? null,
           input.defaultPriceAtomic !== undefined
             ? input.defaultPriceAtomic.toString()
@@ -150,7 +150,7 @@ function rowToRecord(row: PublisherRow): PublisherRecord {
     walletAddress: row.wallet_address as StellarAddress,
     network: row.network as Network,
     defaultPriceAtomic: atomicUsdc(BigInt(row.default_price_atomic)),
-    crawlpayAgentId: row.crawlpay_agent_id ?? undefined,
+    octroiAgentId: row.octroi_agent_id ?? undefined,
     apiKeyHash: row.api_key_hash ?? undefined,
     description: row.description ?? undefined,
     minReputationScore: row.min_reputation_score,

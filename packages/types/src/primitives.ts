@@ -72,7 +72,7 @@ export function atomicToDollars(atomic: AtomicUsdc): string {
   return `${whole}.${fStr}`;
 }
 
-/** Stellar networks CrawlPay settles on. */
+/** Stellar networks Octroi settles on. */
 export type Network = 'stellar-testnet' | 'stellar-mainnet';
 
 export const NETWORKS = [

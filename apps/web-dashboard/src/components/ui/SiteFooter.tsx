@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Logo } from '@/components/brand';
 import { Chip } from './Chip';
 
-const GITHUB_URL = 'https://github.com/StrimzLab/crawlpay';
+const GITHUB_URL = 'https://github.com/StrimzLab/octroi';
 
 /** Site footer. Holds the resource links the nav doesn't carry. */
 export function SiteFooter() {
@@ -28,7 +28,7 @@ export function SiteFooter() {
             <FooterLink href={GITHUB_URL} external>
               GitHub
             </FooterLink>
-            <FooterLink href="https://www.npmjs.com/package/@crawlpay/crawler-sdk" external>
+            <FooterLink href="https://www.npmjs.com/package/@octroi/crawler-sdk" external>
               npm
             </FooterLink>
             <FooterLink href="https://x402.org" external>
@@ -48,7 +48,7 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-border-subtle pt-6 text-[13px] text-ink-tertiary">
-          <span>© 2026 CrawlPay · Open source on GitHub</span>
+          <span>© 2026 Octroi · Open source on GitHub</span>
         </div>
       </div>
     </footer>

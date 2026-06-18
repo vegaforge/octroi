@@ -1,7 +1,7 @@
 import type { Config } from 'tailwindcss';
 
 /**
- * CrawlPay design system for Tailwind. Colors reference CSS vars in globals.css
+ * Octroi design system for Tailwind. Colors reference CSS vars in globals.css
  * (single source of truth). Tremor charts use palette names, so `amber` is
  * overridden below with the brand accent.
  */

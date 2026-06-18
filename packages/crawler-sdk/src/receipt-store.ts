@@ -1,4 +1,4 @@
-import type { CrawlPayReceipt, StellarAddress } from '@crawlpay/types';
+import type { OctroiReceipt, StellarAddress } from '@octroi/types';
 
 export interface ReceiptFilter {
   /** Inclusive lower bound on receipt.timestamp (ISO 8601). */
@@ -18,27 +18,27 @@ export interface ReceiptFilter {
  * Distinct from FetchCache, which is a short-lived content cache to skip re-payment.
  */
 export interface ReceiptStore {
-  put(receipt: CrawlPayReceipt): Promise<void>;
+  put(receipt: OctroiReceipt): Promise<void>;
   /** Look up by authorization nonce (unique per payment). */
-  getByNonce(nonce: string): Promise<CrawlPayReceipt | null>;
-  list(filter?: ReceiptFilter): Promise<CrawlPayReceipt[]>;
+  getByNonce(nonce: string): Promise<OctroiReceipt | null>;
+  list(filter?: ReceiptFilter): Promise<OctroiReceipt[]>;
   /** Count receipts matching the filter (cheaper than `list().length` for DB-backed impls). */
   count(filter?: ReceiptFilter): Promise<number>;
 }
 
 /** In-memory receipt store, for tests and short-lived scripts. */
 export class MemoryReceiptStore implements ReceiptStore {
-  readonly #byNonce = new Map<string, CrawlPayReceipt>();
+  readonly #byNonce = new Map<string, OctroiReceipt>();
 
-  async put(receipt: CrawlPayReceipt): Promise<void> {
+  async put(receipt: OctroiReceipt): Promise<void> {
     this.#byNonce.set(receipt.nonce, receipt);
   }
 
-  async getByNonce(nonce: string): Promise<CrawlPayReceipt | null> {
+  async getByNonce(nonce: string): Promise<OctroiReceipt | null> {
     return this.#byNonce.get(nonce) ?? null;
   }
 
-  async list(filter: ReceiptFilter = {}): Promise<CrawlPayReceipt[]> {
+  async list(filter: ReceiptFilter = {}): Promise<OctroiReceipt[]> {
     let out = Array.from(this.#byNonce.values()).filter((r) => matches(r, filter));
     out.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
     if (filter.limit !== undefined) out = out.slice(0, filter.limit);
@@ -54,7 +54,7 @@ export class MemoryReceiptStore implements ReceiptStore {
   }
 }
 
-function matches(r: CrawlPayReceipt, f: ReceiptFilter): boolean {
+function matches(r: OctroiReceipt, f: ReceiptFilter): boolean {
   if (f.fromTimestamp !== undefined && r.timestamp < f.fromTimestamp) return false;
   if (f.toTimestamp !== undefined && r.timestamp > f.toTimestamp) return false;
   if (f.from !== undefined && r.from !== f.from) return false;

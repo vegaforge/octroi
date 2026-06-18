@@ -46,8 +46,8 @@ const KNOWN_BOT_PATTERNS: RegExp[] = [
   /Diffbot/i,
   /ImagesiftBot/i,
   /Omgilibot/i,
-  // CrawlPay crawlers self-identify
-  /CrawlPay/i,
+  // Octroi crawlers self-identify
+  /Octroi/i,
 ];
 
 /**

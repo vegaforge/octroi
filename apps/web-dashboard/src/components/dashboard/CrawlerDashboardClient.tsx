@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, LayoutGrid, Loader2, Receipt, Settings } from 'lucide-react';
-import type { CrawlPayReceipt } from '@crawlpay/types';
+import type { OctroiReceipt } from '@octroi/types';
 import { DashLayout } from './DashLayout';
 import { KpiCard } from './KpiCard';
 import { DashChart, type ChartPoint, type WindowKey } from './DashChart';
@@ -55,7 +55,7 @@ export function CrawlerDashboardClient({ wallet }: Props) {
     staleTime: 60_000,
   });
 
-  // Reputation lookup against crawlpay_registry. Crawler accounts (AI agents)
+  // Reputation lookup against octroi_registry. Crawler accounts (AI agents)
   // are the most likely to be registered there.
   const reputationQuery = useQuery({
     queryKey: ['reputation', wallet],
@@ -155,7 +155,7 @@ function KpiStrip({
   );
 }
 
-function TopPublishersTable({ receipts }: { receipts: CrawlPayReceipt[] }) {
+function TopPublishersTable({ receipts }: { receipts: OctroiReceipt[] }) {
   const top = useMemo(() => topPublishers(receipts), [receipts]);
 
   if (receipts.length === 0) {
@@ -224,7 +224,7 @@ function chartFromAnalytics(
   }));
 }
 
-function feedFromReceipts(receipts: CrawlPayReceipt[]): FeedEntry[] {
+function feedFromReceipts(receipts: OctroiReceipt[]): FeedEntry[] {
   return receipts.slice(0, 10).map((r) => ({
     id: r.nonce,
     url: r.resource,
@@ -241,7 +241,7 @@ interface PublisherAgg {
   lastTimestamp: number;
 }
 
-function topPublishers(receipts: CrawlPayReceipt[], limit = 5): PublisherAgg[] {
+function topPublishers(receipts: OctroiReceipt[], limit = 5): PublisherAgg[] {
   const map = new Map<string, PublisherAgg>();
   for (const r of receipts) {
     const key = r.to;

@@ -4,7 +4,7 @@ import { Logo } from '@/components/brand';
 import { ApiKeyMenu } from '@/components/auth/ApiKeyMenu';
 import { ButtonLink } from './ButtonLink';
 
-const GITHUB_URL = 'https://github.com/StrimzLab/crawlpay';
+const GITHUB_URL = 'https://github.com/StrimzLab/octroi';
 
 /** Top nav for marketing routes. Links go to real pages only, no in-page anchors. */
 export function SiteNav() {
@@ -13,7 +13,7 @@ export function SiteNav() {
       <div className="mx-auto flex h-full max-w-content items-center justify-between gap-6 px-6 md:px-8">
         <Link
           href="/"
-          aria-label="CrawlPay home"
+          aria-label="Octroi home"
           className="text-accent transition-colors hover:text-accent-hover"
         >
           <Logo variant="lockup" className="h-7 w-auto" />

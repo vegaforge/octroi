@@ -1,6 +1,6 @@
 import IORedis from 'ioredis';
 import { Pool } from 'pg';
-import { StellarKeypairReceiptSigner } from '@crawlpay/receipt-signer';
+import { StellarKeypairReceiptSigner } from '@octroi/receipt-signer';
 import {
   MemoryNonceTracker,
   MemoryReceiptRepository,
@@ -8,7 +8,7 @@ import {
   RedisNonceTracker,
   type NonceTracker,
   type ReceiptRepository,
-} from '@crawlpay/persistence';
+} from '@octroi/persistence';
 import { loadConfig } from './config';
 import { createLogger } from './logger';
 import { buildServer } from './server';
@@ -75,11 +75,11 @@ async function main() {
       sorobanRpcUrl: config.sorobanRpcUrl,
       storage,
     },
-    'crawlpay-facilitator listening',
+    'octroi-facilitator listening',
   );
 }
 
 main().catch((err) => {
-  console.error('Failed to start crawlpay-facilitator:', err);
+  console.error('Failed to start octroi-facilitator:', err);
   process.exit(1);
 });

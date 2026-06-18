@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { Keypair } from '@stellar/stellar-base';
-import type { AssetId, CrawlPayReceipt, StellarAddress } from '@crawlpay/types';
-import { StellarKeypairReceiptSigner, signReceipt, verifyReceipt } from '@crawlpay/receipt-signer';
+import type { AssetId, OctroiReceipt, StellarAddress } from '@octroi/types';
+import { StellarKeypairReceiptSigner, signReceipt, verifyReceipt } from '@octroi/receipt-signer';
 import { decodeReceiptHeader, encodeReceiptHeader } from '../receipts';
 
 const PUBLISHER = Keypair.random().publicKey() as StellarAddress;
 const CRAWLER = Keypair.random().publicKey() as StellarAddress;
 const USDC: AssetId = 'USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN';
 
-async function makeReceipt(): Promise<CrawlPayReceipt> {
+async function makeReceipt(): Promise<OctroiReceipt> {
   const signer = new StellarKeypairReceiptSigner(Keypair.random().secret());
   return signReceipt(
     {

@@ -1,11 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Keypair } from '@stellar/stellar-base';
-import type {
-  AssetId,
-  CrawlPayReceipt,
-  CrawlPayReceiptBody,
-  StellarAddress,
-} from '@crawlpay/types';
+import type { AssetId, OctroiReceipt, OctroiReceiptBody, StellarAddress } from '@octroi/types';
 import {
   StellarKeypairReceiptSigner,
   canonicalizeReceipt,
@@ -19,7 +14,7 @@ const CRAWLER = Keypair.random().publicKey() as StellarAddress;
 const FACILITATOR_PUBKEY = Keypair.random().publicKey() as StellarAddress;
 const USDC: AssetId = 'USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN';
 
-function makeUnsignedBody(): Omit<CrawlPayReceiptBody, 'facilitatorPubkey'> {
+function makeUnsignedBody(): Omit<OctroiReceiptBody, 'facilitatorPubkey'> {
   return {
     version: '1',
     resource: 'https://example.com/articles/how-soroban-works',
@@ -38,7 +33,7 @@ function makeUnsignedBody(): Omit<CrawlPayReceiptBody, 'facilitatorPubkey'> {
 
 describe('canonicalizeReceipt', () => {
   it('orders keys lexicographically', () => {
-    const body: CrawlPayReceiptBody = {
+    const body: OctroiReceiptBody = {
       ...makeUnsignedBody(),
       facilitatorPubkey: FACILITATOR_PUBKEY,
     };
@@ -51,14 +46,14 @@ describe('canonicalizeReceipt', () => {
       ...makeUnsignedBody(),
       facilitatorPubkey: FACILITATOR_PUBKEY,
       signature: 'c2lnbmF0dXJl',
-    } as unknown as CrawlPayReceipt;
+    } as unknown as OctroiReceipt;
     const out = canonicalizeReceipt(signed);
     expect(out).not.toContain('signature');
     expect(out).not.toContain('c2lnbmF0dXJl');
   });
 
   it('keeps explicit null fields but is deterministic', () => {
-    const body: CrawlPayReceiptBody = {
+    const body: OctroiReceiptBody = {
       ...makeUnsignedBody(),
       facilitatorPubkey: FACILITATOR_PUBKEY,
     };
@@ -70,8 +65,8 @@ describe('canonicalizeReceipt', () => {
 
 describe('canonicalReceiptBytes', () => {
   it('changes when any field changes', () => {
-    const a: CrawlPayReceiptBody = { ...makeUnsignedBody(), facilitatorPubkey: FACILITATOR_PUBKEY };
-    const b: CrawlPayReceiptBody = { ...a, amount: '2000' };
+    const a: OctroiReceiptBody = { ...makeUnsignedBody(), facilitatorPubkey: FACILITATOR_PUBKEY };
+    const b: OctroiReceiptBody = { ...a, amount: '2000' };
     expect(Buffer.from(canonicalReceiptBytes(a)).toString('hex')).not.toBe(
       Buffer.from(canonicalReceiptBytes(b)).toString('hex'),
     );
@@ -96,7 +91,7 @@ describe('signReceipt + verifyReceipt round-trip', () => {
     const signer = new StellarKeypairReceiptSigner(Keypair.random().secret());
     const signed = await signReceipt(makeUnsignedBody(), signer);
 
-    const tampered: CrawlPayReceipt = { ...signed, amount: '999999' };
+    const tampered: OctroiReceipt = { ...signed, amount: '999999' };
     const result = await verifyReceipt(tampered);
     expect(result.valid).toBe(false);
   });

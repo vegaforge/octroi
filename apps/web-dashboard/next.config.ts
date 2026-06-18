@@ -4,7 +4,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  transpilePackages: ['@crawlpay/types'],
+  transpilePackages: ['@octroi/types'],
   // Proxy /api/* to the api-gateway so it's same-origin. Needed for the
   // session cookie to reach the browser without SameSite=None+Secure on localhost.
   async rewrites() {

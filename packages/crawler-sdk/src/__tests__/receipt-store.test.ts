@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Keypair } from '@stellar/stellar-sdk';
-import type { AssetId, CrawlPayReceipt, StellarAddress } from '@crawlpay/types';
+import type { AssetId, OctroiReceipt, StellarAddress } from '@octroi/types';
 import { MemoryReceiptStore } from '../receipt-store';
 
 const PUBLISHER_A = Keypair.random().publicKey() as StellarAddress;
@@ -12,7 +12,7 @@ function ts(seconds: number): string {
   return new Date(seconds * 1000).toISOString();
 }
 
-function makeReceipt(overrides: Partial<CrawlPayReceipt> = {}): CrawlPayReceipt {
+function makeReceipt(overrides: Partial<OctroiReceipt> = {}): OctroiReceipt {
   return {
     version: '1',
     resource: 'https://example.com/x',
@@ -27,7 +27,7 @@ function makeReceipt(overrides: Partial<CrawlPayReceipt> = {}): CrawlPayReceipt 
     onchainTxHash: 'a1b2c3',
     mppSessionRef: null,
     facilitatorPubkey: Keypair.random().publicKey() as StellarAddress,
-    signature: 'c2ln' as CrawlPayReceipt['signature'],
+    signature: 'c2ln' as OctroiReceipt['signature'],
     ...overrides,
   };
 }

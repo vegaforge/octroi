@@ -1,4 +1,4 @@
-import { atomicUsdc, type AtomicUsdc } from '@crawlpay/types';
+import { atomicUsdc, type AtomicUsdc } from '@octroi/types';
 import {
   PublisherAlreadyExistsError,
   type CreatePublisherInput,
@@ -33,7 +33,7 @@ export class MemoryPublisherRepository implements PublisherRepository {
       walletAddress: input.walletAddress,
       network: input.network,
       defaultPriceAtomic: input.defaultPriceAtomic ?? DEFAULT_PRICE,
-      crawlpayAgentId: input.crawlpayAgentId,
+      octroiAgentId: input.octroiAgentId,
       apiKeyHash: input.apiKeyHash,
       description: input.description,
       minReputationScore: input.minReputationScore ?? 0,

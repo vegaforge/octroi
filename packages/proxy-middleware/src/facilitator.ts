@@ -1,11 +1,11 @@
 import type {
   AssetId,
-  CrawlPayErrorCode,
-  CrawlPayReceipt,
+  OctroiErrorCode,
+  OctroiReceipt,
   Network,
   PaymentPayload,
   StellarAddress,
-} from '@crawlpay/types';
+} from '@octroi/types';
 
 /** What the middleware sends the facilitator to verify and settle a payment. */
 export interface FacilitatorVerifyRequest {
@@ -22,8 +22,8 @@ export interface FacilitatorVerifyRequest {
 }
 
 export type FacilitatorVerifyResult =
-  | { ok: true; receipt: CrawlPayReceipt }
-  | { ok: false; error: { code: CrawlPayErrorCode; message: string } };
+  | { ok: true; receipt: OctroiReceipt }
+  | { ok: false; error: { code: OctroiErrorCode; message: string } };
 
 /** Pluggable facilitator interface so tests can mock and publishers can point at any deployment. */
 export interface FacilitatorClient {
@@ -58,8 +58,8 @@ export class HttpFacilitatorClient implements FacilitatorClient {
     }
 
     const body = (await response.json().catch(() => ({}))) as {
-      receipt?: CrawlPayReceipt;
-      error?: { code?: CrawlPayErrorCode; message?: string };
+      receipt?: OctroiReceipt;
+      error?: { code?: OctroiErrorCode; message?: string };
     };
 
     if (response.ok && body.receipt) {

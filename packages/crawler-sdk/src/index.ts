@@ -1,7 +1,7 @@
-export { CrawlPayClient } from './client';
+export { OctroiClient } from './client';
 export type {
   BudgetWarningEvent,
-  CrawlPayClientConfig,
+  OctroiClientConfig,
   ErrorEvent,
   FetchOpts,
   FetchResult,

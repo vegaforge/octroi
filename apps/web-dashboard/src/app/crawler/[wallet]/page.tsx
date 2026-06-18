@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: { params: RouteParams }): Pro
       ? `${params.wallet.slice(0, 6)}…${params.wallet.slice(-4)}`
       : params.wallet;
   return {
-    title: `${short} — CrawlPay Crawler`,
+    title: `${short} — Octroi Crawler`,
     description: `Live spend, top publishers, and receipt feed for crawler ${short} on Stellar testnet.`,
   };
 }

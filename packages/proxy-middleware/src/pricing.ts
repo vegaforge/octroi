@@ -1,4 +1,4 @@
-import type { AtomicUsdc, PricingRule } from '@crawlpay/types';
+import type { AtomicUsdc, PricingRule } from '@octroi/types';
 
 export interface PricingDecision {
   priceAtomic: AtomicUsdc;

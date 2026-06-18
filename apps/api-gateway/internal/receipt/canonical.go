@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-// canonicalize renders a JSON value in CrawlPay's canonical form: object keys
+// canonicalize renders a JSON value in Octroi's canonical form: object keys
 // sorted, no whitespace, null kept. It mirrors the TypeScript canonicalizer so
 // receipts hash identically across languages.
 func canonicalize(v interface{}) (string, error) {

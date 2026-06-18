@@ -29,12 +29,12 @@ func Load() (Config, error) {
 		port = p
 	}
 
-	network := os.Getenv("CRAWLPAY_NETWORK")
+	network := os.Getenv("OCTROI_NETWORK")
 	if network == "" {
 		network = "stellar-testnet"
 	}
 	if !supportedNetworks[network] {
-		return Config{}, fmt.Errorf("CRAWLPAY_NETWORK %q is not supported", network)
+		return Config{}, fmt.Errorf("OCTROI_NETWORK %q is not supported", network)
 	}
 
 	return Config{

@@ -3,7 +3,7 @@
  * Atomic USDC is 7-decimal (1000 = $0.0001). Use atomicToUsd, never .toFixed() on raw atomic.
  */
 
-import { atomicToDollars, atomicUsdc, type Network } from '@crawlpay/types';
+import { atomicToDollars, atomicUsdc, type Network } from '@octroi/types';
 
 /** Convert atomic USDC (7 decimals) to a display string like "$0.0001". */
 export function atomicToUsd(atomic: string | bigint | number): string {

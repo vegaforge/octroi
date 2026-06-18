@@ -1,7 +1,7 @@
-import type { CrawlPayReceipt, StellarAddress } from '@crawlpay/types';
+import type { OctroiReceipt, StellarAddress } from '@octroi/types';
 
 /** Signed receipt plus `publisherId`. publisherId is storage context, not part of the signed body. */
-export interface StoredReceipt extends CrawlPayReceipt {
+export interface StoredReceipt extends OctroiReceipt {
   publisherId: string;
 }
 
@@ -21,7 +21,7 @@ export interface ReceiptFilter {
 
 /** Append-only receipt store; receipts are immutable once issued. onchainTxHash is backfilled out-of-band. */
 export interface ReceiptRepository {
-  insert(receipt: CrawlPayReceipt, publisherId: string): Promise<void>;
+  insert(receipt: OctroiReceipt, publisherId: string): Promise<void>;
   getByNonce(nonce: string): Promise<StoredReceipt | null>;
   list(filter?: ReceiptFilter): Promise<StoredReceipt[]>;
   count(filter?: ReceiptFilter): Promise<number>;

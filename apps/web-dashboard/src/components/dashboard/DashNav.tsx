@@ -4,7 +4,7 @@ import { Logo } from '@/components/brand';
 import { Chip } from '@/components/ui/Chip';
 import { ApiKeyMenu } from '@/components/auth/ApiKeyMenu';
 
-const GITHUB_URL = 'https://github.com/StrimzLab/crawlpay';
+const GITHUB_URL = 'https://github.com/StrimzLab/octroi';
 
 type DashNavProps = {
   /** Network chip label override. Defaults to "Stellar testnet". */
@@ -18,7 +18,7 @@ export function DashNav({ network = 'Stellar testnet' }: DashNavProps) {
       <div className="mx-auto flex h-full max-w-none items-center justify-between gap-4 px-6 md:px-8">
         <Link
           href="/"
-          aria-label="CrawlPay home"
+          aria-label="Octroi home"
           className="text-accent transition-colors hover:text-accent-hover"
         >
           <Logo variant="lockup" className="h-7 w-auto" />

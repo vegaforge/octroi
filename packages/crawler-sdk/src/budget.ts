@@ -1,5 +1,5 @@
-import type { AtomicUsdc, CrawlerBudgetState } from '@crawlpay/types';
-import { atomicUsdc } from '@crawlpay/types';
+import type { AtomicUsdc, CrawlerBudgetState } from '@octroi/types';
+import { atomicUsdc } from '@octroi/types';
 
 export interface BudgetTracker {
   /** Get the current day's spend + remaining (UTC). */

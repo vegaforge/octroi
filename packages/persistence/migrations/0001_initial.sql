@@ -1,4 +1,4 @@
--- CrawlPay initial schema (v0, Stellar).
+-- Octroi initial schema (v0, Stellar).
 --
 -- Tables: publishers, pricing_rules, crawlers, access_rules, receipts,
 -- sessions, analytics_daily. Webhooks are deferred to v1.
@@ -11,7 +11,7 @@ CREATE TABLE publishers (
   id                    TEXT PRIMARY KEY,
   domain                TEXT NOT NULL UNIQUE,
   wallet_address        TEXT NOT NULL,            -- Stellar payout G-address
-  crawlpay_agent_id     TEXT,                     -- crawlpay_registry agent id
+  octroi_agent_id     TEXT,                     -- octroi_registry agent id
   api_key_hash          TEXT,                     -- sha256 of the publisher's API key
   default_price_atomic  BIGINT NOT NULL DEFAULT 1000,
   network               TEXT NOT NULL,
@@ -39,7 +39,7 @@ CREATE INDEX pricing_rules_publisher_idx ON pricing_rules(publisher_id, position
 
 CREATE TABLE crawlers (
   wallet_address    TEXT PRIMARY KEY,             -- Stellar G-address (also the Ed25519 pubkey)
-  crawlpay_agent_id TEXT,
+  octroi_agent_id TEXT,
   user_agent        TEXT,
   max_per_request   BIGINT NOT NULL DEFAULT 10000,
   daily_budget      BIGINT,
