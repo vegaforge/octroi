@@ -148,8 +148,15 @@ export class StellarPaymentSigner implements PaymentSigner {
     if (!rpc.Api.isSimulationSuccess(sim) || !sim.result) {
       throw new Error(`balance read failed: ${'error' in sim ? sim.error : 'no result'}`);
     }
-    const value = scValToNative(sim.result.retval);
-    return typeof value === 'bigint' ? value : BigInt(value ?? 0);
+    // SAC `balance` returns an i128, which scValToNative decodes to a bigint. Anything else
+    // means the call did not do what we asked; reporting 0 would look like an empty wallet.
+    const value: unknown = scValToNative(sim.result.retval);
+    if (typeof value !== 'bigint') {
+      throw new Error(
+        `balance read returned ${sim.result.retval.switch().name}, expected an i128 from the SAC`,
+      );
+    }
+    return value;
   }
 
   #server(): rpc.Server {
