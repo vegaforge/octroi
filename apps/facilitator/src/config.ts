@@ -1,5 +1,6 @@
+import { Asset } from '@stellar/stellar-sdk';
 import type { AssetId, ContractAddress, Network } from '@octroi/types';
-import { NETWORKS } from '@octroi/types';
+import { NETWORK_PASSPHRASE, NETWORKS } from '@octroi/types';
 
 export interface FacilitatorConfig {
   port: number;
@@ -53,6 +54,13 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): FacilitatorCon
   if (!usdcSacAddress || !CONTRACT_RE.test(usdcSacAddress)) {
     throw new Error('OCTROI_USDC_SAC must be a Soroban contract address (C...)');
   }
+  const expectedSac = sacContractId(usdcAsset, network);
+  if (usdcSacAddress !== expectedSac) {
+    throw new Error(
+      `OCTROI_USDC_SAC ${usdcSacAddress} is not the Stellar Asset Contract of OCTROI_USDC_ASSET ` +
+        `${usdcAsset} on ${network} (expected ${expectedSac})`,
+    );
+  }
 
   const receiptSigningSeed = env.OCTROI_RECEIPT_SEED;
   if (!receiptSigningSeed || !SECRET_SEED_RE.test(receiptSigningSeed)) {
@@ -76,4 +84,24 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): FacilitatorCon
     databaseUrl: env.DATABASE_URL || undefined,
     redisUrl: env.REDIS_URL || undefined,
   };
+}
+
+/**
+ * The Stellar Asset Contract id for `CODE:ISSUER` on `network`. It is a pure function of the
+ * asset and the network passphrase, the same derivation `deriveSacContractId` in the crawler
+ * SDK uses.
+ */
+function sacContractId(asset: string, network: Network): string {
+  const [code, issuer] = asset.split(':');
+  if (!code || !issuer) {
+    throw new Error(`OCTROI_USDC_ASSET must be in the form CODE:ISSUER_G_ADDRESS; got ${asset}`);
+  }
+  let parsed: Asset;
+  try {
+    parsed = new Asset(code, issuer);
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : String(err);
+    throw new Error(`OCTROI_USDC_ASSET ${asset} is not a valid Stellar asset: ${reason}`);
+  }
+  return parsed.contractId(NETWORK_PASSPHRASE[network]);
 }
