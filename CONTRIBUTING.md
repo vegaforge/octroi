@@ -18,6 +18,7 @@ pnpm install
 cp .env.example .env        # fill in the Stellar settings
 pnpm infra:up               # Postgres + Redis
 pnpm migrate                # apply the schema
+pnpm lint                   # ESLint with typed rules, zero warnings allowed
 pnpm typecheck              # tsc --noEmit across the workspace
 pnpm test                   # Vitest across packages with tests
 ```
@@ -28,18 +29,18 @@ The monorepo is managed with pnpm workspaces and Turbo. Run a single package's s
 
 - Branch off `main`: `feat/<short-name>`, `fix/<short-name>`, or `docs/<short-name>`.
 - Commits follow [Conventional Commits](https://www.conventionalcommits.org): `type(scope): summary`, e.g. `feat(facilitator): submit USDC SAC transfer`. Allowed types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `ci`, `build`, `perf`, `style`.
-- A `commit-msg` hook (commitlint) enforces the format, and a `pre-commit` hook (lint-staged) runs Prettier and ESLint on staged files. Install hooks with `pnpm install` (Husky sets them up automatically).
+- A `commit-msg` hook (commitlint) enforces the format, and a `pre-commit` hook (lint-staged) runs Prettier on staged files. Install hooks with `pnpm install` (Husky sets them up automatically). ESLint is not in the commit hook yet; run `pnpm lint` before you push.
 
 ## Pull requests
 
 1. Keep PRs focused on one issue and one logical change.
 2. Fill in the PR template and link the issue.
-3. CI must pass: typecheck, tests, and formatting.
+3. CI must pass: formatting, lint, typecheck and tests.
 4. A maintainer reviews and merges.
 
 ## Code style
 
-- TypeScript strict mode. No `any` without a justified comment.
+- TypeScript strict mode. No `any`: ESLint rejects it (`@typescript-eslint/no-explicit-any`). Parse untrusted JSON into `unknown` and narrow it.
 - Formatting is Prettier (`pnpm prettier --write .`); don't hand-format.
 - Keep network-specific code in bounded layers, with one enforcement core behind thin adapters (see [`docs/PRD.md` §7](./docs/PRD.md)).
 
