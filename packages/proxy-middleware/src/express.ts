@@ -24,7 +24,7 @@ export function octroi(config: OctroiMiddlewareConfig): RequestHandler {
   const facilitator: FacilitatorClient =
     config.facilitator ?? new HttpFacilitatorClient(config.facilitatorUrl);
 
-  const middleware: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+  const handle = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const fullUrl = `${req.protocol}://${req.get('host') ?? 'localhost'}${req.originalUrl}`;
     const startedAt = Date.now();
 
@@ -105,6 +105,13 @@ export function octroi(config: OctroiMiddlewareConfig): RequestHandler {
     });
 
     return next();
+  };
+
+  // Express 4 ignores the promise a handler returns, so a rejection inside `handle` (a
+  // throwing onSkip or onPayment hook, for example) would go unhandled and leave the request
+  // hanging. Route it to Express's error handling instead.
+  const middleware: RequestHandler = (req, res, next) => {
+    handle(req, res, next).catch(next);
   };
 
   return middleware;
