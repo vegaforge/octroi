@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Check, Copy } from 'lucide-react';
+import { copyText } from '@/lib/clipboard';
 import { cn } from '@/lib/utils';
 
 type AddressChipProps = {
@@ -17,12 +18,9 @@ export function AddressChip({ address, display, className }: AddressChipProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(address);
+    if (await copyText(address)) {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1500);
-    } catch {
-      // clipboard requires a secure context; ignore failures
     }
   };
 
@@ -31,7 +29,7 @@ export function AddressChip({ address, display, className }: AddressChipProps) {
   return (
     <button
       type="button"
-      onClick={handleCopy}
+      onClick={() => void handleCopy()}
       title={copied ? 'Copied' : 'Copy address'}
       className={cn(
         'mono inline-flex items-center gap-2 rounded-lg border border-border-subtle bg-bg-surface px-2.5 py-1.5 text-[13px] text-ink-secondary',

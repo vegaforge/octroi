@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { AlertTriangle, ArrowRight, Check, Copy, Loader2, Play, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Chip } from '@/components/ui/Chip';
+import { copyText } from '@/lib/clipboard';
 import { cn } from '@/lib/utils';
 import {
   probePublisher,
@@ -97,11 +98,14 @@ OCTROI_API_KEY=${apiKey}
 
 function ApiKeyReveal({ apiKey }: { apiKey: string }) {
   const [copied, setCopied] = useState(false);
+  const [copyFailed, setCopyFailed] = useState(false);
 
   async function copy() {
-    await navigator.clipboard.writeText(apiKey);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    const ok = await copyText(apiKey);
+    setCopied(ok);
+    // The key is shown only once, so say so when the browser refuses the copy.
+    setCopyFailed(!ok);
+    if (ok) setTimeout(() => setCopied(false), 2000);
   }
 
   return (
@@ -120,9 +124,14 @@ function ApiKeyReveal({ apiKey }: { apiKey: string }) {
         {apiKey}
       </div>
       <div className="mt-3 flex flex-wrap items-center justify-end gap-3 text-[12px] text-ink-tertiary">
+        {copyFailed ? (
+          <span role="status" className="text-clay">
+            Copy failed. Select the key above and copy it by hand.
+          </span>
+        ) : null}
         <button
           type="button"
-          onClick={copy}
+          onClick={() => void copy()}
           className={cn(
             'inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[12px] transition-colors',
             copied
@@ -166,9 +175,10 @@ function CodeBlock({ code, language }: { code: string; language: 'bash' | 'ts' }
   const [copied, setCopied] = useState(false);
 
   async function copy() {
-    await navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (await copyText(code)) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   }
 
   return (
@@ -181,7 +191,7 @@ function CodeBlock({ code, language }: { code: string; language: 'bash' | 'ts' }
       </pre>
       <button
         type="button"
-        onClick={copy}
+        onClick={() => void copy()}
         className={cn(
           'absolute right-2 top-2 inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[11px] transition-all',
           'opacity-0 group-hover:opacity-100 focus-visible:opacity-100',
