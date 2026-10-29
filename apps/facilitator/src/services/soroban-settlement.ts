@@ -207,7 +207,8 @@ export function validateTransferAuth(
     return fail('recipient_mismatch', 'transfer `to` does not match the offer payTo');
   }
 
-  const amount = scValToNative(args[2]!);
+  // scValToNative is typed `any`; an i128 decodes to a bigint and anything else is refused.
+  const amount: unknown = scValToNative(args[2]!);
   if (typeof amount !== 'bigint' || amount <= 0n) {
     return fail('invalid_payload', 'transfer amount must be a positive integer');
   }

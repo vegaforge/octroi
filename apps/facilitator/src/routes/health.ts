@@ -6,7 +6,7 @@ export function healthRoutes(
   service: FacilitatorService,
   network: string,
 ): void {
-  app.get('/health', async () => ({
+  app.get('/health', () => ({
     ok: true,
     service: 'octroi-facilitator',
     version: '0.0.1',

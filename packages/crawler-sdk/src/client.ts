@@ -1,5 +1,4 @@
 import type {
-  AtomicUsdc,
   OctroiReceipt,
   CrawlerBudgetState,
   StellarAddress,

@@ -12,11 +12,7 @@ import { LiveFeed, type FeedEntry } from './LiveFeed';
 import { TopTable } from './TopTable';
 import { Chip } from '@/components/ui/Chip';
 import { getCrawlerReceipts } from '@/lib/api/receipts';
-import {
-  getCrawlerAnalytics,
-  type AnalyticsWindow,
-  type CrawlerAnalytics,
-} from '@/lib/api/analytics';
+import { getCrawlerAnalytics, type CrawlerAnalytics } from '@/lib/api/analytics';
 import { getReputation } from '@/lib/api/reputation';
 import {
   atomicToDollarsNumber,
@@ -38,7 +34,7 @@ export function CrawlerDashboardClient({ wallet }: Props) {
 
   const analyticsQuery = useQuery({
     queryKey: ['analytics', 'crawler', wallet, windowKey],
-    queryFn: () => getCrawlerAnalytics(wallet, windowKey as AnalyticsWindow),
+    queryFn: () => getCrawlerAnalytics(wallet, windowKey),
     staleTime: 30_000,
   });
 

@@ -37,8 +37,8 @@ describe('canonicalizeReceipt', () => {
       ...makeUnsignedBody(),
       facilitatorPubkey: FACILITATOR_PUBKEY,
     };
-    const parsed = JSON.parse(canonicalizeReceipt(body));
-    expect(Object.keys(parsed)).toEqual([...Object.keys(parsed)].sort());
+    const keys = topLevelKeys(canonicalizeReceipt(body));
+    expect(keys).toEqual([...keys].sort());
   });
 
   it('excludes the signature field even when present', () => {
@@ -117,3 +117,11 @@ describe('signReceipt + verifyReceipt round-trip', () => {
     expect((await verifyReceipt(rb)).valid).toBe(true);
   });
 });
+
+function topLevelKeys(json: string): string[] {
+  const parsed: unknown = JSON.parse(json);
+  if (typeof parsed !== 'object' || parsed === null) {
+    throw new Error(`expected a JSON object, got ${json}`);
+  }
+  return Object.keys(parsed);
+}

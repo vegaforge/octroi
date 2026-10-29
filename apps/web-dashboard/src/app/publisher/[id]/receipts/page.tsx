@@ -5,7 +5,7 @@ import { ReceiptsTable } from '@/components/dashboard/ReceiptsTable';
 
 type RouteParams = { id: string };
 
-export async function generateMetadata({ params }: { params: RouteParams }): Promise<Metadata> {
+export function generateMetadata({ params }: { params: RouteParams }): Metadata {
   return { title: `Receipts — ${params.id} — Octroi` };
 }
 

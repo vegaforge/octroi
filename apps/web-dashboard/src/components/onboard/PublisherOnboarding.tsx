@@ -101,7 +101,7 @@ export function PublisherOnboarding() {
               setDescription={setDescription}
               submitting={submitting}
               error={error}
-              onSubmit={handleSubmit}
+              onSubmit={(e) => void handleSubmit(e)}
             />
           </motion.div>
         )}

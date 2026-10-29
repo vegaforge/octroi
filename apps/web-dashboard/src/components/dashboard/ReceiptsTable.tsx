@@ -71,7 +71,8 @@ export function ReceiptsTable(props: ReceiptsTableProps) {
     staleTime: 15_000,
   });
 
-  const receipts = data?.receipts ?? [];
+  // Memoized so the `?? []` fallback does not hand useMemo below a new array every render.
+  const receipts = useMemo(() => data?.receipts ?? [], [data?.receipts]);
   const pagination: ReceiptListPagination = data?.pagination ?? {
     total: 0,
     limit: PER_PAGE,

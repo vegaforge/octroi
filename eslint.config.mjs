@@ -56,8 +56,8 @@ export default defineConfig(
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
       ],
-      // Type-only imports are erased at build time; keeping them marked avoids runtime
-      // import cycles between packages.
+      // Marking type-only imports keeps them out of the emitted JavaScript, so the real
+      // runtime dependencies between modules stay visible.
       '@typescript-eslint/consistent-type-imports': 'error',
     },
   },
@@ -65,7 +65,9 @@ export default defineConfig(
   {
     files: ['apps/web-dashboard/**/*.{ts,tsx,js,mjs,cjs}'],
     extends: [nextCompat.extends('next/core-web-vitals', 'next/typescript')],
-    settings: { next: { rootDir: 'apps/web-dashboard/' } },
+    // Absolute, because the Next plugin resolves rootDir against the working directory and
+    // the lint script runs from apps/web-dashboard while ad hoc runs start at the root.
+    settings: { next: { rootDir: dashboardDir } },
   },
 
   {

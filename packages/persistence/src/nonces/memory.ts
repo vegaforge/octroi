@@ -12,20 +12,21 @@ export class MemoryNonceTracker implements NonceTracker {
     this.#now = now;
   }
 
-  async reserve(nonce: string, expiresAtUnix: number): Promise<boolean> {
+  reserve(nonce: string, expiresAtUnix: number): Promise<boolean> {
     this.#sweep();
-    if (this.#entries.has(nonce)) return false;
+    if (this.#entries.has(nonce)) return Promise.resolve(false);
     this.#entries.set(nonce, expiresAtUnix);
-    return true;
+    return Promise.resolve(true);
   }
 
-  async isUsed(nonce: string): Promise<boolean> {
+  isUsed(nonce: string): Promise<boolean> {
     this.#sweep();
-    return this.#entries.has(nonce);
+    return Promise.resolve(this.#entries.has(nonce));
   }
 
-  async release(nonce: string): Promise<void> {
+  release(nonce: string): Promise<void> {
     this.#entries.delete(nonce);
+    return Promise.resolve();
   }
 
   #sweep(): void {

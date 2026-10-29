@@ -27,7 +27,7 @@ export function stellarAddress(value: string): StellarAddress {
   if (!isStellarAddress(value)) {
     throw new TypeError(`Not a valid Stellar G-address: ${value}`);
   }
-  return value as StellarAddress;
+  return value;
 }
 
 export function isContractAddress(value: string): value is ContractAddress {

@@ -31,25 +31,28 @@ export class MemoryFetchCache implements FetchCache {
     this.#now = now;
   }
 
-  async get(url: string, maxAgeSeconds: number): Promise<FetchCacheEntry | null> {
+  get(url: string, maxAgeSeconds: number): Promise<FetchCacheEntry | null> {
     const entry = this.#entries.get(url);
-    if (!entry) return null;
+    if (!entry) return Promise.resolve(null);
     if (this.#now() - entry.cachedAt > maxAgeSeconds) {
       this.#entries.delete(url);
-      return null;
+      return Promise.resolve(null);
     }
-    return entry;
+    return Promise.resolve(entry);
   }
 
-  async put(entry: FetchCacheEntry): Promise<void> {
+  put(entry: FetchCacheEntry): Promise<void> {
     this.#entries.set(entry.url, entry);
+    return Promise.resolve();
   }
 
-  async invalidate(url: string): Promise<void> {
+  invalidate(url: string): Promise<void> {
     this.#entries.delete(url);
+    return Promise.resolve();
   }
 
-  async clear(): Promise<void> {
+  clear(): Promise<void> {
     this.#entries.clear();
+    return Promise.resolve();
   }
 }

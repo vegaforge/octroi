@@ -2,7 +2,6 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import { Chip } from '@/components/ui/Chip';
 import { ButtonLink } from '@/components/ui/ButtonLink';
 import { HeroWalkthrough } from './HeroWalkthrough';
 

@@ -137,10 +137,18 @@ export class NoPayableOfferError extends Error {
   }
 }
 
+/**
+ * An error code as received from a facilitator or publisher. Usually an `OctroiErrorCode`,
+ * but a newer server can send a code this SDK does not know yet, and it is kept verbatim
+ * rather than replaced. The `Record<never, never>` intersection keeps `string` from
+ * swallowing the known literals, so editors still suggest them.
+ */
+export type UpstreamErrorCode = OctroiErrorCode | (string & Record<never, never>);
+
 export class PaymentRejectedError extends Error {
   constructor(
     public readonly url: string,
-    public readonly code: OctroiErrorCode | string,
+    public readonly code: UpstreamErrorCode,
     public readonly attempt: number,
   ) {
     super(`Payment rejected for ${url}: ${code} (attempt ${attempt})`);

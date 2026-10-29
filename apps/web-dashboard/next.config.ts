@@ -10,8 +10,8 @@ const nextConfig: NextConfig = {
   eslint: { ignoreDuringBuilds: true },
   // Proxy /api/* to the api-gateway so it's same-origin. Needed for the
   // session cookie to reach the browser without SameSite=None+Secure on localhost.
-  async rewrites() {
-    return [{ source: '/api/:path*', destination: `${API_URL}/:path*` }];
+  rewrites() {
+    return Promise.resolve([{ source: '/api/:path*', destination: `${API_URL}/:path*` }]);
   },
 };
 

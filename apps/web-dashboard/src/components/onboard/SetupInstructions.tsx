@@ -233,7 +233,7 @@ function ProbeSection({ publisherId, domain }: { publisherId: string; domain: st
         and check for a 402 with the <code className="mono text-accent">X-PAYMENT</code> offer.
       </p>
       <div className="flex flex-wrap items-center gap-3">
-        <Button onClick={runProbe} disabled={probing} variant="secondary">
+        <Button onClick={() => void runProbe()} disabled={probing} variant="secondary">
           {probing ? (
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
           ) : (
