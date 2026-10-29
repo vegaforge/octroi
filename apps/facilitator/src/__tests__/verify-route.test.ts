@@ -94,6 +94,11 @@ async function verifyBody(opts: { amount: bigint; scheme?: string }) {
   };
 }
 
+/** The parsed JSON body, typed `unknown` so assertions describe its shape instead of reaching in. */
+function jsonBody(res: { json: () => unknown }): unknown {
+  return res.json();
+}
+
 describe('POST /verify', () => {
   it('settles an exact payment and returns a receipt for the offered amount', async () => {
     const { app, gateway } = makeApp();
@@ -103,7 +108,7 @@ describe('POST /verify', () => {
       payload: await verifyBody({ amount: 1000n }),
     });
     expect(res.statusCode).toBe(200);
-    expect(res.json().receipt.amount).toBe('1000');
+    expect(jsonBody(res)).toMatchObject({ receipt: { amount: '1000' } });
     expect(gateway.submissions).toBe(1);
   });
 
@@ -148,7 +153,7 @@ describe('POST /verify', () => {
       },
     });
     expect(res.statusCode).toBe(402);
-    expect(res.json().error.code).toBe('facilitator_error');
+    expect(jsonBody(res)).toMatchObject({ error: { code: 'facilitator_error' } });
     expect(gateway.submissions).toBe(0);
   });
 
@@ -160,7 +165,7 @@ describe('POST /verify', () => {
       payload: await verifyBody({ amount: 1n }),
     });
     expect(res.statusCode).toBe(402);
-    expect(res.json().error.code).toBe('amount_mismatch');
+    expect(jsonBody(res)).toMatchObject({ error: { code: 'amount_mismatch' } });
     expect(gateway.submissions).toBe(0);
   });
 });
