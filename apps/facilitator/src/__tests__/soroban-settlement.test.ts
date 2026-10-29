@@ -132,6 +132,29 @@ describe('validateTransferAuth', () => {
     expect(result.error.code).toBe('amount_exceeded');
   });
 
+  it('rejects an authorization for less than the offered amount', async () => {
+    const crawler = Keypair.random();
+    const publisher = Keypair.random().publicKey();
+    const entry = await makeEntry({
+      fromAddr: crawler.publicKey(),
+      signWith: crawler,
+      to: publisher,
+      amount: 1n,
+      validUntil: 200,
+    });
+    const result = validateTransferAuth(
+      entry,
+      ctx({
+        payTo: publisher as StellarAddress,
+        declaredFrom: crawler.publicKey() as StellarAddress,
+        maxAmount: 1000n,
+      }),
+    );
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error.code).toBe('amount_mismatch');
+  });
+
   it('rejects an expired signature window', async () => {
     const crawler = Keypair.random();
     const publisher = Keypair.random().publicKey();
