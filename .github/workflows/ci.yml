@@ -58,6 +58,8 @@ jobs:
         run: go vet ./...
       - name: Typecheck
         run: pnpm turbo run typecheck
+      - name: Unused or undeclared dependencies (Knip)
+        run: pnpm knip
 
   tests:
     name: tests

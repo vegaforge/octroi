@@ -1,0 +1,53 @@
+# Code owners. GitHub requests a review from the owner when a pull request
+# touches these paths. They are the sensitive paths from
+# .github/security/sensitive-paths.txt: files that can run code on a
+# maintainer's machine or in CI. Keep the two lists in step.
+.github/** @Signor1
+scripts/** @Signor1
+lefthook.yml @Signor1
+lefthook-local.yml @Signor1
+.lefthook/** @Signor1
+.husky/** @Signor1
+.vscode/** @Signor1
+.devcontainer/** @Signor1
+.idea/** @Signor1
+.envrc @Signor1
+.gitattributes @Signor1
+.gitmodules @Signor1
+.semgrepignore @Signor1
+package.json @Signor1
+pnpm-lock.yaml @Signor1
+pnpm-workspace.yaml @Signor1
+package-lock.json @Signor1
+npm-shrinkwrap.json @Signor1
+.npmrc @Signor1
+.pnpmfile.cjs @Signor1
+.yarnrc.yml @Signor1
+*.config.js @Signor1
+*.config.cjs @Signor1
+*.config.mjs @Signor1
+*.config.ts @Signor1
+*.config.mts @Signor1
+*.config.cts @Signor1
+turbo.json @Signor1
+knip.json @Signor1
+knip.jsonc @Signor1
+knip.ts @Signor1
+biome.json @Signor1
+biome.jsonc @Signor1
+Cargo.toml @Signor1
+Cargo.lock @Signor1
+build.rs @Signor1
+.cargo/** @Signor1
+rust-toolchain @Signor1
+rust-toolchain.toml @Signor1
+deny.toml @Signor1
+go.mod @Signor1
+go.sum @Signor1
+go.work @Signor1
+Dockerfile* @Signor1
+docker-compose* @Signor1
+compose.yaml @Signor1
+compose.yml @Signor1
+Makefile @Signor1
+justfile @Signor1
