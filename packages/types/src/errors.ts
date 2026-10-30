@@ -4,6 +4,8 @@ export type OctroiErrorCode =
   | 'invalid_signature'
   | 'invalid_request_signature'
   | 'amount_exceeded'
+  | 'amount_mismatch'
+  | 'asset_mismatch'
   | 'recipient_mismatch'
   | 'replay'
   | 'expired'

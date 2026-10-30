@@ -366,6 +366,8 @@ Every error is a structured JSON body with a stable `code`, a human-readable `me
 | `invalid_signature`         | 402        | The auth-entry signature does not recover to the declared crawler address | Re-sign and retry                                   |
 | `invalid_request_signature` | 402 or 403 | Missing or invalid Web Bot Auth signature on a priced path                | Sign the request, retry                             |
 | `amount_exceeded`           | 402        | Authorized amount exceeds `maxAmountRequired`                             | Rebuild with the offered amount                     |
+| `amount_mismatch`           | 402        | Authorized amount is less than `maxAmountRequired` (`exact` scheme)       | Rebuild with the offered amount                     |
+| `asset_mismatch`            | 402        | The offer's asset is not the USDC asset the facilitator settles           | Stop; the publisher or facilitator is misconfigured |
 | `recipient_mismatch`        | 402        | `to` does not equal `payTo`                                               | Rebuild the auth entry                              |
 | `replay`                    | 402        | The nonce has already been used                                           | New nonce, retry                                    |
 | `expired`                   | 402        | `signatureExpirationLedger` passed or the window expired                  | Rebuild and retry                                   |

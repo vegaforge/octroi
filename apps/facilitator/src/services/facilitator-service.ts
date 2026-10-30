@@ -39,8 +39,8 @@ const NONCE_TTL_SECONDS = 5 * 60;
 
 /**
  * Core facilitator orchestration. Stateless per call (state lives in the injected trackers).
- * verify() validates, settles on Stellar, reserves the nonce as a replay barrier, then
- * signs and persists a receipt.
+ * verify() checks the network and asset, settles on Stellar, reserves the nonce as a
+ * replay barrier, then signs and persists a receipt.
  */
 export class FacilitatorService {
   readonly #settlement: SorobanSettlement;
@@ -48,6 +48,7 @@ export class FacilitatorService {
   readonly #nonces: NonceTracker;
   readonly #receipts: ReceiptRepository;
   readonly #network: Network;
+  readonly #usdcAsset: AssetId;
 
   constructor(deps: {
     settlement: SorobanSettlement;
@@ -55,12 +56,15 @@ export class FacilitatorService {
     nonces: NonceTracker;
     receipts: ReceiptRepository;
     network: Network;
+    /** The USDC asset this facilitator settles. Must describe the configured SAC. */
+    usdcAsset: AssetId;
   }) {
     this.#settlement = deps.settlement;
     this.#signer = deps.signer;
     this.#nonces = deps.nonces;
     this.#receipts = deps.receipts;
     this.#network = deps.network;
+    this.#usdcAsset = deps.usdcAsset;
   }
 
   get signerPublicKey(): StellarAddress {
@@ -76,6 +80,19 @@ export class FacilitatorService {
       return {
         ok: false,
         error: { code: 'recipient_mismatch', message: 'payment network does not match the offer' },
+      };
+    }
+
+    // The receipt records `input.asset`, but the transfer always moves the configured SAC.
+    // Refuse anything else before settling so a receipt can never name an asset that did
+    // not move, and no fee is sponsored for the attempt.
+    if (input.asset !== this.#usdcAsset) {
+      return {
+        ok: false,
+        error: {
+          code: 'asset_mismatch',
+          message: `asset ${input.asset} is not the asset this facilitator settles`,
+        },
       };
     }
 

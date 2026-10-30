@@ -16,7 +16,10 @@ export type SettlementModel = 'x402' | 'mpp';
 export interface PaymentRequirement {
   scheme: PaymentScheme;
   network: Network;
-  /** Maximum the publisher requires, in atomic USDC, stringified. */
+  /**
+   * The price in atomic USDC, stringified. The name comes from x402 v1; for the `exact`
+   * scheme it is the amount the crawler must authorize, not a ceiling.
+   */
   maxAmountRequired: string;
   resource: string;
   description?: string;
