@@ -1,8 +1,0 @@
-blank_issues_enabled: false
-contact_links:
-  - name: Security vulnerability
-    url: https://github.com/vegaforge/octroi/security/advisories/new
-    about: Report security issues privately, not as public issues.
-  - name: Product spec (PRD)
-    url: https://github.com/vegaforge/octroi/blob/main/docs/PRD.md
-    about: Read the full product requirements before proposing larger changes.
