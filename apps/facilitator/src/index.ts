@@ -62,6 +62,7 @@ async function main() {
     nonces,
     receipts,
     network: config.network,
+    usdcAsset: config.usdcAsset,
   });
 
   const server = buildServer({ service, network: config.network, logger });

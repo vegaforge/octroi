@@ -62,6 +62,7 @@ function makeService(settlement: SorobanSettlement) {
     nonces,
     receipts,
     network: 'stellar-testnet',
+    usdcAsset: USDC,
   });
   return { service, signer, nonces, receipts };
 }
@@ -136,6 +137,24 @@ describe('FacilitatorService.verify', () => {
     const result = await service.verify(input);
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.code).toBe('recipient_mismatch');
+  });
+
+  it('rejects an asset other than the configured USDC before settling', async () => {
+    const settlement = okSettlement('nonce-7');
+    let settleCalls = 0;
+    settlement.impl = async () => {
+      settleCalls += 1;
+      return settlement.result;
+    };
+    const { service, receipts } = makeService(settlement);
+    const input = makeInput();
+    input.asset = `USDC:${Keypair.random().publicKey()}`;
+
+    const result = await service.verify(input);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error.code).toBe('asset_mismatch');
+    expect(settleCalls).toBe(0);
+    expect(await receipts.getByNonce('nonce-7')).toBeNull();
   });
 });
 
