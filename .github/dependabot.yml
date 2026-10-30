@@ -1,0 +1,60 @@
+# Dependabot version updates. Security updates are a repository setting and
+# use these groups too where `applies-to: security-updates` is set.
+# Minor and patch bumps arrive as one grouped pull request per ecosystem each
+# week; major bumps arrive one per pull request so each can be reviewed alone.
+version: 2
+updates:
+  # pnpm workspace: root, apps/* and packages/* share pnpm-lock.yaml.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      npm-minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
+      npm-security:
+        applies-to: security-updates
+        update-types:
+          - minor
+          - patch
+
+  # Go API gateway (separate module).
+  - package-ecosystem: gomod
+    directory: /apps/api-gateway
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      gomod-minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
+      gomod-security:
+        applies-to: security-updates
+        update-types:
+          - minor
+          - patch
+
+  # Actions are pinned to commit SHAs; Dependabot updates the SHA and the
+  # version comment together.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        update-types:
+          - minor
+          - patch
