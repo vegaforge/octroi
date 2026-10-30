@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@octroi/types": "workspace:*",
-    "ioredis": "^5.4.0",
+    "ioredis": "^6.0.0",
     "pg": "^8.11.0"
   },
   "devDependencies": {
