@@ -19,3 +19,8 @@ export {
   type FacilitatorVerifyResult,
 } from './facilitator';
 export { decodeReceiptHeader, encodeReceiptHeader } from './receipts';
+export {
+  Ed25519SignatureVerifier,
+  type SignatureVerifier,
+  type SignatureVerifierOptions,
+} from './signature-verifier';

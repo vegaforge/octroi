@@ -9,6 +9,7 @@ import type {
 import type { BotClassifier, ClassificationResult } from './classifier';
 import type { FacilitatorClient } from './facilitator';
 import type { PricingResolver } from './pricing';
+import type { SignatureVerifier } from './signature-verifier';
 
 export interface OctroiMiddlewareConfig {
   /** Publisher catalog identifier (e.g. "pub_abc123"). */
@@ -37,6 +38,8 @@ export interface OctroiMiddlewareConfig {
   facilitator?: FacilitatorClient;
   /** Override the default pricing resolver (replaces pricingRules + defaultPrice). */
   pricingResolver?: PricingResolver;
+  /** Verify Web Bot Auth signatures on crawler requests. When set, priced paths require a valid signature. */
+  signatureVerifier?: SignatureVerifier;
 
   // observability hooks
   onPayment?: (event: PaymentEvent) => void | Promise<void>;

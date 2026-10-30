@@ -59,6 +59,23 @@ export function octroi(config: OctroiMiddlewareConfig): RequestHandler {
       return next();
     }
 
+    // verify Web Bot Auth signature if configured
+    if (config.signatureVerifier) {
+      const host = req.get('host') ?? 'localhost';
+      const sigResult = config.signatureVerifier.verify(
+        host,
+        req.headers as Record<string, string | string[] | undefined>,
+      );
+      if (!sigResult.valid) {
+        res.status(402).json({
+          x402Version: 1,
+          error: 'invalid_signature',
+          detail: sigResult.error,
+        });
+        return;
+      }
+    }
+
     const paymentHeaderRaw = req.headers[PAYMENT_HEADER];
     const paymentHeader = Array.isArray(paymentHeaderRaw) ? paymentHeaderRaw[0] : paymentHeaderRaw;
 
