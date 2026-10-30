@@ -12,7 +12,7 @@ Payments settle on Stellar. The default is one signed Soroban authorization per 
 
 It is an open, self-hostable alternative to Cloudflare's Pay Per Crawl. Cloudflare only works for sites already behind it, which leaves most of the web without an option. Octroi runs on any stack and anyone can host it. The full spec is in [`docs/PRD.md`](./docs/PRD.md).
 
-> **Status.** This repo is mid-migration from Arc (EVM) to Stellar. The protocol types, the Ed25519 receipt signer, the publisher middleware, the crawler SDK, the facilitator, and the API gateway are built and tested. The part that signs Soroban authorization entries and submits the USDC transfer on-chain is still being written (issues [#1 to #3](https://github.com/vegaforge/octroi/issues)). Code that depends on it throws a clear "not implemented" for now.
+> **Status.** v0 is in progress on Stellar testnet. The protocol types, the Ed25519 receipt signer, the Express publisher middleware, the crawler SDK (including Soroban authorization-entry signing and the USDC balance read), the facilitator (including on-chain x402 settlement with a sponsored fee), and the Go API gateway are built and tested. Still open for v0: MPP sessions ([#7](https://github.com/vegaforge/octroi/issues/7)), which the facilitator rejects with `facilitator_error` until then, and Web Bot Auth request signing ([#4](https://github.com/vegaforge/octroi/issues/4)). The `/.well-known/octroi` discovery manifest ([#6](https://github.com/vegaforge/octroi/issues/6)) is not built yet, so crawlers learn the price from the 402 offer.
 
 ## Table of contents
 
@@ -43,7 +43,9 @@ Octroi closes that gap with three things that already work on Stellar:
 - **MPP sessions.** For heavy access to one publisher, the crawler pre-authorizes a budget once and streams per-URL debits that settle together. This is a standard protocol, not something Octroi had to invent.
 - **Native USDC.** No wrapped token, no bridge. The facilitator covers the network fee, so the crawler funds a USDC budget and that's it.
 
-The wire protocol is x402. A protected URL returns `402 Payment Required` with a JSON offer when there's no payment, and `200 OK` with a receipt header once the crawler pays. Anything that doesn't speak the protocol still sees a normal URL, status code, and body. A crawler that does speak it installs one SDK. And because the request signature follows Web Bot Auth and the payment follows x402, a crawler that already integrated either for Cloudflare or another x402 service can pay Octroi with very little new code.
+The wire protocol follows x402. A protected URL returns `402 Payment Required` with a JSON offer when there's no payment, and `200 OK` with a receipt header once the crawler pays. Anything that doesn't speak the protocol still sees a normal URL, status code, and body. A crawler that does speak it installs one SDK.
+
+Octroi is not yet wire-compatible with other x402 services. It speaks x402 version 1 style: the payment travels in `X-PAYMENT`, the receipt comes back in `X-PAYMENT-RESPONSE`, networks are named `stellar-testnet` and `stellar-mainnet`, and the payment payload is Octroi's own shape (a `settlement` field plus a signed Soroban authorization entry). The current Stellar x402 ecosystem (`@x402/stellar` and the OpenZeppelin Channels facilitator) uses `x402Version: 2` and CAIP-2 network ids such as `stellar:testnet`, so a crawler built for those needs the Octroi crawler SDK or an adapter to pay Octroi today.
 
 Every paid fetch returns a signed receipt. Anyone can verify it with the receipt and the facilitator's public key, without touching Octroi's database. The receipt works as an audit log, a billing record, and evidence of paid access if a licensing or copyright question ever comes up.
 
@@ -210,7 +212,7 @@ octroi/
 
 ## Getting started
 
-You need Node 20+, pnpm 9, and Docker (for local Postgres and Redis).
+You need Node 20+, pnpm 9, Go 1.25 (for the API gateway), and Docker (for local Postgres and Redis).
 
 ```bash
 git clone https://github.com/vegaforge/octroi
@@ -233,10 +235,12 @@ pnpm migrate
 Run the three apps, each in its own terminal:
 
 ```bash
-pnpm --filter @octroi/facilitator dev   # :3001
-pnpm --filter @octroi/api-gateway dev   # :8080
-pnpm web:dev                              # :3000
+pnpm --filter @octroi/facilitator dev                      # :3001, loads ../../.env itself
+(cd apps/api-gateway && set -a && . ../../.env && set +a && go run .)   # :8080
+pnpm web:dev                                               # :3000
 ```
+
+The facilitator loads `.env` through `tsx --env-file`. The Go gateway reads only real environment variables (`API_PORT`, `OCTROI_NETWORK`, `DATABASE_URL`, `NEXT_PUBLIC_FACILITATOR_URL`), so the command above exports `.env` into its shell first. Without `DATABASE_URL` the gateway uses an in-memory store. See [`apps/api-gateway/README.md`](./apps/api-gateway/README.md).
 
 [`.env.example`](./.env.example) documents every variable: the Soroban RPC URL, the network, the USDC asset and SAC address, the facilitator signing seed, the fee-sponsor seed, and the database and Redis URLs.
 
@@ -252,7 +256,7 @@ pnpm web:dev                              # :3000
 | Version           | Focus                                                                                                                          | Status      |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------ | ----------- |
 | v0 (testnet)      | protocol, receipt signing, adapters, SDK, facilitator, gateway, dashboard, live Soroban x402 and one MPP path, a 60-fetch demo | in progress |
-| v1 (mainnet beta) | WordPress/Ghost/Substack plugins, edge adapters, hosted proxy, discovery manifest, Python SDK, Go gateway, anchor cash-out     | Q3 2026     |
+| v1 (mainnet beta) | WordPress/Ghost/Substack plugins, edge adapters, hosted proxy, discovery manifest, Python SDK, anchor cash-out                 | Q3 2026     |
 | v2 (reputation)   | `octroi_registry` on-chain identity and reputation, a validator network, a discovery catalog, publisher pools                  | late 2026   |
 | v3 (scale)        | CCTP cross-chain payout, subscriptions on MPP, enterprise features (SLA, HSM, SSO), Helm and Kubernetes                        | 2027        |
 
