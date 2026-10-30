@@ -30,27 +30,28 @@ export interface ReceiptStore {
 export class MemoryReceiptStore implements ReceiptStore {
   readonly #byNonce = new Map<string, OctroiReceipt>();
 
-  async put(receipt: OctroiReceipt): Promise<void> {
+  put(receipt: OctroiReceipt): Promise<void> {
     this.#byNonce.set(receipt.nonce, receipt);
+    return Promise.resolve();
   }
 
-  async getByNonce(nonce: string): Promise<OctroiReceipt | null> {
-    return this.#byNonce.get(nonce) ?? null;
+  getByNonce(nonce: string): Promise<OctroiReceipt | null> {
+    return Promise.resolve(this.#byNonce.get(nonce) ?? null);
   }
 
-  async list(filter: ReceiptFilter = {}): Promise<OctroiReceipt[]> {
+  list(filter: ReceiptFilter = {}): Promise<OctroiReceipt[]> {
     let out = Array.from(this.#byNonce.values()).filter((r) => matches(r, filter));
     out.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
     if (filter.limit !== undefined) out = out.slice(0, filter.limit);
-    return out;
+    return Promise.resolve(out);
   }
 
-  async count(filter: ReceiptFilter = {}): Promise<number> {
+  count(filter: ReceiptFilter = {}): Promise<number> {
     let n = 0;
     for (const r of this.#byNonce.values()) {
       if (matches(r, filter)) n += 1;
     }
-    return n;
+    return Promise.resolve(n);
   }
 }
 

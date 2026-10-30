@@ -153,7 +153,10 @@ export function ReceiptModal({ receipt, onClose }: ReceiptModalProps) {
                   Verification failed{result.reason ? `: ${result.reason}` : ''}
                 </Chip>
               ) : (
-                <Button onClick={runVerify} disabled={verifying || !receipt.fullReceipt}>
+                <Button
+                  onClick={() => void runVerify()}
+                  disabled={verifying || !receipt.fullReceipt}
+                >
                   {verifying ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : null}
                   {verifying ? 'Verifying…' : 'Verify signature'}
                 </Button>

@@ -19,12 +19,13 @@ export class MemoryPublisherRepository implements PublisherRepository {
     this.#now = now;
   }
 
-  async create(input: CreatePublisherInput): Promise<PublisherRecord> {
+  create(input: CreatePublisherInput): Promise<PublisherRecord> {
+    // Duplicates reject rather than throw, matching the Postgres repository.
     if (this.#byId.has(input.id)) {
-      throw new PublisherAlreadyExistsError('id', input.id);
+      return Promise.reject(new PublisherAlreadyExistsError('id', input.id));
     }
     if (this.#domainIndex.has(input.domain)) {
-      throw new PublisherAlreadyExistsError('domain', input.domain);
+      return Promise.reject(new PublisherAlreadyExistsError('domain', input.domain));
     }
     const now = this.#now();
     const record: PublisherRecord = {
@@ -44,39 +45,39 @@ export class MemoryPublisherRepository implements PublisherRepository {
     };
     this.#byId.set(record.id, record);
     this.#domainIndex.set(record.domain, record.id);
-    return record;
+    return Promise.resolve(record);
   }
 
-  async get(id: string): Promise<PublisherRecord | null> {
-    return this.#byId.get(id) ?? null;
+  get(id: string): Promise<PublisherRecord | null> {
+    return Promise.resolve(this.#byId.get(id) ?? null);
   }
 
-  async getByDomain(domain: string): Promise<PublisherRecord | null> {
+  getByDomain(domain: string): Promise<PublisherRecord | null> {
     const id = this.#domainIndex.get(domain);
-    return id ? (this.#byId.get(id) ?? null) : null;
+    return Promise.resolve(id ? (this.#byId.get(id) ?? null) : null);
   }
 
-  async getByApiKeyHash(apiKeyHash: string): Promise<PublisherRecord | null> {
+  getByApiKeyHash(apiKeyHash: string): Promise<PublisherRecord | null> {
     for (const p of this.#byId.values()) {
-      if (p.apiKeyHash === apiKeyHash) return p;
+      if (p.apiKeyHash === apiKeyHash) return Promise.resolve(p);
     }
-    return null;
+    return Promise.resolve(null);
   }
 
-  async list(filter: PublisherFilter = {}): Promise<PublisherRecord[]> {
+  list(filter: PublisherFilter = {}): Promise<PublisherRecord[]> {
     let out = Array.from(this.#byId.values()).filter((p) => matches(p, filter));
     out.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     if (filter.offset !== undefined) out = out.slice(filter.offset);
     if (filter.limit !== undefined) out = out.slice(0, filter.limit);
-    return out;
+    return Promise.resolve(out);
   }
 
-  async count(filter: PublisherFilter = {}): Promise<number> {
+  count(filter: PublisherFilter = {}): Promise<number> {
     let n = 0;
     for (const p of this.#byId.values()) {
       if (matches(p, filter)) n += 1;
     }
-    return n;
+    return Promise.resolve(n);
   }
 }
 

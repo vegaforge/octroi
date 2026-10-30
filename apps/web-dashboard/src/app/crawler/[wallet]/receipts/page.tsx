@@ -5,7 +5,7 @@ import { ReceiptsTable } from '@/components/dashboard/ReceiptsTable';
 
 type RouteParams = { wallet: string };
 
-export async function generateMetadata({ params }: { params: RouteParams }): Promise<Metadata> {
+export function generateMetadata({ params }: { params: RouteParams }): Metadata {
   const short =
     params.wallet.length > 12
       ? `${params.wallet.slice(0, 6)}…${params.wallet.slice(-4)}`

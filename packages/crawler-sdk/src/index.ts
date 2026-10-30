@@ -7,6 +7,7 @@ export type {
   FetchResult,
   PaymentEvent,
   SkipEvent,
+  UpstreamErrorCode,
 } from './types';
 export {
   BudgetExhaustedError,

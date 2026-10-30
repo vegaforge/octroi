@@ -44,3 +44,28 @@ describe('encodeReceiptHeader / decodeReceiptHeader', () => {
     expect((await verifyReceipt(decoded)).valid).toBe(true);
   });
 });
+
+describe('decodeReceiptHeader with a malformed header', () => {
+  function encodeJson(value: unknown): string {
+    return Buffer.from(JSON.stringify(value), 'utf-8').toString('base64');
+  }
+
+  it('throws when the JSON is not an object', () => {
+    expect(() => decodeReceiptHeader(encodeJson('a string'))).toThrow(/malformed receipt/);
+  });
+
+  it('throws when a required field is missing', async () => {
+    const { amount: _dropped, ...withoutAmount } = await makeReceipt();
+    expect(() => decodeReceiptHeader(encodeJson(withoutAmount))).toThrow(/amount/);
+  });
+
+  it('throws when the amount is not an integer string', async () => {
+    const receipt = { ...(await makeReceipt()), amount: 1000 };
+    expect(() => decodeReceiptHeader(encodeJson(receipt))).toThrow(/amount/);
+  });
+
+  it('throws when the payer is not a Stellar address', async () => {
+    const receipt = { ...(await makeReceipt()), from: 'not-an-address' };
+    expect(() => decodeReceiptHeader(encodeJson(receipt))).toThrow(/from/);
+  });
+});

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Check, Copy } from 'lucide-react';
+import { copyText } from '@/lib/clipboard';
 import { highlightTypeScript } from '@/lib/highlight';
 
 type CodeBlockProps = {
@@ -18,12 +19,9 @@ export function CodeBlock({ code, filename, language = 'typescript' }: CodeBlock
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(code);
+    if (await copyText(code)) {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1500);
-    } catch {
-      // clipboard denied (insecure context or permissions), no-op
     }
   };
 
@@ -36,7 +34,7 @@ export function CodeBlock({ code, filename, language = 'typescript' }: CodeBlock
         </span>
         <button
           type="button"
-          onClick={handleCopy}
+          onClick={() => void handleCopy()}
           className={`code-copy ${copied ? 'copied' : ''}`}
           aria-label={copied ? 'Copied' : 'Copy code'}
         >

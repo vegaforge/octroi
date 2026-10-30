@@ -16,7 +16,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "migrate": "tsx --env-file=../../.env src/bin/migrate.ts",
-    "lint": "echo 'noop'"
+    "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
     "@octroi/types": "workspace:*",

@@ -153,7 +153,12 @@ export function DemoRunner() {
         <p className="mono mb-7 text-[14px] text-ink-secondary">
           5 publishers · 12 fetches each · 60 real Stellar testnet transactions
         </p>
-        <Button onClick={run} size="lg" disabled={state === 'running'} className="min-w-[220px]">
+        <Button
+          onClick={() => void run()}
+          size="lg"
+          disabled={state === 'running'}
+          className="min-w-[220px]"
+        >
           {state === 'running' ? (
             <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.5} aria-hidden />
           ) : (

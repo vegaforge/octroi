@@ -50,7 +50,6 @@ jobs:
             echo "$unformatted"
             exit 1
           fi
-      # Every package's lint script is a no-op until issue #38 adds ESLint.
       - name: Lint
         run: pnpm lint
       - name: go vet

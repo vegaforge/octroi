@@ -59,8 +59,6 @@ if [ -n "$UNFORMATTED" ]; then
   exit 1
 fi
 
-# pnpm lint is a no-op in every package until issue #38 adds ESLint. It runs
-# here anyway so the gate turns real the moment the scripts do.
 echo -e "\n${BLUE}[2/5] Lint (pnpm lint, go vet)...${NC}"
 pnpm lint
 (cd "$GATEWAY" && go vet ./...)

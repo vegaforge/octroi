@@ -14,11 +14,16 @@ export interface VerificationResult {
  * Verify a receipt's Ed25519 signature against the embedded `facilitatorPubkey`
  * (no key recovery like ECDSA). If `expectedSigner` is given, it must match.
  * Never throws on a bad signature; returns a structured result with a reason.
+ * The check itself is synchronous; the function returns a promise to keep the public API.
  */
-export async function verifyReceipt(
+export function verifyReceipt(
   receipt: OctroiReceipt,
   expectedSigner?: StellarAddress,
 ): Promise<VerificationResult> {
+  return Promise.resolve(checkReceipt(receipt, expectedSigner));
+}
+
+function checkReceipt(receipt: OctroiReceipt, expectedSigner?: StellarAddress): VerificationResult {
   const { signature, ...body } = receipt;
   const signerPubkey = body.facilitatorPubkey;
 

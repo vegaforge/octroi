@@ -15,7 +15,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "echo 'noop'"
+    "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
     "@octroi/types": "workspace:*"

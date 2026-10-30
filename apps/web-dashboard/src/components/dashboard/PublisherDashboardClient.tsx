@@ -13,11 +13,7 @@ import { TopTable } from './TopTable';
 import { Chip } from '@/components/ui/Chip';
 import { getPublisher, type PublisherRecord } from '@/lib/api/publishers';
 import { getPublisherReceipts } from '@/lib/api/receipts';
-import {
-  getPublisherAnalytics,
-  type AnalyticsWindow,
-  type PublisherAnalytics,
-} from '@/lib/api/analytics';
+import { getPublisherAnalytics, type PublisherAnalytics } from '@/lib/api/analytics';
 import { getReputation, type ReputationSummary } from '@/lib/api/reputation';
 import {
   atomicToDollarsNumber,
@@ -45,7 +41,7 @@ export function PublisherDashboardClient({ publisherId }: Props) {
 
   const analyticsQuery = useQuery({
     queryKey: ['analytics', 'publisher', publisherId, windowKey],
-    queryFn: () => getPublisherAnalytics(publisherId, windowKey as AnalyticsWindow),
+    queryFn: () => getPublisherAnalytics(publisherId, windowKey),
     staleTime: 30_000,
   });
 

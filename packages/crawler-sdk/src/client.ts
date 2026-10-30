@@ -1,5 +1,4 @@
 import type {
-  AtomicUsdc,
   OctroiReceipt,
   CrawlerBudgetState,
   StellarAddress,
@@ -7,7 +6,7 @@ import type {
   PaymentRequiredResponse,
   PaymentRequirement,
 } from '@octroi/types';
-import { X402_HEADERS, atomicUsdc } from '@octroi/types';
+import { X402_HEADERS, atomicUsdc, parseOctroiReceipt } from '@octroi/types';
 import { verifyReceipt } from '@octroi/receipt-signer';
 import { InMemoryBudgetTracker, UnlimitedBudgetTracker, type BudgetTracker } from './budget';
 import { MemoryFetchCache, type FetchCache, type FetchCacheEntry } from './fetch-cache';
@@ -254,13 +253,11 @@ export class OctroiClient {
     try {
       receipt = decodeReceiptHeader(headerValue);
     } catch (err) {
-      await this.#emitError({
-        url,
-        error: asError(err),
-        phase: 'verify-receipt',
-        attempt: 0,
-      });
-      return null;
+      // A receipt header that is present but unreadable fails closed, the same as a bad
+      // signature below. Returning null here would accept paid content with no proof.
+      const error = new ReceiptVerificationError(url, asError(err).message);
+      await this.#emitError({ url, error, phase: 'verify-receipt', attempt: 0 });
+      throw error;
     }
     const result = await verifyReceipt(receipt);
     if (!result.valid) {
@@ -365,7 +362,13 @@ function encodePaymentPayload(payload: X402PaymentPayload): string {
 }
 
 function decodeReceiptHeader(value: string): OctroiReceipt {
-  return JSON.parse(Buffer.from(value, 'base64').toString('utf-8'));
+  let json: unknown;
+  try {
+    json = JSON.parse(Buffer.from(value, 'base64').toString('utf-8'));
+  } catch (err) {
+    throw new TypeError(`malformed receipt: header is not base64 JSON (${asError(err).message})`);
+  }
+  return parseOctroiReceipt(json);
 }
 
 function cacheEntryToResult<T>(entry: FetchCacheEntry, cached: boolean): FetchResult<T> {

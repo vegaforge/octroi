@@ -25,8 +25,9 @@ export class StellarKeypairReceiptSigner implements ReceiptSigner {
     this.publicKey = this.#keypair.publicKey() as StellarAddress;
   }
 
-  async sign(message: Uint8Array): Promise<Ed25519Signature> {
-    return this.#keypair.sign(Buffer.from(message)).toString('base64') as Ed25519Signature;
+  sign(message: Uint8Array): Promise<Ed25519Signature> {
+    const signature = this.#keypair.sign(Buffer.from(message)).toString('base64');
+    return Promise.resolve(signature as Ed25519Signature);
   }
 }
 

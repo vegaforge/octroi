@@ -5,29 +5,31 @@ import type { ReceiptFilter, ReceiptRepository, StoredReceipt } from './interfac
 export class MemoryReceiptRepository implements ReceiptRepository {
   readonly #byNonce = new Map<string, StoredReceipt>();
 
-  async insert(receipt: OctroiReceipt, publisherId: string): Promise<void> {
-    if (this.#byNonce.has(receipt.nonce)) return;
-    this.#byNonce.set(receipt.nonce, { ...receipt, publisherId });
+  insert(receipt: OctroiReceipt, publisherId: string): Promise<void> {
+    if (!this.#byNonce.has(receipt.nonce)) {
+      this.#byNonce.set(receipt.nonce, { ...receipt, publisherId });
+    }
+    return Promise.resolve();
   }
 
-  async getByNonce(nonce: string): Promise<StoredReceipt | null> {
-    return this.#byNonce.get(nonce) ?? null;
+  getByNonce(nonce: string): Promise<StoredReceipt | null> {
+    return Promise.resolve(this.#byNonce.get(nonce) ?? null);
   }
 
-  async list(filter: ReceiptFilter = {}): Promise<StoredReceipt[]> {
+  list(filter: ReceiptFilter = {}): Promise<StoredReceipt[]> {
     let out = Array.from(this.#byNonce.values()).filter((r) => matches(r, filter));
     out.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
     if (filter.offset !== undefined) out = out.slice(filter.offset);
     if (filter.limit !== undefined) out = out.slice(0, filter.limit);
-    return out;
+    return Promise.resolve(out);
   }
 
-  async count(filter: ReceiptFilter = {}): Promise<number> {
+  count(filter: ReceiptFilter = {}): Promise<number> {
     let n = 0;
     for (const r of this.#byNonce.values()) {
       if (matches(r, filter)) n += 1;
     }
-    return n;
+    return Promise.resolve(n);
   }
 }
 

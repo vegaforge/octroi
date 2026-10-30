@@ -27,23 +27,24 @@ export class InMemoryBudgetTracker implements BudgetTracker {
     this.#date = this.#today();
   }
 
-  async getState(): Promise<CrawlerBudgetState> {
+  getState(): Promise<CrawlerBudgetState> {
     this.#rollIfNewDay();
-    return {
+    return Promise.resolve({
       date: this.#date,
       spentAtomic: this.#spent,
       remainingAtomic: atomicUsdc(this.#dailyBudget - this.#spent),
-    };
+    });
   }
 
-  async canSpend(amount: AtomicUsdc): Promise<boolean> {
+  canSpend(amount: AtomicUsdc): Promise<boolean> {
     this.#rollIfNewDay();
-    return this.#spent + amount <= this.#dailyBudget;
+    return Promise.resolve(this.#spent + amount <= this.#dailyBudget);
   }
 
-  async recordSpend(amount: AtomicUsdc): Promise<void> {
+  recordSpend(amount: AtomicUsdc): Promise<void> {
     this.#rollIfNewDay();
     this.#spent = atomicUsdc(this.#spent + amount);
+    return Promise.resolve();
   }
 
   #today(): string {
@@ -67,19 +68,20 @@ export class UnlimitedBudgetTracker implements BudgetTracker {
     this.#now = now;
   }
 
-  async getState(): Promise<CrawlerBudgetState> {
-    return {
+  getState(): Promise<CrawlerBudgetState> {
+    return Promise.resolve({
       date: this.#now().toISOString().slice(0, 10),
       spentAtomic: atomicUsdc(0n),
       remainingAtomic: atomicUsdc(2n ** 256n - 1n),
-    };
+    });
   }
 
-  async canSpend(_amount: AtomicUsdc): Promise<boolean> {
-    return true;
+  canSpend(_amount: AtomicUsdc): Promise<boolean> {
+    return Promise.resolve(true);
   }
 
-  async recordSpend(_amount: AtomicUsdc): Promise<void> {
-    // intentionally empty
+  recordSpend(_amount: AtomicUsdc): Promise<void> {
+    // Nothing to track without a budget.
+    return Promise.resolve();
   }
 }

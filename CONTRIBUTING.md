@@ -20,6 +20,7 @@ pnpm install                # also installs the git hooks
 cp .env.example .env        # fill in the Stellar settings
 pnpm infra:up               # Postgres + Redis
 pnpm migrate                # apply the schema
+pnpm lint                   # ESLint with typed rules, zero warnings allowed
 pnpm typecheck              # tsc --noEmit across the workspace
 pnpm test                   # Vitest across packages with tests
 ```
@@ -30,13 +31,13 @@ The monorepo is managed with pnpm workspaces and Turbo. Run a single package's s
 
 `./scripts/preflight.sh` runs the same five gates as CI, for both TypeScript and Go:
 
-| Gate      | TypeScript                                  | Go (`apps/api-gateway`)     |
-| --------- | ------------------------------------------- | --------------------------- |
-| Format    | `pnpm format:check`                         | `gofmt -l .` prints nothing |
-| Lint      | `pnpm lint` (a no-op until #38 adds ESLint) | `go vet ./...`              |
-| Typecheck | `pnpm turbo run typecheck`                  |                             |
-| Tests     | `pnpm test`                                 | `go test ./...`             |
-| Build     | `pnpm build`                                | `go build ./...`            |
+| Gate      | TypeScript                 | Go (`apps/api-gateway`)     |
+| --------- | -------------------------- | --------------------------- |
+| Format    | `pnpm format:check`        | `gofmt -l .` prints nothing |
+| Lint      | `pnpm lint` (ESLint)       | `go vet ./...`              |
+| Typecheck | `pnpm turbo run typecheck` |                             |
+| Tests     | `pnpm test`                | `go test ./...`             |
+| Build     | `pnpm build`               | `go build ./...`            |
 
 `./scripts/preflight.sh --fast` skips the build. Set `GO_RACE=true` to run the Go tests with the race detector, as CI does.
 
@@ -60,7 +61,7 @@ The monorepo is managed with pnpm workspaces and Turbo. Run a single package's s
 
 ## Code style
 
-- TypeScript strict mode. No `any` without a justified comment.
+- TypeScript strict mode. No `any`: ESLint rejects it (`@typescript-eslint/no-explicit-any`). Parse untrusted JSON into `unknown` and narrow it.
 - Formatting is Prettier (`pnpm prettier --write .`); don't hand-format.
 - Keep network-specific code in bounded layers, with one enforcement core behind thin adapters (see [`docs/PRD.md` §7](./docs/PRD.md)).
 
