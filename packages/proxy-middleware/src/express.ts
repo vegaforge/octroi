@@ -1,5 +1,12 @@
 import type { NextFunction, Request, RequestHandler, Response } from 'express';
-import { type PaymentPayload, type PaymentRequiredResponse, X402_HEADERS } from '@octroi/types';
+import {
+  atomicUsdc,
+  type AtomicUsdc,
+  type OctroiReceipt,
+  type PaymentPayload,
+  type PaymentRequiredResponse,
+  X402_HEADERS,
+} from '@octroi/types';
 import { DefaultBotClassifier } from './classifier';
 import { HttpFacilitatorClient, type FacilitatorClient } from './facilitator';
 import { GlobPricingResolver, type PricingResolver } from './pricing';
@@ -90,15 +97,31 @@ export function octroi(config: OctroiMiddlewareConfig): RequestHandler {
       return;
     }
 
-    // return the signed receipt to the crawler and downstream handlers
+    // Do not serve on the facilitator's word alone: the receipt has to describe the payment
+    // this middleware offered. A mismatch means a buggy or hostile facilitator, and money
+    // may already have moved, so tell the publisher through onError.
     const { receipt } = result;
+    const mismatch = receiptMismatch(receipt, {
+      amount: pricing.priceAtomic,
+      to: config.publisherWallet,
+      resource: fullUrl,
+      asset: config.asset,
+      network: config.network,
+    });
+    if (mismatch) {
+      await emitError(config, fullUrl, new Error(mismatch), 'verify');
+      res.status(502).json({ x402Version: 1, error: 'facilitator_error' });
+      return;
+    }
+
+    // return the signed receipt to the crawler and downstream handlers
     res.setHeader(X402_HEADERS.response, encodeReceiptHeader(receipt));
     res.locals.octroiReceipt = receipt;
 
     await config.onPayment?.({
       url: fullUrl,
       from: receipt.from,
-      amount: pricing.priceAtomic,
+      amount: atomicUsdc(BigInt(receipt.amount)),
       receipt,
       settlementRef: receipt.onchainTxHash ?? receipt.mppSessionRef?.sessionId ?? '',
       durationMs: Date.now() - startedAt,
@@ -144,6 +167,31 @@ function buildOffer(
       },
     ],
   };
+}
+
+interface OfferedPayment {
+  amount: AtomicUsdc;
+  to: OctroiReceipt['to'];
+  resource: string;
+  asset: OctroiReceipt['asset'];
+  network: OctroiReceipt['network'];
+}
+
+/** Returns a description of the first receipt field that differs from the offer, or null. */
+function receiptMismatch(receipt: OctroiReceipt, offered: OfferedPayment): string | null {
+  const checks: Array<[field: string, actual: string, expected: string]> = [
+    ['amount', receipt.amount, offered.amount.toString()],
+    ['to', receipt.to, offered.to],
+    ['resource', receipt.resource, offered.resource],
+    ['asset', receipt.asset, offered.asset],
+    ['network', receipt.network, offered.network],
+  ];
+  for (const [field, actual, expected] of checks) {
+    if (actual !== expected) {
+      return `facilitator receipt ${field} ${actual} does not match the offered ${expected}`;
+    }
+  }
+  return null;
 }
 
 function decodePaymentPayload(headerValue: string): PaymentPayload {

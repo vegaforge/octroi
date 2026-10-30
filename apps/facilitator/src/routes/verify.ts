@@ -1,7 +1,8 @@
 import type { FastifyInstance } from 'fastify';
-import type { AssetId, Network, PaymentPayload, StellarAddress } from '@octroi/types';
+import type { AssetId, Network, StellarAddress } from '@octroi/types';
 import { NETWORKS } from '@octroi/types';
 import type { FacilitatorService } from '../services/facilitator-service';
+import { parsePaymentPayload } from './parse-payment';
 
 interface VerifyBody {
   publisherId?: unknown;
@@ -15,10 +16,6 @@ interface VerifyBody {
 
 const G_ADDRESS_RE = /^G[A-Z2-7]{55}$/;
 const ASSET_RE = /^[A-Za-z0-9]{1,12}:G[A-Z2-7]{55}$/;
-
-function isObject(v: unknown): v is Record<string, unknown> {
-  return typeof v === 'object' && v !== null;
-}
 
 export function verifyRoutes(app: FastifyInstance, service: FacilitatorService): void {
   app.post('/verify', async (req, reply) => {
@@ -42,8 +39,9 @@ export function verifyRoutes(app: FastifyInstance, service: FacilitatorService):
     if (typeof body.maxAmountRequired !== 'string' || !/^\d+$/.test(body.maxAmountRequired)) {
       return reply.code(400).send({ error: 'maxAmountRequired required (atomic USDC string)' });
     }
-    if (!isObject(body.payment)) {
-      return reply.code(400).send({ error: 'payment required (object)' });
+    const payment = parsePaymentPayload(body.payment);
+    if (!payment.ok) {
+      return reply.code(400).send({ error: payment.error });
     }
 
     const result = await service.verify({
@@ -53,7 +51,7 @@ export function verifyRoutes(app: FastifyInstance, service: FacilitatorService):
       network: body.network as Network,
       asset: body.asset as AssetId,
       maxAmountRequired: body.maxAmountRequired,
-      payment: body.payment as unknown as PaymentPayload,
+      payment: payment.value,
     });
 
     if (!result.ok) {

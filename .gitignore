@@ -27,3 +27,12 @@ apps/api-gateway/bin/
 *.pem
 *.key
 .secrets/
+
+# Governance
+# Agent worktrees live here, one per branch.
+.worktrees/
+# Root-level ship-*.sh scripts prepared for the maintainer are never committed.
+# Root only: scripts/*.sh stays tracked.
+/*.sh
+.env*
+!.env.example

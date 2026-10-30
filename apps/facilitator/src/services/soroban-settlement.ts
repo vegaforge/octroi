@@ -28,7 +28,7 @@ export interface SettleInput {
   asset: AssetId;
   /** Network the settlement must occur on. */
   network: Network;
-  /** offered ceiling, authorized amount must not exceed this */
+  /** Offered price in atomic USDC. Under the `exact` scheme the authorized amount must equal it. */
   maxAmountRequired: string;
 }
 
@@ -121,7 +121,7 @@ export class StellarSorobanSettlement implements SorobanSettlement {
     const checked = validateTransferAuth(entry, {
       sac: this.#sacAddress,
       payTo: input.payTo,
-      maxAmount: BigInt(input.maxAmountRequired),
+      requiredAmount: BigInt(input.maxAmountRequired),
       declaredFrom: input.payment.payload.from,
       passphrase: this.#passphrase,
       currentLedger,
@@ -148,7 +148,8 @@ export class StellarSorobanSettlement implements SorobanSettlement {
 interface AuthContext {
   sac: ContractAddress;
   payTo: StellarAddress;
-  maxAmount: bigint;
+  /** The offered price. The authorized amount must equal it exactly. */
+  requiredAmount: bigint;
   declaredFrom: StellarAddress;
   passphrase: string;
   currentLedger: number;
@@ -161,7 +162,7 @@ type ValidatedAuth =
 /**
  * Verify that the signed authorization entry authorizes exactly the offered
  * transfer: the USDC SAC, `transfer(from, to, amount)` with `to == payTo` and
- * `amount <= maxAmountRequired`, signed by `from`, and not expired.
+ * `amount == requiredAmount`, signed by `from`, and not expired.
  */
 export function validateTransferAuth(
   entry: xdr.SorobanAuthorizationEntry,
@@ -212,8 +213,11 @@ export function validateTransferAuth(
   if (typeof amount !== 'bigint' || amount <= 0n) {
     return fail('invalid_payload', 'transfer amount must be a positive integer');
   }
-  if (amount > ctx.maxAmount) {
-    return fail('amount_exceeded', 'authorized amount exceeds maxAmountRequired');
+  if (amount > ctx.requiredAmount) {
+    return fail('amount_exceeded', 'authorized amount exceeds the offered amount');
+  }
+  if (amount < ctx.requiredAmount) {
+    return fail('amount_mismatch', 'authorized amount is less than the offered amount');
   }
 
   if (addr.signatureExpirationLedger() <= ctx.currentLedger) {

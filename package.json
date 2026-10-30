@@ -13,7 +13,7 @@
     "typecheck": "turbo run typecheck",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky",
+    "prepare": "lefthook install --reset-hooks-path",
     "web:dev": "pnpm --filter @octroi/web-dashboard dev",
     "web:build": "pnpm --filter @octroi/web-dashboard build",
     "web:start": "pnpm --filter @octroi/web-dashboard start",
@@ -21,7 +21,8 @@
     "infra:up": "docker compose -f infra/docker-compose.yml up -d",
     "infra:down": "docker compose -f infra/docker-compose.yml down",
     "infra:reset": "docker compose -f infra/docker-compose.yml down -v",
-    "infra:logs": "docker compose -f infra/docker-compose.yml logs -f"
+    "infra:logs": "docker compose -f infra/docker-compose.yml logs -f",
+    "preflight": "./scripts/preflight.sh"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.0.0",
@@ -30,16 +31,12 @@
     "@eslint/js": "^9.39.0",
     "@types/node": "^20.11.0",
     "eslint": "^9.39.0",
-    "husky": "^9.1.0",
-    "lint-staged": "^15.2.0",
+    "lefthook": "^2.2.2",
     "prettier": "^3.2.0",
     "tsx": "^4.7.0",
     "turbo": "^2.0.0",
     "typescript": "^5.4.0",
     "typescript-eslint": "^8.72.0"
-  },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx,json,md,yml,yaml,css}": "prettier --write"
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {

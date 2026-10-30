@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { Keypair } from '@stellar/stellar-sdk';
 import { StellarKeypairReceiptSigner } from '@octroi/receipt-signer';
 import { MemoryNonceTracker, MemoryReceiptRepository } from '@octroi/persistence';
+import type { AssetId } from '@octroi/types';
 import { buildServer } from '../server';
 import { FacilitatorService } from '../services/facilitator-service';
 import type { SettleResult, SorobanSettlement } from '../services/soroban-settlement';
@@ -20,6 +21,8 @@ function makeApp() {
     nonces: new MemoryNonceTracker(),
     receipts: new MemoryReceiptRepository(),
     network: 'stellar-testnet',
+    // These routes never settle, so any well-formed asset id works here.
+    usdcAsset: `USDC:${Keypair.random().publicKey()}` as AssetId,
   });
   return { app: buildServer({ service, network: 'stellar-testnet' }), signer };
 }

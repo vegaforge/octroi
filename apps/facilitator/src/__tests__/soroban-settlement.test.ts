@@ -54,7 +54,7 @@ function ctx(over: Partial<Parameters<typeof validateTransferAuth>[1]> = {}) {
   return {
     sac: SAC,
     payTo: 'PAY_TO' as StellarAddress,
-    maxAmount: 1000n,
+    requiredAmount: 1000n,
     declaredFrom: 'FROM' as StellarAddress,
     passphrase: PASSPHRASE,
     currentLedger: 100,
@@ -109,7 +109,7 @@ describe('validateTransferAuth', () => {
     expect(result.error.code).toBe('recipient_mismatch');
   });
 
-  it('rejects when the amount exceeds the ceiling', async () => {
+  it('rejects when the amount exceeds the offered amount', async () => {
     const crawler = Keypair.random();
     const publisher = Keypair.random().publicKey();
     const entry = await makeEntry({
@@ -124,12 +124,35 @@ describe('validateTransferAuth', () => {
       ctx({
         payTo: publisher as StellarAddress,
         declaredFrom: crawler.publicKey() as StellarAddress,
-        maxAmount: 1000n,
+        requiredAmount: 1000n,
       }),
     );
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.error.code).toBe('amount_exceeded');
+  });
+
+  it('rejects an authorization for less than the offered amount', async () => {
+    const crawler = Keypair.random();
+    const publisher = Keypair.random().publicKey();
+    const entry = await makeEntry({
+      fromAddr: crawler.publicKey(),
+      signWith: crawler,
+      to: publisher,
+      amount: 1n,
+      validUntil: 200,
+    });
+    const result = validateTransferAuth(
+      entry,
+      ctx({
+        payTo: publisher as StellarAddress,
+        declaredFrom: crawler.publicKey() as StellarAddress,
+        requiredAmount: 1000n,
+      }),
+    );
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error.code).toBe('amount_mismatch');
   });
 
   it('rejects an expired signature window', async () => {
@@ -313,6 +336,31 @@ describe('StellarSorobanSettlement.settle', () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.error.code).toBe('amount_exceeded');
+    expect(gateway.submitted).toBeNull();
+  });
+
+  it('does not submit an authorization for less than the offered amount', async () => {
+    const crawler = Keypair.random();
+    const publisher = Keypair.random().publicKey();
+    const entry = await makeEntry({
+      fromAddr: crawler.publicKey(),
+      signWith: crawler,
+      to: publisher,
+      amount: 1n,
+      validUntil: 200,
+    });
+    const gateway = new FakeGateway(100);
+    const settlement = new StellarSorobanSettlement({
+      rpcUrl: 'unused',
+      network: NETWORK,
+      sacAddress: SAC,
+      gateway,
+    });
+
+    const result = await settlement.settle(makeInput(entry, crawler.publicKey(), publisher));
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error.code).toBe('amount_mismatch');
     expect(gateway.submitted).toBeNull();
   });
 

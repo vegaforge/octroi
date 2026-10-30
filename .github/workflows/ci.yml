@@ -1,60 +1,132 @@
 name: CI
 
+# Three parallel jobs run the same gates as scripts/preflight.sh. The `quality`
+# job aggregates them and is the only check branch protection requires, so jobs
+# can be added or split here without touching repository settings.
+
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CI: true
 
 jobs:
-  verify:
+  checks:
+    name: format, lint, typecheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: 20
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
           cache: pnpm
-
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: apps/api-gateway/go.mod
+          cache-dependency-path: apps/api-gateway/go.sum
       - name: Install
         run: pnpm install --frozen-lockfile
-
-      - name: Format check
-        run: pnpm prettier --check .
-
+      - name: Prettier (format check)
+        run: pnpm format:check
+      - name: gofmt (format check)
+        working-directory: apps/api-gateway
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "gofmt found unformatted files:"
+            echo "$unformatted"
+            exit 1
+          fi
       - name: Lint
         run: pnpm lint
-
-      - name: Typecheck
-        run: pnpm typecheck
-
-      - name: Test
-        run: pnpm test
-
-  gateway:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
+      - name: go vet
         working-directory: apps/api-gateway
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-go@v5
-        with:
-          go-version: '1.25'
-          cache-dependency-path: apps/api-gateway/go.sum
-
-      - name: Format check
-        run: test -z "$(gofmt -l .)"
-
-      - name: Vet
         run: go vet ./...
+      - name: Typecheck
+        run: pnpm turbo run typecheck
 
-      - name: Build
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: apps/api-gateway/go.mod
+          cache-dependency-path: apps/api-gateway/go.sum
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Unit tests (Vitest)
+        run: pnpm test
+      - name: Gateway tests (go test, race detector)
+        working-directory: apps/api-gateway
+        run: go test -race ./...
+
+  build:
+    name: build, release notes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The release-note gate diffs against the base branch.
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: apps/api-gateway/go.mod
+          cache-dependency-path: apps/api-gateway/go.sum
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Build (pnpm)
+        run: pnpm build
+      - name: Build (Go gateway)
+        working-directory: apps/api-gateway
         run: go build ./...
+      - name: Release-note gate
+        env:
+          STRICT_RELEASE_NOTES: 'true'
+          RELEASE_NOTES_BASE: origin/${{ github.base_ref || 'main' }}
+        run: bash scripts/check_release_notes.sh
 
-      - name: Test
-        run: go test ./...
+  quality:
+    name: quality
+    runs-on: ubuntu-latest
+    needs: [checks, tests, build]
+    if: always()
+    steps:
+      - name: Every gate passed
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Job results: $RESULTS"
+          for result in $RESULTS; do
+            if [ "$result" != "success" ]; then
+              echo "A required job finished with '$result'."
+              exit 1
+            fi
+          done

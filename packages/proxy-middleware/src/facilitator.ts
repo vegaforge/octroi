@@ -15,7 +15,7 @@ export interface FacilitatorVerifyRequest {
   resource: string;
   network: Network;
   asset: AssetId;
-  /** Offered ceiling, atomic USDC stringified. */
+  /** Offered price, atomic USDC stringified. The `exact` scheme settles exactly this amount. */
   maxAmountRequired: string;
   /** The crawler's `X-PAYMENT` payload (auth entry or MPP debit). */
   payment: PaymentPayload;
