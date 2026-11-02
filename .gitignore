@@ -36,3 +36,6 @@ apps/api-gateway/bin/
 /*.sh
 .env*
 !.env.example
+
+# Python bytecode from scripts/security
+__pycache__/

@@ -58,6 +58,35 @@ The monorepo is managed with pnpm workspaces and Turbo. Run a single package's s
 4. CI must pass. The `quality` check aggregates format, lint, typecheck, tests, build, and the release-note gate.
 5. A maintainer reviews and merges.
 
+## Security checks on pull requests
+
+Every pull request runs a `security` check next to `quality`. It reads your
+changes without installing or running them, and it fails when it finds:
+
+- compiled or archived files (executables, native modules, zip or tar files);
+  images and fonts are fine inside the asset folders in
+  `.github/security/allowed-binaries.txt`
+- invisible Unicode characters, minified or encoded code, or source files over
+  512 KB
+- SVGs with scripts, event handlers, embedded HTML or links to outside files
+- dependencies from anywhere other than the official registries, known
+  malicious packages, or new known vulnerabilities
+- new install-time scripts (`preinstall`, `postinstall`, `prepare`)
+- code that reads credential files, sends environment secrets over the network,
+  or downloads and runs code
+- workflow changes with unsafe triggers or permissions, and known malware
+  signatures
+
+Changes to build scripts, Git hooks, workflows, dependency manifests and other
+files that run code (the list is in `.github/security/sensitive-paths.txt`) also
+wait for a maintainer to review and approve your latest commit. Pushing again
+after that approval asks for a new review. This is expected, so leave those
+files out of your pull request unless the issue asks for them.
+
+If you think the check is wrong about your change, say so in the pull request.
+A maintainer will look at it and, if needed, narrow the rule. Do not try to work
+around a finding.
+
 ## Code style
 
 - TypeScript strict mode. No `any` without a justified comment.

@@ -61,14 +61,18 @@ fi
 
 # pnpm lint is a no-op in every package until issue #38 adds ESLint. It runs
 # here anyway so the gate turns real the moment the scripts do.
-echo -e "\n${BLUE}[2/5] Lint (pnpm lint, go vet)...${NC}"
+echo -e "\n${BLUE}[2/5] Lint (pnpm lint, go vet, knip)...${NC}"
 pnpm lint
 (cd "$GATEWAY" && go vet ./...)
+# Knip fails on dependencies nothing imports and imports nothing declares.
+pnpm knip
 
 echo -e "\n${BLUE}[3/5] Typecheck...${NC}"
 pnpm turbo run typecheck
 
 echo -e "\n${BLUE}[4/5] Tests (Vitest, go test)...${NC}"
+# The PR security checks have their own tests (standard library only).
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s scripts/security -q
 pnpm test
 (cd "$GATEWAY" && go test "${GO_TEST_FLAGS[@]+"${GO_TEST_FLAGS[@]}"}" ./...)
 

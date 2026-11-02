@@ -7,3 +7,6 @@ pnpm-lock.yaml
 
 # Generated
 **/*.min.*
+
+# Deliberate malicious-code samples for the Semgrep rule tests
+.github/semgrep/
