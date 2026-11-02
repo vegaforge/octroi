@@ -13,7 +13,7 @@ AI coding agents follow [`AGENTS.md`](./AGENTS.md), which holds the full ruleboo
 
 ## Development setup
 
-Requirements: Node 20 (see `.nvmrc`), pnpm 9, Go 1.25 (for `apps/api-gateway`), Docker (for local Postgres + Redis).
+Requirements: Node 22 (see `.nvmrc`), pnpm 9, Go 1.25 (for `apps/api-gateway`), Docker (for local Postgres + Redis).
 
 ```bash
 pnpm install                # also installs the git hooks
