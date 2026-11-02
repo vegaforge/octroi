@@ -182,7 +182,7 @@ The signature covers a canonical JSON form with sorted keys and stable serializa
 | Layer          | Tools                                                                 |
 | -------------- | --------------------------------------------------------------------- |
 | Language       | TypeScript 5.4 strict (facilitator, SDK, dashboard); Go (api-gateway) |
-| Runtime        | Node 20+, pnpm 9 workspaces, Turbo; Go 1.25                           |
+| Runtime        | Node 22+, pnpm 9 workspaces, Turbo; Go 1.25                           |
 | Facilitator    | Fastify, `@stellar/stellar-sdk` (Soroban RPC, auth entries)           |
 | API gateway    | Go, Gin, pgx; Ed25519 receipt verification matching the TS signer     |
 | Frontend       | Next.js 15 (App Router), React 18, Tailwind, TanStack Query           |
@@ -212,7 +212,7 @@ octroi/
 
 ## Getting started
 
-You need Node 20+, pnpm 9, Go 1.25 (for the API gateway), and Docker (for local Postgres and Redis).
+You need Node 22+, pnpm 9, Go 1.25 (for the API gateway), and Docker (for local Postgres and Redis).
 
 ```bash
 git clone https://github.com/vegaforge/octroi
