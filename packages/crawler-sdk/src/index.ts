@@ -27,3 +27,4 @@ export {
   type StellarPaymentSignerOptions,
 } from './payment-signer';
 export { DefaultRetryPolicy, type RetryDecision, type RetryPolicy } from './retry';
+export { StellarRequestSigner, type RequestSigner, type SignableRequest } from './request-signer';
