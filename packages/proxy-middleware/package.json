@@ -26,8 +26,8 @@
   "devDependencies": {
     "@octroi/receipt-signer": "workspace:*",
     "@stellar/stellar-base": "^15.0.0",
-    "@types/express": "^4.17.0",
-    "express": "^4.19.0",
+    "@types/express": "^5.0.6",
+    "express": "^5.3.0",
     "typescript": "^5.4.0",
     "vitest": "^1.6.0"
   }
