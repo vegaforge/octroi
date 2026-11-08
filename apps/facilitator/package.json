@@ -19,7 +19,7 @@
     "fastify": "^4.27.0",
     "ioredis": "^5.4.0",
     "pg": "^8.23.1",
-    "pino": "^9.0.0",
+    "pino": "^10.4.0",
     "pino-pretty": "^11.0.0"
   },
   "devDependencies": {
